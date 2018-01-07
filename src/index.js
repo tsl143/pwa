@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 
 import ReduxStore from './reducers/store';
 import App from './components/App';
+import Notifications from './components/Notifications';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import setFCM from './FCM';
 import registerServiceWorker from './registerServiceWorker';
@@ -20,6 +21,13 @@ ReactDomRender(
         <HashRouter>
             <div>
                 <Route exact path="/" component={MyApp} />
+                <Route exact path="/notifications" component={
+                    () => (
+                        <MuiThemeProvider>
+                            <Notifications />
+                        </MuiThemeProvider>
+                    )
+                } />
             </div>
         </HashRouter>
     </Provider>,

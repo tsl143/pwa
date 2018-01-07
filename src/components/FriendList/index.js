@@ -6,7 +6,7 @@ import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 
-import { getFriends, getFriendsCache } from '../../actions/ng';
+import { getFriends, getFriendsCache } from '../../actions/friends';
 import CommunicationChatBubble from 'material-ui/svg-icons/communication/chat-bubble';
 import Styles from './styles.scss'
 
@@ -14,9 +14,6 @@ class FriendList extends Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {
-			friends: []
-		}
 	}
 
 	componentWillMount() {
@@ -25,10 +22,6 @@ class FriendList extends Component {
 
 	componentDidMount() {
 		if(navigator.onLine) this.props.getFriends();
-	}
-
-	componentWillReceiveProps(props) {
-		const { friends } = props;
 	}
 
 	populateFriendsList() {
@@ -49,7 +42,7 @@ class FriendList extends Component {
   	render() {
   		const { loading } = this.props;
 	    return (
-	    	<div>
+	    	<div className={Styles.FriendList}>
 	    		{loading &&
 			    	<RefreshIndicator
 					      size={40}
@@ -62,7 +55,6 @@ class FriendList extends Component {
 				<List>
 					{this.populateFriendsList()}
 				</List>
-			      
 		    </div>
     	);
   	}
@@ -82,8 +74,8 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = state => {
     return {
-    	friends: state.ng.list || [],
-    	loading: state.ng.isLoading || false,
+    	friends: state.friends.list || [],
+    	loading: state.friends.isLoading || false,
     }
 }
 

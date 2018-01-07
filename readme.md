@@ -1,6 +1,17 @@
 # TEST PWA
 
-### Get started
+## Deploy
+
+Deploy following files
+- index.html
+- bundle.js
+- logo.png
+- manifest.json
+- firebase-messaging-sw.js
+- service-worker.js
+
+
+### Get involved
 | Command                     | Description              |
 |-----------------------------|--------------------------|
 | `yarn install`              | Install all dependencies |
@@ -8,8 +19,6 @@
 | `yarn build`                | build for Deployment 	 |
 | `yarn test`                 | run test cases 			 |
 
-
-App has a basic UI and few validations on the add/edit form
 
 Project consist of few test cases written in 
 - enzyme

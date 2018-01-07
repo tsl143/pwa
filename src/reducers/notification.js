@@ -6,7 +6,7 @@ export default function ng(state = [], action) {
 		case 'LOADER':
 			return { ...tempState, isLoading: true }
 			break;
-		case 'FRIENDS_LIST':
+		case 'NOTIFICATIONS':
 			let isError = true;
 			let isLoading = true;
 			let list = [];
@@ -16,23 +16,23 @@ export default function ng(state = [], action) {
 				action.payload.status >= 200 && action.payload.status < 300
 			) {
 				isError = false;
-				const data = action.payload.data.data;
+				const data = action.payload.data.noti;
 
 				list = data.filter( entry => {
 					return Boolean(entry.channelid);
 				});
 
-				if(list.length > 0) localStorage.setItem('myFriends', JSON.stringify(list) );
+				if(list.length > 0) localStorage.setItem('NG_myNotifications', JSON.stringify(list) );
 				isLoading = false;
 			}
 
 			return { ...tempState, list, isLoading }
 			break;
 		
-		case 'FRIENDS_LIST_CACHE':
+		case 'NOTIFICATIONS_CACHE':
 			list = [];
 			try {
-				const fromCache = localStorage.getItem('myFriends');
+				const fromCache = localStorage.getItem('NG_myNotifications');
 				list = JSON.parse(fromCache)
 			}catch(e){
 				list = [];

@@ -8,7 +8,7 @@ import FriendList from '../FriendList';
 import Styles from './style.scss';
 
 
-class List extends Component {
+export default class List extends Component {
 
     constructor(props) {
         super(props);
@@ -18,22 +18,9 @@ class List extends Component {
 
         return (
             <div>
-                <Header/>
+                <Header name="Friends"/>
                 <FriendList />
             </div>
         );        
     }
 }
-
-const mapDispatchToProps = dispatch => {
-    return {
-    }
-}
-
-const mapStateToProps = state => {
-    return {
-
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(List);
