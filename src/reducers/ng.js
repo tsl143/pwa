@@ -17,15 +17,30 @@ export default function ng(state = [], action) {
 			) {
 				isError = false;
 				const data = action.payload.data.data;
+
 				list = data.filter( entry => {
 					return Boolean(entry.channelid);
 				});
+
+				if(list.length > 0) localStorage.setItem('myFriends', JSON.stringify(list) );
 				isLoading = false;
 			}
 
 			return { ...tempState, list, isLoading }
 			break;
 		
+		case 'FRIENDS_LIST_CACHE':
+			list = [];
+			try {
+				const fromCache = localStorage.getItem('myFriends');
+				list = JSON.parse(fromCache)
+			}catch(e){
+				list = [];
+			}
+
+			return { ...tempState, list }
+			break;
+
 		default:
 			return tempState;
 	}

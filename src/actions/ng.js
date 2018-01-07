@@ -25,8 +25,15 @@ export const getFriends = (channelid = '2c4049be7a41473d8b743a816bed041b') => {
     })
     .catch( error => {
         return {
-            type: 'ADD',
+            type: 'FRIENDS_LIST',
             payload: { data: 0, error }
         }
     } );
+}
+
+export const getFriendsCache = () => {
+    return {
+            type: 'FRIENDS_LIST_CACHE',
+            payload: true
+        }
 }

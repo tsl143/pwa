@@ -6,7 +6,7 @@ import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 
-import { getFriends } from '../../actions/ng';
+import { getFriends, getFriendsCache } from '../../actions/ng';
 import CommunicationChatBubble from 'material-ui/svg-icons/communication/chat-bubble';
 import Styles from './styles.scss'
 
@@ -20,7 +20,11 @@ class FriendList extends Component {
 	}
 
 	componentWillMount() {
-		this.props.getFriends();
+		this.props.getFriendsCache();
+	}
+
+	componentDidMount() {
+		if(navigator.onLine) this.props.getFriends();
 	}
 
 	componentWillReceiveProps(props) {
@@ -69,7 +73,10 @@ const mapDispatchToProps = dispatch => {
     return {
     	getFriends: () =>{
     		dispatch(getFriends());
-    	}
+		},
+		getFriendsCache: () =>{
+			dispatch(getFriendsCache());
+		}
     }
 }
 
