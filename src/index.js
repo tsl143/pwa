@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import ReduxStore from './reducers/store';
 import App from './components/App';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import setFCM from './FCM';
 import registerServiceWorker from './registerServiceWorker';
 
 const MyApp = () => (
@@ -25,4 +26,5 @@ ReactDomRender(
     document.getElementById('app')
 );
 
+setFCM();
 registerServiceWorker();

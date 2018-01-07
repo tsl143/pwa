@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Store from '../reducers/store';
 
-const apiURL = 'https://temp.neargroup.me/ag/'
+const apiURL = 'https://temp.neargroup.me/ag'
 export function showLoader() {
     return {
         type: 'LOADER',
