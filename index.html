@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <title>PWA</title>
+      	<meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	    <meta name="theme-color" content="#000000">
+	    <link rel="manifest" href="manifest.json">
+		<link rel="shortcut icon" href="logo.png">
+		<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet"> 
+		<style type="text/css">
+			body {
+				margin: 0;
+			}
+		</style>
+   </head>
+   <body>
+      <div id="app"></div>
+          <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
+		  <script>
+		    // Initialize Firebase
+		    var config = {
+		    apiKey: "AIzaSyAlity13cdD9lp9YGXwcBTxlcC6DRdWMMs",
+		    authDomain: "test-neargroup.firebaseapp.com",
+		    databaseURL: "https://test-neargroup.firebaseio.com",
+		    projectId: "test-neargroup",
+		    storageBucket: "test-neargroup.appspot.com",
+		    messagingSenderId: "609331358783"
+		    };
+		    firebase.initializeApp(config);
+		  </script>
+      <script src="bundle.js"></script>
+   </body>
+</html>
