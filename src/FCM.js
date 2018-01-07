@@ -17,23 +17,23 @@ export default function initialize() {
     messaging.requestPermission()
         .then(function() {
             console.log('Notification permission granted.');
+
+            // getting and setting up the token
+            messaging.getToken()
+                .then(function(currentToken) {
+                    if (currentToken) {
+                        sendTokenToServer(currentToken)
+                        console.log(currentToken);
+                    } else {
+                        console.log('No Instance ID token available. Request permission to generate one.');
+                    }
+                })
+                .catch(function(err) {
+                    console.log('An error occurred while retrieving token. ', err);
+                });
         })
         .catch(function(err) {
             console.log('Unable to get permission to notify.', err);
-        });
-
-    // getting and setting up the token
-    messaging.getToken()
-        .then(function(currentToken) {
-            if (currentToken) {
-                sendTokenToServer(currentToken)
-                console.log(currentToken);
-            } else {
-                console.log('No Instance ID token available. Request permission to generate one.');
-            }
-        })
-        .catch(function(err) {
-            console.log('An error occurred while retrieving token. ', err);
         });
 
 }
