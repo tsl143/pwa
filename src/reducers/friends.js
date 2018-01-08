@@ -3,7 +3,7 @@ export default function ng(state = [], action) {
 	const tempState = { ...state }
 
 	switch(action.type) {
-		case 'LOADER':
+		case 'LOADER_FRNDS':
 			return { ...tempState, isLoading: true }
 			break;
 		case 'FRIENDS_LIST':
@@ -26,7 +26,7 @@ export default function ng(state = [], action) {
 				isLoading = false;
 			}
 
-			return { ...tempState, list, isLoading }
+			return { ...tempState, list, isLoading, timestamp: Date.now() }
 			break;
 		
 		case 'FRIENDS_LIST_CACHE':
@@ -38,7 +38,7 @@ export default function ng(state = [], action) {
 				list = [];
 			}
 
-			return { ...tempState, list }
+			return { ...tempState, list, isLoading: false }
 			break;
 
 		default:

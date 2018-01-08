@@ -28,7 +28,11 @@ class Notifications extends Component {
     }
 
     componentDidMount() {
-        if(navigator.onLine) this.props.getNotifications();
+        if(navigator.onLine) {
+            const nowTime = Date.now();
+            const thenTime = parseInt(this.props.timestamp,10);
+            if(Math.abs(nowTime - thenTime) > 60000) this.props.getNotifications();
+        }
     }
 
     populateNotifications() {
@@ -99,6 +103,7 @@ const mapStateToProps = state => {
     return {
         notifications: state.notifications.list || [],
         loading: state.notifications.isLoading || false,
+        timestamp : state.notifications.timestamp || 0,
     }
 }
 

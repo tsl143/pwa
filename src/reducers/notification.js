@@ -3,7 +3,7 @@ export default function ng(state = [], action) {
 	const tempState = { ...state }
 
 	switch(action.type) {
-		case 'LOADER':
+		case 'LOADER_NOTIFICATION':
 			return { ...tempState, isLoading: true }
 			break;
 		case 'NOTIFICATIONS':
@@ -26,7 +26,7 @@ export default function ng(state = [], action) {
 				isLoading = false;
 			}
 
-			return { ...tempState, list, isLoading }
+			return { ...tempState, list, isLoading, timestamp: Date.now() }
 			break;
 		
 		case 'NOTIFICATIONS_CACHE':

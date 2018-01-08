@@ -21,7 +21,11 @@ class FriendList extends Component {
 	}
 
 	componentDidMount() {
-		if(navigator.onLine) this.props.getFriends();
+		if(navigator.onLine) {
+			const nowTime = Date.now();
+			const thenTime = parseInt(this.props.timestamp,10);
+			if(Math.abs(nowTime - thenTime) > 60000) this.props.getFriends();
+		}
 	}
 
 	populateFriendsList() {
@@ -76,6 +80,7 @@ const mapStateToProps = state => {
     return {
     	friends: state.friends.list || [],
     	loading: state.friends.isLoading || false,
+    	timestamp : state.friends.timestamp || 0,
     }
 }
 

@@ -4,7 +4,7 @@ import Store from '../reducers/store';
 const apiURL = 'https://temp.neargroup.me/ag'
 export function showLoader() {
     return {
-        type: 'LOADER',
+        type: 'LOADER_NOTIFICATION',
         payload: true
     };
 }

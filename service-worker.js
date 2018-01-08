@@ -1,5 +1,5 @@
-const dataCacheName = 'NG_TSL_API_DATA_4';
-const cacheName = 'NG_TSL_API_PWA_4';
+const dataCacheName = 'NG_TSL_API_DATA_7';
+const cacheName = 'NG_TSL_API_PWA_7';
 const filesToCache = [
   '/',
   '/index.html',
@@ -29,6 +29,31 @@ self.addEventListener('activate', function(e) {
     })
   );
   return self.clients.claim();
+});
+
+self.addEventListener('fetch', function(event) {
+  event.respondWith(caches.match(event.request).then(function(response) {
+    // caches.match() always resolves
+    // but in case of success response will have value
+    if (response !== undefined) {
+      console.log(response)
+      return response;
+    } else {
+      return fetch(event.request).then(function (response) {
+        // response may be used only once
+        // we need to save clone to put one copy in cache
+        // and serve second one
+        let responseClone = response.clone();
+        
+        caches.open('v1').then(function (cache) {
+          cache.put(event.request, responseClone);
+        });
+        return response;
+      }).catch(function (w) {
+        console.log(w)
+      });
+    }
+  }));
 });
 /*
 self.addEventListener('fetch', function(e) {
