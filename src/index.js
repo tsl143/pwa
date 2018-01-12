@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 
 import ReduxStore from './reducers/store';
 import App from './components/App';
+import Chat from './components/Chat';
 import Notifications from './components/Notifications';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import setFCM from './FCM';
@@ -21,6 +22,13 @@ ReactDomRender(
         <HashRouter>
             <div>
                 <Route exact path="/" component={MyApp} />
+                <Route exact path="/chat" component={
+                    () => (
+                        <MuiThemeProvider>
+                            <Chat />
+                        </MuiThemeProvider>
+                    )
+                } />
                 <Route exact path="/notifications" component={
                     () => (
                         <MuiThemeProvider>
