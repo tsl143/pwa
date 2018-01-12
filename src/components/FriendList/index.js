@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import Header from '../Header';
 import Avatar from 'material-ui/Avatar';
 import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
@@ -36,7 +37,7 @@ class FriendList extends Component {
 	  			<ListItem
 					primaryText={friend.name}
 					leftAvatar={<Avatar src={`${AvtarUrl}${friend.image_name}`} />}
-					rightIcon={<a onClick={()=>this.props.letsChat(friend)}><CommunicationChatBubble /></a>}
+					rightIcon={<a onClick={() => this.props.letsChat(friend)}><CommunicationChatBubble /></a>}
 					key={friend.channelid}
 				/>
 	  		);
@@ -46,19 +47,22 @@ class FriendList extends Component {
   	render() {
   		const { loading } = this.props;
 	    return (
-	    	<div className={Styles.FriendList}>
-	    		{loading &&
-			    	<RefreshIndicator
-					      size={40}
-					      left={10}
-					      top={0}
-					      status="loading"
-					      className={Styles.refresh}
-				    />
-				}
-				<List>
-					{this.populateFriendsList()}
-				</List>
+			<div>
+				<Header name="Friends"/>
+				<div className={Styles.FriendList}>
+					{loading &&
+						<RefreshIndicator
+						      size={40}
+						      left={10}
+						      top={0}
+						      status="loading"
+						      className={Styles.refresh}
+					    />
+					}
+					<List>
+						{this.populateFriendsList()}
+					</List>
+			    </div>
 		    </div>
     	);
   	}

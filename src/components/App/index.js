@@ -1,13 +1,9 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 
-import Header from '../Header';
 import FriendList from '../FriendList';
 import Chat from '../Chat';
 
 import Styles from './style.scss';
-
 
 export default class List extends Component {
 
@@ -40,14 +36,12 @@ export default class List extends Component {
             <div>
                 {this.state.screen === 'list' &&
                     <div>
-                        <Header name="Friends"/>
-                        <FriendList letsChat={this.letsChat.bind(this)}/>
+                        <FriendList letsChat={this.letsChat}/>
                     </div>
                 }
                 {this.state.screen === 'chat' &&
                     <div>
-                        <Header name="Chat"/>
-                        <Chat from={this.state.from} data={this.state.friendData} />
+                        <Chat toggleScreen={this.toggleScreen} from={this.state.from} data={this.state.friendData} />
                     </div>
                 }
             </div>

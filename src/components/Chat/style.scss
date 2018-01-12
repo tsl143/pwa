@@ -1,22 +1,24 @@
 .actionBtns {
     display: flex;
     position: fixed;
+    background: #e7e7e7;
     bottom: 0;
     width: 100%;
     left: 0;
     right: 0;
     align-content: center;
-    padding: 10px;
     border-top: 1px solid #f1f1f1;
 
     a {
+        align-self: center;
+        text-align: center;
         width: 50px;
     }
 }
 
 .ChatBox {
     padding: 5px;
-    padding-top: 64px;
+    padding: 64px 10px 70px;
 }
 
 .chatlet {
