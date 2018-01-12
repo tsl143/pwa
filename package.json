@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "go": "webpack-dev-server --progress --colors",
+    "go": "webpack-dev-server --config webpack-dev.js --progress --colors",
     "build": "webpack",
     "test": "jest"
   },

@@ -36,7 +36,7 @@ class FriendList extends Component {
 	  			<ListItem
 					primaryText={friend.name}
 					leftAvatar={<Avatar src={`${AvtarUrl}${friend.image_name}`} />}
-					rightIcon={<CommunicationChatBubble />}
+					rightIcon={<a onClick={()=>this.props.letsChat(friend)}><CommunicationChatBubble /></a>}
 					key={friend.channelid}
 				/>
 	  		);
