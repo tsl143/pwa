@@ -54,6 +54,9 @@ export default class Chat extends Component {
             msg: this.state.message,
             timeStamp: Date.now()
       	});
+        try{
+            this.refs["autoFocus"].select();
+        }catch(e){}
     }
 
     startListening() {
@@ -69,7 +72,6 @@ export default class Chat extends Component {
     }
 
     render() {
-        console.log(this.props)
         const AvtarUrl = "https://img.neargroup.me/project/forcesize/65x65/pixelate_3/profile_";
         return (
             <div>
@@ -103,6 +105,7 @@ export default class Chat extends Component {
                                 ev.preventDefault();
                             }
                         }}
+                        ref="autoFocus"
                     />
                     <a onClick={this.sendPlz}>
                         <ActionSend color={cyan500}/>
