@@ -11,6 +11,8 @@ import Header from '../Header';
 import Styles from './style.scss';
 
 let myFirebase;
+let isOnline;
+let lastSeen;
 
 export default class Chat extends Component {
 
@@ -27,7 +29,11 @@ export default class Chat extends Component {
 
     componentDidMount() {
         const channelId = window.prompt('Enter channelId');
-        myFirebase = new Firebase(`https://test-neargroup.firebaseio.com/rooms/${channelId}`);
+        const connectFirebase = new Firebase(`https://test-neargroup.firebaseio.com/`);
+        myFirebase = connectFirebase.child('rooms').child(channelId);
+        isOnline = connectFirebase.child('isOnline').child(this.props.from);
+        lastSeen = connectFirebase.child('lastSeen').child(this.props.from);
+        isOnline.set(true);
         this.startListening();
     }
 
@@ -52,7 +58,8 @@ export default class Chat extends Component {
             to: this.props.data,
 			uId: 1234,
             msg: this.state.message,
-            timeStamp: Date.now()
+            timeStamp: Date.now(),
+            arrivedAt: Firebase.ServerValue.TIMESTAMP,
       	});
         try{
             this.refs["autoFocus"].select();
@@ -68,6 +75,10 @@ export default class Chat extends Component {
                 chats.push(msg);
                 return { chats };
             });
+        });
+        isOnline.onDisconnect().set(false);
+        lastSeen.onDisconnect().set(Firebase.ServerValue.TIMESTAMP);
+        myFirebase.on('value', function(snapshot) {
         });
     }
 
