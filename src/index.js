@@ -1,3 +1,5 @@
+const API = 'http://localhost:8081/';
+
 import React from 'react';
 import { render as ReactDomRender } from 'react-dom';
 import { Route, HashRouter } from 'react-router-dom';
@@ -5,15 +7,13 @@ import { Provider } from 'react-redux';
 
 import ReduxStore from './reducers/store';
 import App from './components/App';
-import Chat from './components/Chat';
-import Notifications from './components/Notifications';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import setFCM from './FCM';
 import registerServiceWorker from './registerServiceWorker';
 
-const MyApp = () => (
+const MyApp = props => (
   <MuiThemeProvider>
-    <App />
+    <App route={props}/>
   </MuiThemeProvider>
 );
 
@@ -22,25 +22,12 @@ ReactDomRender(
         <HashRouter>
             <div>
                 <Route exact path="/" component={MyApp} />
-                <Route exact path="/chat" component={
-                    () => (
-                        <MuiThemeProvider>
-                            <Chat />
-                        </MuiThemeProvider>
-                    )
-                } />
-                <Route exact path="/notifications" component={
-                    () => (
-                        <MuiThemeProvider>
-                            <Notifications />
-                        </MuiThemeProvider>
-                    )
-                } />
+                <Route name="MyApp"  path="?status=:status" component={MyApp} />
             </div>
         </HashRouter>
     </Provider>,
     document.getElementById('app')
 );
 
-setFCM();
+//setFCM();
 registerServiceWorker();

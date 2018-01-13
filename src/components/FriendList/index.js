@@ -7,7 +7,6 @@ import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 
-import { getFriends, getFriendsCache } from '../../actions/friends';
 import CommunicationChatBubble from 'material-ui/svg-icons/communication/chat-bubble';
 import Styles from './styles.scss'
 
@@ -17,28 +16,16 @@ class FriendList extends Component {
 		super(props);
 	}
 
-	componentWillMount() {
-		this.props.getFriendsCache();
-	}
-
-	componentDidMount() {
-		if(navigator.onLine) {
-			const nowTime = Date.now();
-			const thenTime = parseInt(this.props.timestamp,10);
-			if(Math.abs(nowTime - thenTime) > 60000) this.props.getFriends();
-		}
-	}
-
 	populateFriendsList() {
 		const { friends } = this.props;
-	  	const AvtarUrl = 'https://img.neargroup.me/project/forcesize/65x65/pixelate_3/profile_';
+	  	const AvtarUrl = 'https://img.neargroup.me/project/forcesize/50x50/profile_';
 	  	return friends.map( friend => {
 	  		return (
 	  			<ListItem
+					key={friend.channelId}
+					leftAvatar={<Avatar src={`${AvtarUrl}${friend.imageUrl}`} />}
+					onClick={() => this.props.letsChat(friend)}
 					primaryText={friend.name}
-					leftAvatar={<Avatar src={`${AvtarUrl}${friend.image_name}`} />}
-					rightIcon={<a onClick={() => this.props.letsChat(friend)}><CommunicationChatBubble /></a>}
-					key={friend.channelid}
 				/>
 	  		);
 	  	});
@@ -68,24 +55,12 @@ class FriendList extends Component {
   	}
 }
 
-
-const mapDispatchToProps = dispatch => {
-    return {
-    	getFriends: () =>{
-    		dispatch(getFriends());
-		},
-		getFriendsCache: () =>{
-			dispatch(getFriendsCache());
-		}
-    }
-}
-
 const mapStateToProps = state => {
     return {
-    	friends: state.friends.list || [],
+    	friends: state.friends.friends || [],
     	loading: state.friends.isLoading || false,
     	timestamp : state.friends.timestamp || 0,
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(FriendList);
+export default connect(mapStateToProps)(FriendList);

@@ -3,44 +3,42 @@
     position: fixed;
     background: #e7e7e7;
     bottom: 0;
-    width: 100%;
+    width: calc(100% - 20px);
     left: 0;
     right: 0;
     align-content: center;
     border-top: 1px solid #f1f1f1;
+    padding: 0 10px;
 
     a {
         align-self: center;
         text-align: center;
-        width: 50px;
+        width: 25px;
     }
 }
 
 .ChatBox {
-    padding: 5px;
-    padding: 64px 10px 70px;
+    background: #f9f9f9;
+    padding: 64px 0 70px;
 }
 
 .chatlet {
-    display: flex;
-    border-bottom: 1px solid #d9d9d9;
-    font-size: 12px;
-    color: #888;
-    align-items: center;
+    font-size: 16px;
+    display: inline-block;
+    padding: 5px 15px;
+    background: #e1e1e1;
+    color: #444;
+    margin: 5px;
+    max-width: 80%;
+    border-radius: 5px;
+    
 
-    &.self {
-        flex-direction: row-reverse;
-        text-align: right;
-    }
+}
 
-    .avatarHolder {
-        padding: 5px 0;
-    }
-
-    .chatletHolder {
-        margin: 0 5px;
-        padding: 5px;
-        flex: 2;
-        min-height: 30px;
-    }
+.self {
+    text-align: right;
+        .chatlet {
+            background: rgb(0, 188, 212);
+            color: #fff;
+        }
 }

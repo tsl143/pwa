@@ -28,11 +28,11 @@ export default class Chat extends Component {
     }
 
     componentDidMount() {
-        const channelId = window.prompt('Enter channelId');
+        const { data, fromId } = this.props;
         const connectFirebase = new Firebase(`https://test-neargroup.firebaseio.com/`);
-        myFirebase = connectFirebase.child('rooms').child(channelId);
-        isOnline = connectFirebase.child('isOnline').child(this.props.from);
-        lastSeen = connectFirebase.child('lastSeen').child(this.props.from);
+        myFirebase = connectFirebase.child('rooms').child(data.meetingId);
+        isOnline = connectFirebase.child('isOnline').child(fromId);
+        lastSeen = connectFirebase.child('lastSeen').child(fromId);
         isOnline.set(true);
         this.startListening();
     }
@@ -48,17 +48,16 @@ export default class Chat extends Component {
     }
 
     sendPlz() {
+        const { data, fromId } = this.props;
         if(this.state.message.trim() === '')
             return false;
         this.setState({
             message: ''
         });
 		myFirebase.push({
-            from: this.props.from,
-            to: this.props.data,
-			uId: 1234,
+            fromId,
+            toId: data.channelId,
             msg: this.state.message,
-            timeStamp: Date.now(),
             arrivedAt: Firebase.ServerValue.TIMESTAMP,
       	});
         try{
@@ -83,28 +82,23 @@ export default class Chat extends Component {
     }
 
     render() {
-        const AvtarUrl = "https://img.neargroup.me/project/forcesize/65x65/pixelate_3/profile_";
+        const { data, fromId } = this.props;
+        const AvtarUrl = `https://img.neargroup.me/project/forcesize/50x50/profile_${data.imageUrl}`;
         return (
             <div>
-                <Header name="Chat"/>
+                <Header name={data.name} avtar={AvtarUrl} action={this.props.toggleScreen}/>
                 <div className={Styles.ChatBox}>
                   {this.state.chats.map((chat, index) => {
-                    return <div key={index} className={chat.from == this.props.from ? `${Styles.self} ${Styles.chatlet}` : `${Styles.chatlet}`}>
-                        <div className={Styles.avatarHolder}>
-                          <Avatar src={`${AvtarUrl}${chat.to.channelid}`} size={30} />
+                    return (
+                        <div key={index} className={chat.fromId == fromId ? Styles.self : ''}>
+                            <span className={Styles.chatlet}>
+                                {chat.msg}
+                            </span>
                         </div>
-                        <div className={Styles.chatletHolder}>
-                          <b>{chat.to.name}</b>
-                          <br />
-                          {chat.msg}
-                        </div>
-                      </div>;
+                    );
                   })}
                 </div>
                 <div className={Styles.actionBtns}>
-                    <a onClick={() => this.props.toggleScreen('list')}>
-                        <ActionList color={cyan500}/>
-                    </a>
                     <TextField
                         onChange={this.handleMsg}
                         value={this.state.message}

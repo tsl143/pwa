@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Store from '../reducers/store';
 
-const apiURL = 'https://temp.neargroup.me/ag'
+const API = 'https://stark-chamber-45207.herokuapp.com/';
 export function showLoader() {
     return {
         type: 'LOADER_FRNDS',
@@ -9,13 +9,11 @@ export function showLoader() {
     };
 }
 
-export const getFriends = (channelid = '2c4049be7a41473d8b743a816bed041b') => {
+export const getFriends = (authId = '') => {
     Store.dispatch(showLoader());
-    const data = { channelid };
     return axios({
-      method: 'POST',
-      url: `${apiURL}/frndlist`,
-      data
+      method: 'GET',
+      url: `${API}getFriends?id=${authId}`,
     })
     .then( response => {
         return {
