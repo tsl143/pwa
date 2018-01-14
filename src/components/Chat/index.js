@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import Avatar from 'material-ui/Avatar';
 import TextField from 'material-ui/TextField';
 import ActionSend from 'material-ui/svg-icons/content/send';
-import ActionList from 'material-ui/svg-icons/action/view-list';
+import RefreshIndicator from 'material-ui/RefreshIndicator';
 import {cyan500} from 'material-ui/styles/colors';
 
 import Header from '../Header';
@@ -25,6 +25,7 @@ export default class Chat extends Component {
             message: '',
             chats: [],
             lastChat: {},
+            loading: true,
             isOtherOnline: false
         }
         this.handleMsg = this.handleMsg.bind(this);
@@ -45,7 +46,8 @@ export default class Chat extends Component {
             const chatsRetrieved = JSON.parse(cachedChats);
             lastChat = chatsRetrieved[chatsRetrieved.length - 1];
             this.setState({
-                chats: chatsRetrieved
+                chats: chatsRetrieved,
+                loading: false
             });
             myFirebase = firebase.database().ref(`/rooms/${data.meetingId}`).orderByKey().startAt(lastChat.id)
         } else {
@@ -118,7 +120,7 @@ export default class Chat extends Component {
                     const chats = [...prevState.chats];
                     chats.push(msg);
                     localStorage.setItem(`NG_PWA_CHAT_${props.data.meetingId}`, JSON.stringify(chats));
-                    return { chats };
+                    return { chats, loading: false };
                 });
             }
         });
@@ -144,16 +146,25 @@ export default class Chat extends Component {
                     avtar={AvtarUrl}
                     action={this.props.toggleScreen}
                 />
+                {this.state.loading &&
+                    <RefreshIndicator
+                            size={40}
+                            left={10}
+                            top={0}
+                            status="loading"
+                            className={Styles.refresh}
+                    />
+                }
                 <div className={Styles.ChatBox}>
-                  {this.state.chats.map((chat, index) => {
-                    return (
-                        <div key={index} className={chat.fromId == fromId ? Styles.self : ''}>
-                            <span className={Styles.chatlet}>
-                                {chat.msg}
-                            </span>
-                        </div>
-                    );
-                  })}
+                    {this.state.chats.map((chat, index) => {
+                        return (
+                            <div key={index} className={chat.fromId == fromId ? Styles.self : ''}>
+                                <span className={Styles.chatlet}>
+                                    {chat.msg}
+                                </span>
+                            </div>
+                        );
+                    })}
                 </div>
                 <div className={Styles.actionBtns}>
                     <TextField

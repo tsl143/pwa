@@ -1,3 +1,9 @@
+.refresh {
+	top: calc(50% - 20px) !important;
+	left: calc(50% - 20px) !important;
+    transform: translate(0) !important;
+    position: fixed !important;
+}
 .actionBtns {
     display: flex;
     position: fixed;
