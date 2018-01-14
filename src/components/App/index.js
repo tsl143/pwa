@@ -60,12 +60,17 @@ class List extends Component {
 
     componentDidMount() {
         if(navigator.onLine){
+            let authId;
             const searchText = this.props.route.location.search;
-            const searchParams = searchText.split('=');
+            if(searchText && searchText.trim != ""){
+                const searchParams = searchText.split('=');
+                if(searchParams.length > 2) this.setState({ error: true });
+                authId = searchParams.pop();
+                localStorage.setItem('NG_PWA_AUTHID', authId);
+            } else {
+                authId = localStorage.getItem('NG_PWA_AUTHID')
+            }
             
-            if(searchParams.length > 2) this.setState({ error: true });
-
-            const authId = searchParams.pop();
             this.props.getFriends(authId);
         }
     }
