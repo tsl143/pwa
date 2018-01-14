@@ -1,9 +1,10 @@
-const cacheName = 'NG_TSL_API_PWA_3';
+const cacheName = 'NG_TSL_API_PWA_4';
 const filesToCache = [
     '/',
     '/index.html',
     '/bundle.js',
-    '/logo.png'
+    '/logo.png',
+    '/notify.png'
 ];
 
 self.addEventListener('install', function(e) {

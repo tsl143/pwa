@@ -7,6 +7,7 @@ import ActionList from 'material-ui/svg-icons/action/view-list';
 import {cyan500} from 'material-ui/styles/colors';
 
 import Header from '../Header';
+import initialize from '../../initializeFirebase';
 
 import Styles from './style.scss';
 
@@ -29,6 +30,12 @@ export default class Chat extends Component {
         this.handleMsg = this.handleMsg.bind(this);
         this.sendPlz = this.sendPlz.bind(this);
         this.startListening = this.startListening.bind(this);
+    }
+
+    componentWillMount(){
+        if(firebase.apps.length === 0){
+            initialize()
+        }
     }
 
     componentDidMount() {
@@ -77,6 +84,7 @@ export default class Chat extends Component {
             fromId,
             toId: data.channelId,
             msg: this.state.message,
+            sentTime: Date.now(),
             arrivedAt: Firebase.ServerValue.TIMESTAMP,
       	});
         try{
@@ -95,6 +103,7 @@ export default class Chat extends Component {
     }
 
     startListening() {
+        //intercepts for any new message from firebase with check of lastchatId
         myFirebase.on('child_added', snapshot => {
             const msg = snapshot.val();
             const msgId = snapshot.key;
@@ -113,16 +122,13 @@ export default class Chat extends Component {
                 });
             }
         });
-        const connectFirebase = new Firebase(`https://test-neargroup.firebaseio.com/`);
+
+        //manage self online and last seen
         writeFirebase.isOnline.onDisconnect().set({ online: false });
         writeFirebase.lastSeen.onDisconnect().set(Firebase.ServerValue.TIMESTAMP);
 
+        //check if other participant is online
         writeFirebase.isOtherOnline.on('child_changed', snapshot => {
-            const isOtherOnline = snapshot.val();
-            this.setState({ isOtherOnline })
-        });
-
-        writeFirebase.isOtherOnline.on('child_added', snapshot => {
             const isOtherOnline = snapshot.val();
             this.setState({ isOtherOnline })
         });

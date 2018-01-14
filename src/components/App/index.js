@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
 import FriendList from '../FriendList';
 import Chat from '../Chat';
 import { getFriends, getFriendsCache, sendPush } from '../../actions/friends';
@@ -24,12 +23,16 @@ class List extends Component {
         this.toggleScreen = this.toggleScreen.bind(this);
         this.touchstartHandler = this.touchstartHandler.bind(this);
         this.stopTouchReload = this.stopTouchReload.bind(this);
+        this.processNotifications = this.processNotifications.bind(this);
     }
 
     componentWillMount() {
         this.props.getFriendsCache();
         document.addEventListener('touchstart', this.touchstartHandler, false);
         document.addEventListener('touchmove', this.stopTouchReload, false);
+        this.setState({
+            isNotificationEnabeled: localStorage.getItem(`NG_PWA_NOTIFICATION`)
+        });
     }
 
     touchstartHandler(e) {
@@ -67,15 +70,6 @@ class List extends Component {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
-        if(
-            nextProps.me &&
-            nextProps.me.channelId
-        ) {
-            setFCM(nextProps.me.channelId);
-        }
-    }
-
     toggleScreen(screen) {
         this.setState({
             screen,
@@ -90,12 +84,35 @@ class List extends Component {
         });
     }
 
+    processNotifications() {
+        this.setState({
+            isNotificationEnabeled: true
+        });
+        localStorage.setItem(`NG_PWA_NOTIFICATION`, true);
+        if(
+            this.props.me &&
+            this.props.me.channelId
+        ) {
+            setFCM(this.props.me.channelId);
+        }
+    }
+
     render() {
         const { me } = this.props;
 
         if(this.state.error || !me.channelId) return <div />;
         return (
             <div>
+                {!this.state.isNotificationEnabeled &&
+                    <div>
+                        <div className={Styles.overlay} />
+                        <div
+                            className={Styles.popup}
+                            style={{background: 'url(notify.png)'}}
+                            onClick={this.processNotifications}
+                        />
+                    </div>
+                }
                 {this.state.screen === 'list' &&
                     <div>
                         <FriendList letsChat={this.letsChat}/>
