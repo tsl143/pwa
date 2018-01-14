@@ -8,9 +8,7 @@ import { Provider } from 'react-redux';
 import ReduxStore from './reducers/store';
 import App from './components/App';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import setFCM from './FCM';
 import registerServiceWorker from './registerServiceWorker';
-import initializeFirebase from './initializeFirebase';
 
 const MyApp = props => (
   <MuiThemeProvider>
@@ -29,7 +27,4 @@ ReactDomRender(
     </Provider>,
     document.getElementById('app')
 );
-
-initializeFirebase();
-//setFCM();
 //registerServiceWorker();

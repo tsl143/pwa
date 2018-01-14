@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 
 import FriendList from '../FriendList';
 import Chat from '../Chat';
-import { getFriends, getFriendsCache } from '../../actions/friends';
+import { getFriends, getFriendsCache, sendPush } from '../../actions/friends';
+import setFCM from '../../FCM';
 
 import Styles from './style.scss';
 
@@ -66,6 +67,15 @@ class List extends Component {
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+        if(
+            nextProps.me &&
+            nextProps.me.channelId
+        ) {
+            setFCM(nextProps.me.channelId);
+        }
+    }
+
     toggleScreen(screen) {
         this.setState({
             screen,
@@ -93,7 +103,7 @@ class List extends Component {
                 }
                 {this.state.screen === 'chat' &&
                     <div>
-                        <Chat toggleScreen={this.toggleScreen} fromId={me.channelId} data={this.state.friendData} />
+                        <Chat sendPush={this.props.sendPush} toggleScreen={this.toggleScreen} fromId={me.channelId} data={this.state.friendData} />
                     </div>
                 }
             </div>
@@ -114,6 +124,9 @@ const mapDispatchToProps = dispatch => {
         },
         getFriendsCache: () =>{
             dispatch(getFriendsCache());
+        },
+        sendPush: data => {
+            dispatch(sendPush(data));
         }
     }
 }

@@ -1,8 +1,6 @@
 // Initialize Firebase
 import axios from 'axios';
-export default function initialize() {
-
-    /*
+export default function initialize(channelId) {
     const config = {
         apiKey: "AIzaSyAlity13cdD9lp9YGXwcBTxlcC6DRdWMMs",
         authDomain: "test-neargroup.firebaseapp.com",
@@ -11,7 +9,7 @@ export default function initialize() {
         storageBucket: "test-neargroup.appspot.com",
         messagingSenderId: "609331358783"
     };
-    firebase.initializeApp(config);*/
+    firebase.initializeApp(config);
 
     // getting notification permissions
     const messaging = firebase.messaging();
@@ -23,7 +21,7 @@ export default function initialize() {
             messaging.getToken()
                 .then(function(currentToken) {
                     if (currentToken) {
-                        sendTokenToServer(currentToken)
+                        sendTokenToServer(currentToken, channelId)
                         console.log(currentToken);
                     } else {
                         console.log('No Instance ID token available. Request permission to generate one.');
@@ -39,9 +37,9 @@ export default function initialize() {
 
 }
 
-function sendTokenToServer(token) {
+function sendTokenToServer(token, channelId) {
     const data = {
-        channelid: "2c4049be7a41473d8b743a816bed041b",
+        channelid: channelId,
         accessToken: token
     }
     axios({

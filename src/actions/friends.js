@@ -12,8 +12,8 @@ export function showLoader() {
 export const getFriends = (authId = '') => {
     Store.dispatch(showLoader());
     return axios({
-      method: 'GET',
-      url: `${API}getFriends?id=${authId}`,
+        method: 'GET',
+        url: `${API}getFriends?id=${authId}`,
     })
     .then( response => {
         return {
@@ -26,7 +26,21 @@ export const getFriends = (authId = '') => {
             type: 'FRIENDS_LIST',
             payload: { data: 0, error }
         }
-    } );
+    });
+}
+
+export const sendPush = data => {
+    return axios({
+        method: 'POST',
+        url: `${API}notifyUser`,
+        data
+    })
+    .then( response => {
+        return {
+            type: 'SENT',
+            payload: response
+        }
+    });
 }
 
 export const getFriendsCache = () => {

@@ -23,7 +23,8 @@ export default class Chat extends Component {
         this.state = {
             message: '',
             chats: [],
-            lastChat: {}
+            lastChat: {},
+            isOtherOnline: false
         }
         this.handleMsg = this.handleMsg.bind(this);
         this.sendPlz = this.sendPlz.bind(this);
@@ -47,10 +48,11 @@ export default class Chat extends Component {
         const connectFirebase = new Firebase(`https://test-neargroup.firebaseio.com/`);
         writeFirebase = {
             chat: connectFirebase.child('rooms').child(data.meetingId),
-            isOnline: connectFirebase.child('isOnline'),
-            lastSeen: connectFirebase.child('lastSeen'),
+            isOnline: connectFirebase.child('isOnline').child(fromId),
+            isOtherOnline: firebase.database().ref(`/isOnline/${data.channelId}`),
+            lastSeen: connectFirebase.child('lastSeen').child(data.meetingId),
         }
-        writeFirebase.isOnline.set(true);
+        writeFirebase.isOnline.set({ online: true });
         this.startListening();
     }
 
@@ -80,6 +82,16 @@ export default class Chat extends Component {
         try{
             this.refs["autoFocus"].select();
         }catch(e){}
+
+        if(!this.state.isOtherOnline) {
+            this.props.sendPush(
+                {
+                    "toChannelId": data.channelId,
+                    "fromChannelId": fromId,
+                    "msg": this.state.message,
+                }
+            )
+        }
     }
 
     startListening() {
@@ -102,8 +114,18 @@ export default class Chat extends Component {
             }
         });
         const connectFirebase = new Firebase(`https://test-neargroup.firebaseio.com/`);
-        writeFirebase.isOnline.onDisconnect().set(false);
+        writeFirebase.isOnline.onDisconnect().set({ online: false });
         writeFirebase.lastSeen.onDisconnect().set(Firebase.ServerValue.TIMESTAMP);
+
+        writeFirebase.isOtherOnline.on('child_changed', snapshot => {
+            const isOtherOnline = snapshot.val();
+            this.setState({ isOtherOnline })
+        });
+
+        writeFirebase.isOtherOnline.on('child_added', snapshot => {
+            const isOtherOnline = snapshot.val();
+            this.setState({ isOtherOnline })
+        });
     }
 
     render() {
@@ -111,7 +133,11 @@ export default class Chat extends Component {
         const AvtarUrl = `https://img.neargroup.me/project/forcesize/50x50/profile_${data.imageUrl}`;
         return (
             <div>
-                <Header name={data.name} avtar={AvtarUrl} action={this.props.toggleScreen}/>
+                <Header
+                    name={data.name}
+                    avtar={AvtarUrl}
+                    action={this.props.toggleScreen}
+                />
                 <div className={Styles.ChatBox}>
                   {this.state.chats.map((chat, index) => {
                     return (

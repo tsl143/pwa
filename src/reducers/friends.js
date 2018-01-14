@@ -27,7 +27,9 @@ export default function ng(state = [], action) {
 
 			return { ...tempState, friends, me, isLoading, timestamp: Date.now() }
 			break;
-		
+		case 'SENT':
+			return { ...tempState }
+			break;
 		case 'FRIENDS_LIST_CACHE':
 			try {
 				const fromCache = localStorage.getItem('NG_PWA_friendsList');
