@@ -27,4 +27,4 @@ ReactDomRender(
     </Provider>,
     document.getElementById('app')
 );
-//registerServiceWorker();
+registerServiceWorker();
