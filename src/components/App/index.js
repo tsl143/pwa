@@ -7,6 +7,9 @@ import { getFriends, getFriendsCache } from '../../actions/friends';
 
 import Styles from './style.scss';
 
+let lastTouchY = 0;
+let maybePreventPullToRefresh = false;
+
 class List extends Component {
 
     constructor(props) {
@@ -18,11 +21,38 @@ class List extends Component {
         };
         this.letsChat = this.letsChat.bind(this);
         this.toggleScreen = this.toggleScreen.bind(this);
+        this.touchstartHandler = this.touchstartHandler.bind(this);
+        this.stopTouchReload = this.stopTouchReload.bind(this);
     }
 
     componentWillMount() {
         this.props.getFriendsCache();
+        document.addEventListener('touchstart', this.touchstartHandler, false);
+        document.addEventListener('touchmove', this.stopTouchReload, false);
     }
+
+    touchstartHandler(e) {
+        try{
+            if (e.touches.length != 1) return;
+            lastTouchY = e.touches[0].clientY;
+            maybePreventPullToRefresh = window.pageYOffset == 0;
+        }catch(e){}
+    }
+
+    stopTouchReload(e) {
+        try{
+            const touchY = e.touches[0].clientY;
+            var touchYDelta = touchY - lastTouchY;
+            lastTouchY = touchY;
+            if (maybePreventPullToRefresh) {
+                maybePreventPullToRefresh = false;
+                if (touchYDelta > 0) {
+                    e.preventDefault();
+                    return;
+                }
+            }
+        }catch(e){}
+      }
 
     componentDidMount() {
         if(navigator.onLine){

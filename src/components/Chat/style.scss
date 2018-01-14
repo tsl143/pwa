@@ -19,7 +19,8 @@
 
 .ChatBox {
     background: #f9f9f9;
-    padding: 64px 0 70px;
+    padding: 64px 0 50px;
+    min-height: calc(100vh - 114px);
 }
 
 .chatlet {
