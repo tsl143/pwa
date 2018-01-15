@@ -26,7 +26,8 @@ export default class Chat extends Component {
             chats: [],
             lastChat: {},
             loading: true,
-            isOtherOnline: false
+            isOtherOnline: false,
+            sentTime: Date.now()
         }
         this.handleMsg = this.handleMsg.bind(this);
         this.sendPlz = this.sendPlz.bind(this);
@@ -82,13 +83,21 @@ export default class Chat extends Component {
         this.setState({
             message: ''
         });
-		writeFirebase.chat.push({
+        const chatObj = {
             fromId,
             toId: data.channelId,
             msg: this.state.message,
             sentTime: Date.now(),
             arrivedAt: Firebase.ServerValue.TIMESTAMP,
-      	});
+        };
+        writeFirebase.chat
+        .push(chatObj)
+        .then(res => {
+            chatObj.id = res.key();
+            if(chatObj.id) {
+                this.setChat(chatObj);
+            }
+        });
         try{
             this.refs["autoFocus"].select();
         }catch(e){}
@@ -105,23 +114,28 @@ export default class Chat extends Component {
     }
 
     startListening() {
+        firebase.database()
+            .ref(".info/connected")
+            .on("value", snap => {
+                if(snap.val()) this.setState({ loading: false })
+            });
         //intercepts for any new message from firebase with check of lastchatId
         myFirebase.on('child_added', snapshot => {
             const msg = snapshot.val();
             const msgId = snapshot.key;
             msg.id = msgId;
             if(
-                lastChat.id &&
-                lastChat.id === msgId
+                (
+                    lastChat.id &&
+                    lastChat.id === msgId
+                ) || (
+                    msg.fromId === this.props.fromId &&
+                    parseInt(msg.sentTime, 10) > this.state.sentTime
+                )
             ){
                 return true;
             } else {
-                this.setState((prevState, props) => {
-                    const chats = [...prevState.chats];
-                    chats.push(msg);
-                    localStorage.setItem(`NG_PWA_CHAT_${props.data.meetingId}`, JSON.stringify(chats));
-                    return { chats, loading: false };
-                });
+                this.setChat(msg);
             }
         });
 
@@ -134,6 +148,27 @@ export default class Chat extends Component {
             const isOtherOnline = snapshot.val();
             this.setState({ isOtherOnline })
         });
+    }
+
+    setChat(msg) {
+        this.setState((prevState, props) =>
+        {
+            const chats = [...prevState.chats];
+            chats.push(msg);
+            localStorage.setItem(`NG_PWA_CHAT_${props.data.meetingId}`, JSON.stringify(chats));
+            return { chats, loading: false };
+        });
+    }
+
+    formatTime(t) {
+        const dateObj = new Date(t);
+        const tym = dateObj.toLocaleTimeString();
+        return `${tym.substring(0,5)} ${tym.substr(tym.length - 2)}`;
+    }
+
+    formatDate(t) {
+        const dateObj = new Date(t);
+        return dateObj.toDateString().substr(4);
     }
 
     render() {
@@ -157,11 +192,25 @@ export default class Chat extends Component {
                 }
                 <div className={Styles.ChatBox}>
                     {this.state.chats.map((chat, index) => {
+                        let newDay = '';
+                        if(index === 0 ){
+                            newDay = this.formatDate(chat.sentTime);
+                        }else {
+                            const newDate = this.formatDate(chat.sentTime);
+                            const oldDate = this.formatDate(this.state.chats[index - 1].sentTime);
+                            if(newDate !== oldDate) {
+                                newDay = newDate;
+                            }
+                        }
                         return (
                             <div key={index} className={chat.fromId == fromId ? Styles.self : ''}>
+                                {newDay &&
+                                    <div className={Styles.newDay}>{newDay}</div>
+                                }
                                 <span className={Styles.chatlet}>
                                     {chat.msg}
                                 </span>
+                                <span className={Styles.time}>{this.formatTime(chat.sentTime)}</span>
                             </div>
                         );
                     })}
