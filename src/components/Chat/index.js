@@ -114,11 +114,6 @@ export default class Chat extends Component {
     }
 
     startListening() {
-        firebase.database()
-            .ref(".info/connected")
-            .on("value", snap => {
-                if(snap.val()) this.setState({ loading: false })
-            });
         //intercepts for any new message from firebase with check of lastchatId
         myFirebase.on('child_added', snapshot => {
             const msg = snapshot.val();
@@ -137,6 +132,9 @@ export default class Chat extends Component {
             } else {
                 this.setChat(msg);
             }
+        });
+        myFirebase.on('value', snapshot => {
+            this.setState({ loading: false });
         });
 
         //manage self online and last seen
