@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Twemoji } from "react-emoji-render";
 
 import Avatar from 'material-ui/Avatar';
 import TextField from 'material-ui/TextField';
@@ -26,7 +27,8 @@ export default class Chat extends Component {
             chats: [],
             lastChat: {},
             loading: true,
-            isOtherOnline: false
+            isOtherOnline: false,
+            sentTime: Date.now()
         }
         this.handleMsg = this.handleMsg.bind(this);
         this.sendPlz = this.sendPlz.bind(this);
@@ -82,13 +84,15 @@ export default class Chat extends Component {
         this.setState({
             message: ''
         });
-		writeFirebase.chat.push({
+        const chatObj = {
             fromId,
             toId: data.channelId,
             msg: this.state.message,
             sentTime: Date.now(),
             arrivedAt: Firebase.ServerValue.TIMESTAMP,
-      	});
+        };
+        this.setChat(chatObj);
+        writeFirebase.chat.push(chatObj);
         try{
             this.refs["autoFocus"].select();
         }catch(e){}
@@ -111,17 +115,17 @@ export default class Chat extends Component {
             const msgId = snapshot.key;
             msg.id = msgId;
             if(
-                lastChat.id &&
-                lastChat.id === msgId
+                (
+                    lastChat.id &&
+                    lastChat.id === msgId
+                ) || (
+                    msg.fromId === this.props.fromId &&
+                    parseInt(msg.sentTime, 10) > this.state.sentTime
+                )
             ){
                 return true;
             } else {
-                this.setState((prevState, props) => {
-                    const chats = [...prevState.chats];
-                    chats.push(msg);
-                    localStorage.setItem(`NG_PWA_CHAT_${props.data.meetingId}`, JSON.stringify(chats));
-                    return { chats, loading: false };
-                });
+                this.setChat(msg);
             }
         });
 
@@ -133,6 +137,15 @@ export default class Chat extends Component {
         writeFirebase.isOtherOnline.on('child_changed', snapshot => {
             const isOtherOnline = snapshot.val();
             this.setState({ isOtherOnline })
+        });
+    }
+
+    setChat(msg) {
+        this.setState((prevState, props) => {
+            const chats = [...prevState.chats];
+            chats.push(msg);
+            localStorage.setItem(`NG_PWA_CHAT_${props.data.meetingId}`, JSON.stringify(chats));
+            return { chats, loading: false };
         });
     }
 
@@ -160,7 +173,7 @@ export default class Chat extends Component {
                         return (
                             <div key={index} className={chat.fromId == fromId ? Styles.self : ''}>
                                 <span className={Styles.chatlet}>
-                                    {chat.msg}
+                                    <Twemoji text={chat.msg} />
                                 </span>
                             </div>
                         );
