@@ -109,7 +109,7 @@ export default class Chat extends Component {
       this.props.sendPush({
         toChannelId: data.channelId,
         fromChannelId: fromId,
-        msg: this.state.message
+        msg: this.state.message.substring(0,200)
       });
     }
   }
@@ -222,8 +222,9 @@ export default class Chat extends Component {
             value={this.state.message}
             fullWidth={true}
             hintText="Message"
+            multiLine={true}
             onKeyPress={ev => {
-              if (ev.key === "Enter") {
+              if (ev.key === "Enter" && !ev.shiftKey) {
                 this.sendPlz();
                 ev.preventDefault();
               }

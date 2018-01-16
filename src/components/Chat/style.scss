@@ -50,6 +50,11 @@
         margin: 5px;
         max-width: 80%;
         border-radius: 5px;
+
+        span{
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
     }
     .time {
         font-size: 10px;
@@ -66,6 +71,7 @@
         .chatlet {
             background: rgb(0, 188, 212);
             color: #fff;
+            text-align: left;
         }
         .time {
             right: 7px;
