@@ -17,9 +17,19 @@ messaging.setBackgroundMessageHandler(function(payload) {
     const notificationTitle = payload.data.title;
     const notificationOptions = {
         body: payload.data.detail,
-        icon: '/logo.png'
+        icon: '/logo.png',
+        vibrate: [100, 50, 100],
+        data: payload.data.url
     };
-
     return self.registration.showNotification(notificationTitle,
         notificationOptions);
 });
+
+self.addEventListener(
+  "notificationclick",
+  function(event) {
+    event.notification.close();
+    clients.openWindow(event.notification.data);
+  },
+  false
+);
