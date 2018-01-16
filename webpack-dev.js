@@ -56,6 +56,7 @@ module.exports = {
         new webpack.DefinePlugin({
             FIRBASE_URL: JSON.stringify('https://test-neargroup.firebaseio.com/'),
             API: JSON.stringify('https://stark-chamber-45207.herokuapp.com/'),
+            'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
         })
       ]
 };
