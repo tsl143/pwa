@@ -27,19 +27,38 @@
     background: #f9f9f9;
     padding: 64px 0 50px;
     min-height: calc(100vh - 114px);
-}
 
-.chatlet {
-    font-size: 16px;
-    display: inline-block;
-    padding: 8px 10px;
-    background: #e1e1e1;
-    color: #444;
-    margin: 5px;
-    max-width: 80%;
-    border-radius: 5px;
-    
+    > div {
+        position: relative;
+        margin-bottom: 15px;
+    }
 
+    .newDay {
+        text-align: center;
+        font-style: italic;
+        color: #888;
+        font-size: 12px;
+        padding-bottom: 5px;
+    }
+
+    .chatlet {
+        font-size: 16px;
+        display: inline-block;
+        padding: 8px 10px;
+        background: #e1e1e1;
+        color: #444;
+        margin: 5px;
+        max-width: 80%;
+        border-radius: 5px;
+    }
+    .time {
+        font-size: 10px;
+        position: absolute;
+        bottom: -10px;
+        left: 7px;
+        font-style: italic;
+        color: #888;
+    }
 }
 
 .self {
@@ -47,5 +66,8 @@
         .chatlet {
             background: rgb(0, 188, 212);
             color: #fff;
+        }
+        .time {
+            right: 7px;
         }
 }

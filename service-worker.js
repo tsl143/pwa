@@ -52,9 +52,21 @@ self.addEventListener('activate', function(e) {
 self.addEventListener('fetch', event => {
     event.respondWith(
         caches.match(event.request).then(response => {
+            console.log(response)
             return response || fetch(event.request);
         }).catch(()=> {
             fetch(event.request);
         })
     );
 });
+
+self.addEventListener('notificationclick', function(event) {
+    console.log('[Service Worker] Notification click Received.');
+
+    event.notification.close();
+
+    // event.waitUntil(
+    //   clients.openWindow('https://developers.google.com/web/')
+    // );
+  });
+  
