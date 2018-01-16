@@ -15,7 +15,9 @@ self.addEventListener('install', function(e) {
                 console.log(keyList)
             })
             console.info('[ServiceWorker] Caching app shell');
-            return cache.addAll(filesToCache);
+            cache.addAll(filesToCache).then(()=>{
+                return self.clients.claim();
+            });
         })
     );
     e.waitUntil(
@@ -56,14 +58,3 @@ self.addEventListener('fetch', event => {
         })
     );
 });
-
-self.addEventListener('notificationclick', function(event) {
-    console.log('[Service Worker] Notification click Received.');
-
-    event.notification.close();
-
-    // event.waitUntil(
-    //   clients.openWindow('https://developers.google.com/web/')
-    // );
-  });
-  
