@@ -11,7 +11,8 @@ new CompressionPlugin({
 
         */
 
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
     entry: './src/index.js',
@@ -52,6 +53,10 @@ module.exports = {
         ]
     },
     plugins: [
-        new UglifyJsPlugin()
+        new UglifyJsPlugin(),
+        new webpack.DefinePlugin({
+            FIRBASE_URL: JSON.stringify('https://test-neargroup.firebaseio.com/'),
+            API: JSON.stringify('https://stark-chamber-45207.herokuapp.com/'),
+        })
       ]
 };

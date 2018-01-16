@@ -44,7 +44,7 @@ function sendTokenToServer(token, channelId) {
     }
     axios({
         method: 'POST',
-        url: 'https://temp.neargroup.me/ag/fcmtoken',
+        url: `${API}fcmtoken`,
         data
     })
     .then(response => {

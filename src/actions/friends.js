@@ -1,7 +1,6 @@
 import axios from 'axios';
 import Store from '../reducers/store';
 
-const API = 'https://stark-chamber-45207.herokuapp.com/';
 export function showLoader() {
     return {
         type: 'LOADER_FRNDS',
