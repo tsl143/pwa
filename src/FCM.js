@@ -9,7 +9,7 @@ export default function initialize(channelId) {
         storageBucket: "test-neargroup.appspot.com",
         messagingSenderId: "609331358783"
     };
-    firebase.initializeApp(config);
+    if (firebase.apps.length === 0) firebase.initializeApp(config);
 
     // getting notification permissions
     const messaging = firebase.messaging();

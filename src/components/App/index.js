@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import FriendList from '../FriendList';
 import Chat from '../Chat';
-import { getFriends, getFriendsCache, sendPush } from '../../actions/friends';
+import { getFriends, getFriendsCache, getLastMsg, sendPush } from '../../actions/friends';
+import initialize from "../../initializeFirebase";
 import setFCM from '../../FCM';
 
 import Styles from './style.scss';
@@ -17,7 +18,9 @@ class List extends Component {
         this.state = {
             screen: 'list',
             friendData: {},
-            error: false
+            lastMsg: {},
+            error: false,
+            firstCall: true
         };
         this.letsChat = this.letsChat.bind(this);
         this.toggleScreen = this.toggleScreen.bind(this);
@@ -33,6 +36,9 @@ class List extends Component {
         this.setState({
             isNotificationEnabeled: localStorage.getItem(`NG_PWA_NOTIFICATION`)
         });
+        if (firebase.apps.length === 0) {
+            initialize();
+        }
     }
 
     touchstartHandler(e) {
@@ -89,6 +95,31 @@ class List extends Component {
         });
     }
 
+    componentWillReceiveProps(props) {
+        if(
+            props &&
+            props.friends &&
+            props.friends.length != 0 &&
+            this.state.firstCall
+        ) {
+            //write code for last message at list
+            props.friends.forEach(friend => {
+                //this.props.getLastMsg(friend.meetingId);
+                firebase.database().ref(`/rooms/${friend.meetingId}`)
+                .limitToLast(1)
+                .once('value', snap => {
+                    const value = snap.val();
+                    const msg = value[Object.keys(value)[0]];
+                    this.setState(prev => {
+                        const lastMsg = { ...prev.lastMsg };
+                        lastMsg[friend.meetingId] = msg.msg.substr(0,100);
+                        return { lastMsg };
+                    })
+                });
+            })
+        }
+    }
+
     processNotifications() {
         this.setState({
             isNotificationEnabeled: true
@@ -120,7 +151,7 @@ class List extends Component {
                 }
                 {this.state.screen === 'list' &&
                     <div>
-                        <FriendList letsChat={this.letsChat}/>
+                        <FriendList letsChat={this.letsChat} lastMsg={this.state.lastMsg}/>
                     </div>
                 }
                 {this.state.screen === 'chat' &&
@@ -135,7 +166,8 @@ class List extends Component {
 
 const mapStateToProps = state => {
     return {
-        me: state.friends.me || {}
+        me: state.friends.me || {},
+        friends: state.friends.friends || [],
     }
 }
 
@@ -149,6 +181,9 @@ const mapDispatchToProps = dispatch => {
         },
         sendPush: data => {
             dispatch(sendPush(data));
+        },
+        getLastMsg: id => {
+            dispatch(getLastMsg(id));
         }
     }
 }

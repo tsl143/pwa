@@ -17,7 +17,7 @@ class FriendList extends Component {
 	}
 
 	populateFriendsList() {
-		const { friends } = this.props;
+		const { friends, lastMsg } = this.props;
 	  	const AvtarUrl = 'https://img.neargroup.me/project/forcesize/50x50/profile_';
 	  	return friends.map( friend => {
 	  		return (
@@ -26,6 +26,7 @@ class FriendList extends Component {
 					leftAvatar={<Avatar src={`${AvtarUrl}${friend.imageUrl}`} />}
 					onClick={() => this.props.letsChat(friend)}
 					primaryText={friend.name}
+					secondaryText={lastMsg[friend.meetingId]}
 				/>
 	  		);
 	  	});

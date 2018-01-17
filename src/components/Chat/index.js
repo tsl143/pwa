@@ -8,7 +8,6 @@ import RefreshIndicator from "material-ui/RefreshIndicator";
 import { cyan500 } from "material-ui/styles/colors";
 
 import Header from "../Header";
-import initialize from "../../initializeFirebase";
 
 import Styles from "./style.scss";
 
@@ -32,12 +31,6 @@ export default class Chat extends Component {
     this.handleMsg = this.handleMsg.bind(this);
     this.sendPlz = this.sendPlz.bind(this);
     this.startListening = this.startListening.bind(this);
-  }
-
-  componentWillMount() {
-    if (firebase.apps.length === 0) {
-      initialize();
-    }
   }
 
   componentDidMount() {

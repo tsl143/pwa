@@ -42,6 +42,22 @@ export const sendPush = data => {
     });
 }
 
+export const getLastMsg = id => {
+    return firebase.database().ref(`/rooms/${id}`)
+    .limitToLast(1)
+    .once('value', snap => {
+        const value = snap.val();
+        const msg = value[Object.keys(value)[0]]
+        return {
+            type: 'LAST_MSG',
+            payload: {
+                id,
+                msg
+            }
+        }
+    });
+}
+
 export const getFriendsCache = () => {
     return {
             type: 'FRIENDS_LIST_CACHE',

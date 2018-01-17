@@ -4,7 +4,8 @@ export default function initialize() {
         authDomain: "test-neargroup.firebaseapp.com",
         databaseURL: "https://test-neargroup.firebaseio.com",
         projectId: "test-neargroup",
-        storageBucket: "test-neargroup.appspot.com"
+        storageBucket: "test-neargroup.appspot.com",
+        messagingSenderId: "609331358783"
     };
-    firebase.initializeApp(config);
+    if (firebase.apps.length === 0) firebase.initializeApp(config);
 }
