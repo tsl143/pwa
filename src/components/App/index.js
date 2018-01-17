@@ -36,9 +36,15 @@ class List extends Component {
         this.setState({
             isNotificationEnabeled: localStorage.getItem(`NG_PWA_NOTIFICATION`)
         });
-        if (firebase.apps.length === 0) {
+        if (firebase && firebase.apps.length === 0) {
             initialize();
         }
+        const lastMessages = localStorage.getItem('NG_PWA_LAST_MSG');
+        try {
+            this.setState({
+                lastMsg: JSON.parse(lastMessages)
+            })
+        }catch(e){}
     }
 
     touchstartHandler(e) {
@@ -76,7 +82,7 @@ class List extends Component {
             } else {
                 authId = localStorage.getItem('NG_PWA_AUTHID')
             }
-            
+
             this.props.getFriends(authId);
         }
     }
@@ -100,11 +106,11 @@ class List extends Component {
             props &&
             props.friends &&
             props.friends.length != 0 &&
-            this.state.firstCall
+            this.state.firstCall &&
+            navigator.online
         ) {
-            //write code for last message at list
+            this.setState({ firstCall: false });
             props.friends.forEach(friend => {
-                //this.props.getLastMsg(friend.meetingId);
                 firebase.database().ref(`/rooms/${friend.meetingId}`)
                 .limitToLast(1)
                 .once('value', snap => {
@@ -112,7 +118,8 @@ class List extends Component {
                     const msg = value[Object.keys(value)[0]];
                     this.setState(prev => {
                         const lastMsg = { ...prev.lastMsg };
-                        lastMsg[friend.meetingId] = msg.msg.substr(0,100);
+                        lastMsg[friend.meetingId] = msg.msg.substr(0, 100);
+                        localStorage.setItem('NG_PWA_LAST_MSG', JSON.stringify(lastMsg));
                         return { lastMsg };
                     })
                 });
@@ -160,7 +167,7 @@ class List extends Component {
                     </div>
                 }
             </div>
-        );        
+        );
     }
 }
 

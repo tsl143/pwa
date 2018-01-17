@@ -26,7 +26,7 @@ class FriendList extends Component {
 					leftAvatar={<Avatar src={`${AvtarUrl}${friend.imageUrl}`} />}
 					onClick={() => this.props.letsChat(friend)}
 					primaryText={friend.name}
-					secondaryText={lastMsg[friend.meetingId]}
+					secondaryText={lastMsg && lastMsg[friend.meetingId]}
 				/>
 	  		);
 	  	});
