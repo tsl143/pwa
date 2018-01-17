@@ -13,6 +13,9 @@ export const getFriends = (authId = '') => {
     return axios({
         method: 'GET',
         url: `${API}getFriends?id=${authId}`,
+        headers: {
+            'Content-Type': 'application/json'
+          }
     })
     .then( response => {
         return {
@@ -29,6 +32,7 @@ export const getFriends = (authId = '') => {
 }
 
 export const sendPush = data => {
+    if(typeof data === 'object') data.isRegistered = 1;
     return axios({
         method: 'POST',
         url: `${API}notifyUser`,
@@ -47,4 +51,11 @@ export const getFriendsCache = () => {
             type: 'FRIENDS_LIST_CACHE',
             payload: true
         }
+}
+
+export const getLastMsg = (id, msg) => {
+    return {
+        type: 'LAST_MSG',
+        payload: { id, msg }
+    }
 }

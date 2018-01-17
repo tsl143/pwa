@@ -22,7 +22,7 @@ export default function ng(state = [], action) {
 					return Boolean(entry.channelid);
 				});
 
-				if(list.length > 0) localStorage.setItem('NG_myNotifications', JSON.stringify(list) );
+				if(list.length > 0) localStorage.setItem('NG_myNotifications', JSON.stringify(list));
 				isLoading = false;
 			}
 

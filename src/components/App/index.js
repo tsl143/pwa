@@ -18,7 +18,6 @@ class List extends Component {
         this.state = {
             screen: 'list',
             friendData: {},
-            lastMsg: {},
             error: false,
             firstCall: true
         };
@@ -78,9 +77,12 @@ class List extends Component {
                 const searchParams = searchText.split('=');
                 if(searchParams.length > 2) this.setState({ error: true });
                 authId = searchParams.pop();
-                localStorage.setItem('NG_PWA_AUTHID', authId);
+                localStorage.setItem('NG_PWA_AUTHID', JSON.stringify(authId));
             } else {
-                authId = localStorage.getItem('NG_PWA_AUTHID')
+                try{
+                    authId = JSON.parse(localStorage.getItem('NG_PWA_AUTHID'));
+                }catch(e){}
+                
             }
 
             this.props.getFriends(authId);
@@ -107,7 +109,7 @@ class List extends Component {
             props.friends &&
             props.friends.length != 0 &&
             this.state.firstCall &&
-            navigator.online
+            navigator.onLine
         ) {
             this.setState({ firstCall: false });
             props.friends.forEach(friend => {
@@ -115,13 +117,11 @@ class List extends Component {
                 .limitToLast(1)
                 .once('value', snap => {
                     const value = snap.val();
-                    const msg = value[Object.keys(value)[0]];
-                    this.setState(prev => {
-                        const lastMsg = { ...prev.lastMsg };
-                        lastMsg[friend.meetingId] = msg.msg.substr(0, 100);
-                        localStorage.setItem('NG_PWA_LAST_MSG', JSON.stringify(lastMsg));
-                        return { lastMsg };
-                    })
+                    if (value) {
+                        const msg = value[Object.keys(value)[0]];
+                        this.props.getLastMsg(friend.meetingId, msg);
+                    }
+                    
                 });
             })
         }
@@ -158,7 +158,7 @@ class List extends Component {
                 }
                 {this.state.screen === 'list' &&
                     <div>
-                        <FriendList letsChat={this.letsChat} lastMsg={this.state.lastMsg}/>
+                        <FriendList letsChat={this.letsChat}/>
                     </div>
                 }
                 {this.state.screen === 'chat' &&
@@ -189,8 +189,8 @@ const mapDispatchToProps = dispatch => {
         sendPush: data => {
             dispatch(sendPush(data));
         },
-        getLastMsg: id => {
-            dispatch(getLastMsg(id));
+        getLastMsg: (id, msg) => {
+            dispatch(getLastMsg(id, msg));
         }
     }
 }

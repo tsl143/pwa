@@ -3,6 +3,7 @@ export default function ng(state = [], action) {
 	const tempState = { ...state };
 	let friends;
 	let me;
+	let lastChats = {};
 
 	switch(action.type) {
 		case 'LOADER_FRNDS':
@@ -24,8 +25,11 @@ export default function ng(state = [], action) {
 				if(friends && friends.length > 0) localStorage.setItem('NG_PWA_friendsList', JSON.stringify(action.payload.data) );
 				isLoading = false;
 			}
+			try{
+				lastChats = JSON.parse(localStorage.getItem('NG_PWA_LAST_MSG'));
+			}catch(e){}
 
-			return { ...tempState, friends, me, isLoading, timestamp: Date.now() }
+			return { ...tempState, friends, me, isLoading, timestamp: Date.now(), lastChats }
 			break;
 
 		case 'SENT':
@@ -33,8 +37,10 @@ export default function ng(state = [], action) {
 			break;
 
 		case 'LAST_MSG':
-		console.log(action.payload)
-			return { ...tempState }
+			lastChats = { ...tempState.lastChats };
+			lastChats[action.payload.id] = action.payload.msg;
+			localStorage.setItem('NG_PWA_LAST_MSG', JSON.stringify(lastChats));
+			return { ...tempState, lastChats }
 			break;
 
 		case 'FRIENDS_LIST_CACHE':

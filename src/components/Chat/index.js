@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux';
 
 import { Twemoji } from "react-emoji-render";
 import Avatar from "material-ui/Avatar";
@@ -6,6 +7,7 @@ import TextField from "material-ui/TextField";
 import ActionSend from "material-ui/svg-icons/content/send";
 import RefreshIndicator from "material-ui/RefreshIndicator";
 import { cyan500 } from "material-ui/styles/colors";
+import { getLastMsg } from '../../actions/friends';
 
 import Header from "../Header";
 
@@ -17,13 +19,12 @@ let lastChat = {};
 let isOnline;
 let lastSeen;
 
-export default class Chat extends Component {
+class Chat extends Component {
   constructor(props) {
     super(props);
     this.state = {
       message: "",
       chats: [],
-      lastChat: {},
       loading: true,
       isOtherOnline: false,
       sentTime: Date.now()
@@ -92,7 +93,8 @@ export default class Chat extends Component {
       chatObj.id = res.key();
       if (chatObj.id) {
         this.setChat(chatObj);
-      }
+    }
+	  this.props.getLastMsg(this.props.data.meetingId, chatObj)
     });
     try {
       this.refs["autoFocus"].select();
@@ -232,3 +234,17 @@ export default class Chat extends Component {
     );
   }
 }
+
+const mapStateToProps = state => {
+  return {}
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+      getLastMsg: (id, msg) => {
+          dispatch(getLastMsg(id, msg));
+      }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Chat);
