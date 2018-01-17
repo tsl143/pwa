@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import Header from '../Header';
+import { Twemoji } from "react-emoji-render";
 import Avatar from 'material-ui/Avatar';
 import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 
-import CommunicationChatBubble from 'material-ui/svg-icons/communication/chat-bubble';
+import Header from '../Header';
 import Styles from './styles.scss'
 
 class FriendList extends Component {
@@ -25,8 +25,12 @@ class FriendList extends Component {
 					key={friend.channelId}
 					leftAvatar={<Avatar src={`${AvtarUrl}${friend.imageUrl}`} />}
 					onClick={() => this.props.letsChat(friend)}
-					primaryText={friend.name}
-					secondaryText={lastChats[friend.meetingId] && lastChats[friend.meetingId].msg}
+					primaryText={<Twemoji text={friend.name} />}
+					secondaryText={
+						lastChats[friend.meetingId] &&
+						lastChats[friend.meetingId].msg &&
+						<p><Twemoji text={lastChats[friend.meetingId].msg.substr(0,200)} /></p>
+					}
 				/>
 	  		);
 	  	});
