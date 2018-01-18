@@ -48,9 +48,9 @@ export const sendPush = data => {
 
 export const getFriendsCache = () => {
     return {
-            type: 'FRIENDS_LIST_CACHE',
-            payload: true
-        }
+        type: 'FRIENDS_LIST_CACHE',
+        payload: true
+    }
 }
 
 export const getLastMsg = (id, msg) => {

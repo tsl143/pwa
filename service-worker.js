@@ -11,10 +11,6 @@ self.addEventListener('install', function(e) {
     console.info('[ServiceWorker] Install');
     e.waitUntil(
         caches.open(cacheName).then(function(cache) {
-            caches.keys().then(function(keyList) {
-                console.log(keyList)
-            })
-            console.info('[ServiceWorker] Caching app shell');
             cache.addAll(filesToCache).then(()=>{
                 return self.clients.claim();
             });
@@ -38,9 +34,7 @@ self.addEventListener('activate', function(e) {
     console.info('[ServiceWorker] Activate');
     e.waitUntil(
         caches.keys().then(function(keyList) {
-            console.log(keyList)
             return Promise.all(keyList.map(key => {
-                console.log(key)
                 if (key !== cacheName) {
                     console.info('[ServiceWorker] Removing old cache', key);
                     return caches.delete(key);

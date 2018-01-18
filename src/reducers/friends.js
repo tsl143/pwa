@@ -46,7 +46,7 @@ export default function ng(state = [], action) {
 		case 'FRIENDS_LIST_CACHE':
 			try {
 				const fromCache = localStorage.getItem('NG_PWA_friendsList');
-				data = JSON.parse(fromCache)
+				const data = JSON.parse(fromCache);
 				me = data.me;
 				friends = data.friends;
 			}catch(e){}

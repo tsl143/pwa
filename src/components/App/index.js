@@ -35,7 +35,7 @@ class List extends Component {
         this.setState({
             isNotificationEnabeled: localStorage.getItem(`NG_PWA_NOTIFICATION`)
         });
-        if (firebase && firebase.apps.length === 0) {
+        if (navigator.onLine && firebase && firebase.apps.length === 0) {
             initialize();
         }
         const lastMessages = localStorage.getItem('NG_PWA_LAST_MSG');
@@ -82,7 +82,7 @@ class List extends Component {
                 try{
                     authId = JSON.parse(localStorage.getItem('NG_PWA_AUTHID'));
                 }catch(e){}
-                
+
             }
 
             this.props.getFriends(authId);
@@ -105,11 +105,10 @@ class List extends Component {
 
     componentWillReceiveProps(props) {
         if(
-            props &&
+            navigator.onLine &&
             props.friends &&
             props.friends.length != 0 &&
-            this.state.firstCall &&
-            navigator.onLine
+            this.state.firstCall
         ) {
             this.setState({ firstCall: false });
             props.friends.forEach(friend => {
@@ -121,13 +120,14 @@ class List extends Component {
                         const msg = value[Object.keys(value)[0]];
                         this.props.getLastMsg(friend.meetingId, msg);
                     }
-                    
+
                 });
             })
         }
     }
 
     processNotifications() {
+        if (!navigator.onLine) return false;
         this.setState({
             isNotificationEnabeled: true
         });
