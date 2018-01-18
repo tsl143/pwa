@@ -175,7 +175,10 @@ class Chat extends Component {
           avtar={AvtarUrl}
           action={this.props.toggleScreen}
         />
-        {this.state.loading && (
+        {
+          this.state.loading &&
+          navigator.onLine &&
+          (
           <RefreshIndicator
             size={40}
             left={10}
