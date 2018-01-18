@@ -25,9 +25,6 @@ export default function ng(state = [], action) {
 				if(friends && friends.length > 0) localStorage.setItem('NG_PWA_friendsList', JSON.stringify(action.payload.data) );
 				isLoading = false;
 			}
-			try{
-				lastChats = JSON.parse(localStorage.getItem('NG_PWA_LAST_MSG'));
-			}catch(e){}
 
 			return { ...tempState, friends, me, isLoading, timestamp: Date.now(), lastChats }
 			break;
@@ -49,9 +46,10 @@ export default function ng(state = [], action) {
 				const data = JSON.parse(fromCache);
 				me = data.me;
 				friends = data.friends;
+				lastChats = JSON.parse(localStorage.getItem('NG_PWA_LAST_MSG'));
 			}catch(e){}
 
-			return { ...tempState, friends, me, isLoading: false }
+			return { ...tempState, friends, me, lastChats, isLoading: false }
 			break;
 
 		default:

@@ -1,4 +1,4 @@
-const cacheName = 'NG_TSL_API_PWA_5';
+const cacheName = 'NG_TSL_API_PWA_1_1_1';
 const filesToCache = [
     '/',
     '/index.html',
