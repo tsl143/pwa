@@ -35,7 +35,8 @@ self.addEventListener(
           var client = clientList[i];
           if (client.url == "/" && "focus" in client) return client.focus();
         }
-        if (clients.openWindow) return clients.openWindow(event.notification.data);
+        const openUrl = event.notification.data || '/';
+        if (clients.openWindow) return clients.openWindow(openUrl);
       }));
     event.notification.close();
   },

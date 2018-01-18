@@ -53,8 +53,10 @@ self.addEventListener('activate', function(e) {
 
 self.addEventListener('fetch', event => {
     event.respondWith(
-        caches.match(event.request).then(response => {
-            return response || fetch(event.request);
+        caches.open(cacheName).then(function (cache) {
+            return caches.match(event.request).then(response => {
+                return response || fetch(event.request);
+            });
         })
     );
 });
