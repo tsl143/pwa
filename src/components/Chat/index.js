@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 
 import { Twemoji } from "react-emoji-render";
 import Snackbar from 'material-ui/Snackbar';
@@ -8,7 +9,8 @@ import TextField from "material-ui/TextField";
 import ActionSend from "material-ui/svg-icons/content/send";
 import RefreshIndicator from "material-ui/RefreshIndicator";
 import { cyan500 } from "material-ui/styles/colors";
-import { getLastMsg } from '../../actions/friends';
+import { getLastMsg, sendPush } from '../../actions/friends';
+import initialize from "../../initializeFirebase";
 
 import Header from "../Header";
 
@@ -38,6 +40,10 @@ class Chat extends Component {
 	}
 
 	componentWillMount() {
+		if(!this.props.data) return false;
+		if (navigator.onLine && firebase && firebase.apps.length === 0) {
+            initialize();
+        }
 		const { data, fromId } = this.props;
 		const cachedChats = localStorage.getItem(`NG_PWA_CHAT_${data.meetingId}`);
 		if (cachedChats && cachedChats.length > 0) {
@@ -51,7 +57,7 @@ class Chat extends Component {
 	}
 
 	componentDidMount() {
-		if(!navigator.onLine) return false;
+		if(!navigator.onLine || !this.props.data) return false;
 		const { data, fromId } = this.props;
 		if (lastChat.id) {
 			myFirebase = firebase
@@ -181,13 +187,16 @@ class Chat extends Component {
 
 	render() {
 		const { data, fromId } = this.props;
+		if(!data){
+			return <Redirect to="/" push />
+		}
 		const AvtarUrl = `https://img.neargroup.me/project/forcesize/50x50/profile_${data.imageUrl}`;
 		return (
 		<div>
 			<Header
 				name={data.name}
 				avtar={AvtarUrl}
-				action={this.props.toggleScreen}
+				action='home'
 			/>
 			{
 				this.state.loading &&
@@ -261,14 +270,20 @@ class Chat extends Component {
 }
 
 const mapStateToProps = state => {
-  	return {}
+	return {
+		fromId: (state.friends.me && state.friends.me.channelId) || '',
+		data: state.friends.meetingData || null
+	  }
 }
 
 const mapDispatchToProps = dispatch => {
 	return {
 		getLastMsg: (id, msg) => {
 			dispatch(getLastMsg(id, msg));
-		}
+		},
+		sendPush: data => {
+            dispatch(sendPush(data));
+        }
 	}
 }
 

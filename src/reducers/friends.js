@@ -26,7 +26,7 @@ export default function ng(state = [], action) {
 				isLoading = false;
 			}
 
-			return { ...tempState, friends, me, isLoading, timestamp: Date.now(), lastChats }
+			return { ...tempState, friends, me, isLoading, timestamp: Date.now(), lastChats, noReload: true }
 			break;
 
 		case 'SENT':
@@ -50,6 +50,13 @@ export default function ng(state = [], action) {
 			}catch(e){}
 
 			return { ...tempState, friends, me, lastChats, isLoading: false }
+			break;
+
+		case 'SET_MEETING':
+			const friendData = [ ...tempState.friends ];
+			const meetingId = action.payload;
+			const meetingData = friendData.find(friend => friend.meetingId == meetingId);
+			return { ...tempState, meetingData }
 			break;
 
 		default:

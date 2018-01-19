@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 import AppBar from 'material-ui/AppBar';
 import Avatar from 'material-ui/Avatar';
@@ -30,9 +31,10 @@ export default class Header extends Component {
                     <div className={Styles.avtar}>
                         {
                             this.props.action &&
-                            <a onClick={() => this.props.action('list')}>
+                            this.props.action === 'home' &&
+                            <Link to="/">
                                 <ActionBack color={'white'}/>
-                            </a>
+                            </Link>
                         }
                         <Avatar src={avtar} />
                     </div>

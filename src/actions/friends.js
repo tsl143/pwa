@@ -59,3 +59,10 @@ export const getLastMsg = (id, msg) => {
         payload: { id, msg }
     }
 }
+
+export const setMeeting = meetingId => {
+    return {
+        type: 'SET_MEETING',
+        payload: meetingId
+    }
+}

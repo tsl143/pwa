@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import FriendList from '../FriendList';
 import Chat from '../Chat';
-import { getFriends, getFriendsCache, getLastMsg, sendPush } from '../../actions/friends';
+import { getFriends, getFriendsCache, getLastMsg } from '../../actions/friends';
 import initialize from "../../initializeFirebase";
 import setFCM from '../../FCM';
 
@@ -16,13 +16,9 @@ class List extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            screen: 'list',
-            friendData: {},
             error: false,
             firstCall: true
         };
-        this.letsChat = this.letsChat.bind(this);
-        this.toggleScreen = this.toggleScreen.bind(this);
         this.touchstartHandler = this.touchstartHandler.bind(this);
         this.stopTouchReload = this.stopTouchReload.bind(this);
         this.processNotifications = this.processNotifications.bind(this);
@@ -70,7 +66,7 @@ class List extends Component {
       }
 
     componentDidMount() {
-        if(navigator.onLine){
+        if(navigator.onLine && !this.props.noReload){
             let authId;
             const searchText = this.props.route.location.search;
             if(searchText && searchText.trim != ""){
@@ -82,25 +78,9 @@ class List extends Component {
                 try{
                     authId = JSON.parse(localStorage.getItem('NG_PWA_AUTHID'));
                 }catch(e){}
-
             }
-
             this.props.getFriends(authId);
         }
-    }
-
-    toggleScreen(screen) {
-        this.setState({
-            screen,
-            friendData: {}
-        })
-    }
-
-    letsChat(friendData) {
-        this.setState({
-            screen: 'chat',
-            friendData
-        });
     }
 
     componentWillReceiveProps(props) {
@@ -156,16 +136,7 @@ class List extends Component {
                         />
                     </div>
                 }
-                {this.state.screen === 'list' &&
-                    <div>
-                        <FriendList letsChat={this.letsChat}/>
-                    </div>
-                }
-                {this.state.screen === 'chat' &&
-                    <div>
-                        <Chat sendPush={this.props.sendPush} toggleScreen={this.toggleScreen} fromId={me.channelId} data={this.state.friendData} />
-                    </div>
-                }
+                <FriendList />
             </div>
         );
     }
@@ -175,6 +146,7 @@ const mapStateToProps = state => {
     return {
         me: state.friends.me || {},
         friends: state.friends.friends || [],
+        noReload: state.friends.noReload || false
     }
 }
 
@@ -185,9 +157,6 @@ const mapDispatchToProps = dispatch => {
         },
         getFriendsCache: () =>{
             dispatch(getFriendsCache());
-        },
-        sendPush: data => {
-            dispatch(sendPush(data));
         },
         getLastMsg: (id, msg) => {
             dispatch(getLastMsg(id, msg));
