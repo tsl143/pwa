@@ -86,7 +86,8 @@ class Chat extends Component {
 	}
 
 	componentDidUpdate() {
-		window.scrollTo(0, document.body.scrollHeight);
+		const chatbox = document.getElementById('chatBox');
+		chatbox.scrollTo(0, chatbox.scrollHeight);
 	}
 
 	handleMsg(prop, message) {
@@ -197,7 +198,7 @@ class Chat extends Component {
 		}
 		const AvtarUrl = `https://img.neargroup.me/project/50x50/forcesize/50x50/profile_${data.imageUrl}`;
 		return (
-		<div>
+		<div className={Styles.chatWindow}>
 			<Header
 				name={data.name}
 				avtar={AvtarUrl}
@@ -214,7 +215,7 @@ class Chat extends Component {
 					className={Styles.refresh}
 				/>
 			}
-			<div className={Styles.ChatBox}>
+			<div className={Styles.ChatBox} id="chatBox">
 				{this.state.chats.map((chat, index) => {
 					let newDay = "";
 					if (index === 0) {
@@ -251,6 +252,7 @@ class Chat extends Component {
 					fullWidth={true}
 					hintText="Message"
 					multiLine={true}
+					underlineStyle={{display: 'none'}}
 					onKeyPress={ev => {
 						if (ev.key === "Enter" && ev.shiftKey) {
 							this.sendPlz();
