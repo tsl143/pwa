@@ -94,7 +94,7 @@ class List extends Component {
             const friendIds = [];
             this.setState({ firstCall: false });
             props.friends.forEach(friend => {
-                friendIds.push(friend.channelId);
+                friendIds.push(friend.meetingId);
                 firebase.database().ref(`/rooms/${friend.meetingId}`)
                 .limitToLast(1)
                 .once('value', snap => {
