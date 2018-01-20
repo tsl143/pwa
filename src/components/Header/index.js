@@ -5,6 +5,7 @@ import AppBar from 'material-ui/AppBar';
 import Avatar from 'material-ui/Avatar';
 import ActionBack from 'material-ui/svg-icons/hardware/keyboard-backspace';
 import {white500} from 'material-ui/styles/colors';
+import { htmlDecode } from '../../utility';
 
 import Styles from './style.scss';
 
@@ -39,7 +40,8 @@ export default class Header extends Component {
                         <Avatar src={avtar} />
                     </div>
                 }
-            	title = { name }/>
+                title = { htmlDecode(name) }
+            />
             </div>
         );
     }

@@ -11,6 +11,7 @@ import RefreshIndicator from "material-ui/RefreshIndicator";
 import { cyan500 } from "material-ui/styles/colors";
 import { getLastMsg, sendPush } from '../../actions/friends';
 import initialize from "../../initializeFirebase";
+import { htmlDecode } from '../../utility';
 
 import Header from "../Header";
 
@@ -239,7 +240,7 @@ class Chat extends Component {
 							</div>
 						}
 						<span className={Styles.chatlet}>
-							<Twemoji text={chat.msg} />
+							<Twemoji text={htmlDecode(chat.msg)} />
 						</span>
 						<span className={Styles.time}>
 							{this.formatTime(chat.sentTime)}

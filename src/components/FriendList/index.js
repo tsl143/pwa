@@ -11,6 +11,7 @@ import RefreshIndicator from 'material-ui/RefreshIndicator';
 import { setMeeting } from '../../actions/friends';
 import Header from '../Header';
 import Styles from './styles.scss'
+import { htmlDecode } from '../../utility';
 
 class FriendList extends Component {
 
@@ -27,12 +28,12 @@ class FriendList extends Component {
 					key={friend.channelId}
 					leftAvatar={<Avatar src={`${AvtarUrl}${friend.imageUrl}`} />}
 					onClick={() => this.props.setMeeting(friend.meetingId)}
-					primaryText={<Twemoji text={friend.name} />}
+					primaryText={<Twemoji text={htmlDecode(friend.name)} />}
 					containerElement={<Link to="/chat" />}
 					secondaryText={
 						lastChats[friend.meetingId] &&
 						lastChats[friend.meetingId].msg &&
-						<p><Twemoji text={lastChats[friend.meetingId].msg.substr(0,200)} /></p>
+						<p><Twemoji text={htmlDecode(lastChats[friend.meetingId].msg.substr(0,200))} /></p>
 					}
 				/>
 	  		);
