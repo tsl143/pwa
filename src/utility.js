@@ -7,9 +7,9 @@ const ascCompare = (a,b) => {
 }
 
 const descCompare = (a,b) => {
-	if (a.created > b.created)
+	if (a.lastTime > b.lastTime)
 		return -1;
-	if (a.created < b.created)
+	if (a.lastTime < b.lastTime)
 		return 1;
 	return 0;
 }
@@ -23,4 +23,22 @@ export const htmlDecode = msg => {
 	}catch(e) {
 		return msg;
 	}
+}
+
+export const sortFriendList = (friends, lastMessage) => {
+	const sortedFriends = [];
+	if(friends.length !== 0) {
+		friends.forEach(friend => {
+			const theFriend = { ...friend };
+			if(lastMessage && lastMessage[friend.meetingId]) {
+				theFriend.lastMsg = lastMessage[friend.meetingId].msg;
+				theFriend.lastTime = lastMessage[friend.meetingId].sentTime;
+			} else {
+				theFriend.lastTime = 0;
+			}
+			sortedFriends.push(theFriend);
+		});
+		return sortedFriends.sort(descCompare);
+	}
+	return friends;
 }

@@ -11,7 +11,7 @@ import RefreshIndicator from 'material-ui/RefreshIndicator';
 import { setMeeting } from '../../actions/friends';
 import Header from '../Header';
 import Styles from './styles.scss'
-import { htmlDecode } from '../../utility';
+import { htmlDecode, sortFriendList } from '../../utility';
 
 class FriendList extends Component {
 
@@ -21,8 +21,9 @@ class FriendList extends Component {
 
 	populateFriendsList() {
 		const { friends, lastChats } = this.props;
+		const sortedFriends = sortFriendList(friends, lastChats) || [];
 	  	const AvtarUrl = 'https://img.neargroup.me/project/forcesize/50x50/profile_';
-	  	return friends.map( friend => {
+		return sortedFriends.map( friend => {
 	  		return (
 	  			<ListItem
 					key={friend.channelId}

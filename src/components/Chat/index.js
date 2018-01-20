@@ -57,8 +57,7 @@ class Chat extends Component {
 			lastChat = chatsRetrieved[chatsRetrieved.length - 1];
 		}
 		this.setState({
-			chats: myBotChat.concat(chatsRetrieved),
-			loading: false
+			chats: myBotChat.concat(chatsRetrieved)
 		});
 	}
 
@@ -75,12 +74,11 @@ class Chat extends Component {
 			myFirebase = firebase.database().ref(`/rooms/${data.meetingId}`);
 		}
 
-		const connectFirebase = new Firebase(`https://test-neargroup.firebaseio.com/`);
 		writeFirebase = {
-			chat: connectFirebase.child("rooms").child(data.meetingId),
-			isOnline: connectFirebase.child("isOnline").child(fromId),
+			chat: firebase.database().ref(`/rooms/${data.meetingId}`),
+			isOnline: firebase.database().ref(`/isOnline/${fromId}`),
 			isOtherOnline: firebase.database().ref(`/isOnline/${data.channelId}`),
-			lastSeen: connectFirebase.child("lastSeen").child(data.meetingId)
+			lastSeen: firebase.database().ref(`/lastSeen/${data.channelId}`),
 		};
 		writeFirebase.isOnline.set({ online: true });
 		this.startListening();
@@ -121,7 +119,7 @@ class Chat extends Component {
 			arrivedAt: Firebase.ServerValue.TIMESTAMP
 		};
 		writeFirebase.chat.push(chatObj).then(res => {
-			chatObj.id = res.key();
+			chatObj.id = res.key;
 			if (chatObj.id) {
 				this.setChat(chatObj);
 			}

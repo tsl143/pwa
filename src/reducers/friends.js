@@ -27,7 +27,7 @@ export default function ng(state = [], action) {
 				isLoading = false;
 			}
 
-			return { ...tempState, friends, me, isLoading, timestamp: Date.now(), lastChats, noReload: true }
+			return { ...tempState, friends, me, isLoading, timestamp: Date.now(), noReload: true }
 			break;
 
 		case 'SENT':
