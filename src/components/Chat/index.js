@@ -195,7 +195,7 @@ class Chat extends Component {
 		if(!data){
 			return <Redirect to="/" push />
 		}
-		const AvtarUrl = `https://img.neargroup.me/project/forcesize/50x50/profile_${data.imageUrl}`;
+		const AvtarUrl = `https://img.neargroup.me/project/50x50/forcesize/50x50/profile_${data.imageUrl}`;
 		return (
 		<div>
 			<Header
@@ -252,10 +252,10 @@ class Chat extends Component {
 					hintText="Message"
 					multiLine={true}
 					onKeyPress={ev => {
-					if (ev.key === "Enter" && !ev.shiftKey) {
-						this.sendPlz();
-						ev.preventDefault();
-					}
+						if (ev.key === "Enter" && ev.shiftKey) {
+							this.sendPlz();
+							ev.preventDefault();
+						}
 					}}
 					ref="autoFocus"
 				/>
