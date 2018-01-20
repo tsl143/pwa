@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import FriendList from '../FriendList';
 import Chat from '../Chat';
-import { getFriends, getFriendsCache, getLastMsg } from '../../actions/friends';
+import { getFriends, getFriendsCache, getLastMsg, getFriendsChat } from '../../actions/friends';
 import initialize from "../../initializeFirebase";
 import setFCM from '../../FCM';
 
@@ -88,10 +88,13 @@ class List extends Component {
             navigator.onLine &&
             props.friends &&
             props.friends.length != 0 &&
-            this.state.firstCall
+            this.state.firstCall &&
+            !this.props.noReload
         ) {
+            const friendIds = [];
             this.setState({ firstCall: false });
             props.friends.forEach(friend => {
+                friendIds.push(friend.channelId);
                 firebase.database().ref(`/rooms/${friend.meetingId}`)
                 .limitToLast(1)
                 .once('value', snap => {
@@ -102,10 +105,19 @@ class List extends Component {
                     }
 
                 });
-            })
+            });
+            this.setFriendsChat(props.me.channelId, friendIds);
         }
     }
 
+    setFriendsChat(channelId, friendIds) {
+        try{
+            const botChats = JSON.parse(localStorage.getItem('NG_PWA_BOT_CHATS')) || {};
+            const storedFriends = Object.keys(botChats);
+            const newFriends = friendIds.filter(id => !storedFriends.includes(id));
+            if(newFriends.length !== 0) this.props.getFriendsChat(channelId, newFriends);
+        }catch(e){}
+    }
     processNotifications() {
         if (!navigator.onLine) return false;
         this.setState({
@@ -152,11 +164,14 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        getFriends: authId =>{
+        getFriends: authId => {
             dispatch(getFriends(authId));
         },
-        getFriendsCache: () =>{
+        getFriendsCache: () => {
             dispatch(getFriendsCache());
+        },
+        getFriendsChat: (channelId, newFriends) => {
+            dispatch(getFriendsChat(channelId, newFriends));
         },
         getLastMsg: (id, msg) => {
             dispatch(getLastMsg(id, msg));

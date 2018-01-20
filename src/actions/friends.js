@@ -31,6 +31,32 @@ export const getFriends = (authId = '') => {
     });
 }
 
+export const getFriendsChat = (channelId, friends) => {
+    return axios({
+        method: 'POST',
+        url: `${API}getFriendsChat`,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: {
+            channelId,
+            friends
+        }
+    })
+    .then( response => {
+        return {
+            type: 'BOT_CHAT',
+            payload: response
+        }
+    })
+    .catch( error => {
+        return {
+            type: 'BOT_CHAT',
+            payload: { data: 0, error }
+        }
+    });
+}
+
 export const sendPush = data => {
     if(typeof data === 'object') data.isRegistered = 1;
     return axios({

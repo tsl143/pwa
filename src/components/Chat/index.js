@@ -44,16 +44,21 @@ class Chat extends Component {
 		if (navigator.onLine && firebase && firebase.apps.length === 0) {
             initialize();
         }
-		const { data, fromId } = this.props;
+		const { data, fromId, botChats } = this.props;
+		let myBotChat = [];
+		let chatsRetrieved = [];
+		if(botChats[data.channelId] && botChats[data.channelId].length !==0){
+			myBotChat = botChats[data.channelId];
+		}
 		const cachedChats = localStorage.getItem(`NG_PWA_CHAT_${data.meetingId}`);
 		if (cachedChats && cachedChats.length > 0) {
-			const chatsRetrieved = JSON.parse(cachedChats);
+			chatsRetrieved = JSON.parse(cachedChats);
 			lastChat = chatsRetrieved[chatsRetrieved.length - 1];
-			this.setState({
-				chats: chatsRetrieved,
-				loading: false
-			});
 		}
+		this.setState({
+			chats: myBotChat.concat(chatsRetrieved),
+			loading: false
+		});
 	}
 
 	componentDidMount() {
@@ -175,13 +180,13 @@ class Chat extends Component {
 	}
 
 	formatTime(t) {
-		const dateObj = new Date(t);
+		const dateObj = new Date(parseInt(t, 10));
 		const tym = dateObj.toLocaleTimeString();
 		return `${tym.substring(0, 5)} ${tym.substr(tym.length - 2)}`;
 	}
 
 	formatDate(t) {
-		const dateObj = new Date(t);
+		const dateObj = new Date(parseInt(t, 10));
 		return dateObj.toDateString().substr(4);
 	}
 
@@ -272,7 +277,8 @@ class Chat extends Component {
 const mapStateToProps = state => {
 	return {
 		fromId: (state.friends.me && state.friends.me.channelId) || '',
-		data: state.friends.meetingData || null
+		data: state.friends.meetingData || null,
+		botChats: state.friends.botChats || {}
 	  }
 }
 

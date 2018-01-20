@@ -4,6 +4,7 @@ export default function ng(state = [], action) {
 	let friends;
 	let me;
 	let lastChats = {};
+	let botChats = {};
 
 	switch(action.type) {
 		case 'LOADER_FRNDS':
@@ -47,9 +48,10 @@ export default function ng(state = [], action) {
 				me = data.me;
 				friends = data.friends;
 				lastChats = JSON.parse(localStorage.getItem('NG_PWA_LAST_MSG'));
+				botChats = JSON.parse(localStorage.getItem('NG_PWA_BOT_CHATS'));
 			}catch(e){}
 
-			return { ...tempState, friends, me, lastChats, isLoading: false }
+			return { ...tempState, friends, me, lastChats, botChats, isLoading: false }
 			break;
 
 		case 'SET_MEETING':
@@ -57,6 +59,23 @@ export default function ng(state = [], action) {
 			const meetingId = action.payload;
 			const meetingData = friendData.find(friend => friend.meetingId == meetingId);
 			return { ...tempState, meetingData }
+			break;
+
+		case 'BOT_CHAT':
+			if(
+				action.payload &&
+				action.payload.status &&
+				action.payload.data &&
+				typeof action.payload.data === 'object' &&
+				action.payload.status >= 200 && action.payload.status < 300
+			) {
+				const newChats = action.payload.data;
+				const cacheBotChats = JSON.parse(localStorage.getItem('NG_PWA_BOT_CHATS')) || {};
+				botChats = Object.assign(cacheBotChats, newChats);
+				localStorage.setItem('NG_PWA_BOT_CHATS', JSON.stringify(botChats) );
+			}
+			return { ...tempState, botChats}
+
 			break;
 
 		default:
