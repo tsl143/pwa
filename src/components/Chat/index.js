@@ -48,8 +48,8 @@ class Chat extends Component {
 		const { data, fromId, botChats } = this.props;
 		let myBotChat = [];
 		let chatsRetrieved = [];
-		if(botChats[data.channelId] && botChats[data.channelId].length !==0){
-			myBotChat = botChats[data.channelId];
+		if(botChats[data.meetingId] && botChats[data.meetingId].length !==0){
+			myBotChat = botChats[data.meetingId];
 		}
 		const cachedChats = localStorage.getItem(`NG_PWA_CHAT_${data.meetingId}`);
 		if (cachedChats && cachedChats.length > 0) {
