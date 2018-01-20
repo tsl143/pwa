@@ -91,10 +91,10 @@ class List extends Component {
             this.state.firstCall &&
             !this.props.noReload
         ) {
-            const friendIds = [];
+            const friendMeetingIds = [];
             this.setState({ firstCall: false });
             props.friends.forEach(friend => {
-                friendIds.push(friend.meetingId);
+                friendMeetingIds.push(friend.meetingId);
                 firebase.database().ref(`/rooms/${friend.meetingId}`)
                 .limitToLast(1)
                 .once('value', snap => {
@@ -106,15 +106,15 @@ class List extends Component {
 
                 });
             });
-            this.setFriendsChat(props.me.channelId, friendIds);
+            this.setFriendsChat(props.me.channelId, friendMeetingIds);
         }
     }
 
-    setFriendsChat(channelId, friendIds) {
+    setFriendsChat(channelId, friendMeetingIds) {
         try{
             const botChats = JSON.parse(localStorage.getItem('NG_PWA_BOT_CHATS')) || {};
             const storedFriends = Object.keys(botChats);
-            const newFriends = friendIds.filter(id => !storedFriends.includes(id));
+            const newFriends = friendMeetingIds.filter(id => !storedFriends.includes(id));
             if(newFriends.length !== 0) this.props.getFriendsChat(channelId, newFriends);
         }catch(e){}
     }

@@ -86,8 +86,10 @@ class Chat extends Component {
 	}
 
 	componentDidUpdate() {
-		const chatbox = document.getElementById('chatBox');
-		chatbox.scrollTo(0, chatbox.scrollHeight);
+		try{
+			const chatbox = document.getElementById('chatBox');
+			chatbox.scrollTo(0, chatbox.scrollHeight);
+		}catch(e){}
 	}
 
 	handleMsg(prop, message) {
