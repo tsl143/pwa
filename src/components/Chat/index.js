@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 
 import { Twemoji } from "react-emoji-render";
-import Snackbar from 'material-ui/Snackbar';
 import Avatar from "material-ui/Avatar";
 import TextField from "material-ui/TextField";
 import ActionSend from "material-ui/svg-icons/content/send";
@@ -31,20 +30,15 @@ class Chat extends Component {
 			chats: [],
 			loading: true,
 			isOtherOnline: false,
-			sentTime: Date.now(),
-			snackBar: false
+			sentTime: Date.now()
 		};
 		this.handleMsg = this.handleMsg.bind(this);
 		this.sendPlz = this.sendPlz.bind(this);
 		this.startListening = this.startListening.bind(this);
-		this.toggleSnack = this.toggleSnack.bind(this);
 	}
 
 	componentWillMount() {
 		if(!this.props.data) return false;
-		if (navigator.onLine && firebase && firebase.apps.length === 0) {
-            initialize();
-        }
 		const { data, fromId, botChats } = this.props;
 		let myBotChat = [];
 		let chatsRetrieved = [];
@@ -65,7 +59,7 @@ class Chat extends Component {
 	}
 
 	componentDidMount() {
-		if(!navigator.onLine || !this.props.data) return false;
+		if(!this.props.data) return false;
 		const { data, fromId } = this.props;
 		if (lastChat.id) {
 			myFirebase = firebase
@@ -85,6 +79,7 @@ class Chat extends Component {
 		};
 		writeFirebase.isOnline.set({ online: true });
 		this.startListening();
+		this.scrollUp();
 	}
 
 	componentDidUpdate() {
@@ -108,15 +103,7 @@ class Chat extends Component {
 		});
 	}
 
-	toggleSnack(snackBar) {
-		this.setState({ snackBar });
-	}
-
 	sendPlz() {
-		if(!navigator.onLine) {
-			this.toggleSnack(true);
-			return false;
-		}
 		const { data, fromId } = this.props;
 		if (this.state.message.trim() === "") return false;
 		this.setState({
@@ -141,7 +128,7 @@ class Chat extends Component {
 			this.refs["autoFocus"].select();
 		} catch (e) {}
 
-		if (!this.state.isOtherOnline) {
+		if (!this.state.isOtherOnline && navigator.onLine) {
 			this.props.sendPush({
 				toChannelId: data.channelId,
 				fromChannelId: fromId,
@@ -276,12 +263,6 @@ class Chat extends Component {
 					<ActionSend color={cyan500} />
 				</a>
 			</div>
-			<Snackbar
-				open={this.state.snackBar}
-				message="No Internet!"
-				autoHideDuration={2000}
-				onRequestClose={this.toggleSnack.bind(this, false)}
-			/>
 		</div>
 		);
 	}

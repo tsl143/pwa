@@ -31,9 +31,6 @@ class List extends Component {
         this.setState({
             isNotificationEnabeled: localStorage.getItem(`NG_PWA_NOTIFICATION`)
         });
-        if (navigator.onLine && firebase && firebase.apps.length === 0) {
-            initialize();
-        }
         const lastMessages = localStorage.getItem('NG_PWA_LAST_MSG');
         try {
             this.setState({

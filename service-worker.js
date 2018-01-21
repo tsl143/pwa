@@ -1,4 +1,4 @@
-const cacheName = 'NG_TSL_API_PWA_1_1_2';
+const cacheName = 'NG_TSL_API_PWA_1_2_2';
 const filesToCache = [
     '/',
     '/index.html',
@@ -6,6 +6,8 @@ const filesToCache = [
     '/logo.png',
     '/notify.png',
     '/avtar.svg',
+    'https://www.gstatic.com/firebasejs/4.8.1/firebase.js',
+    'https://cdn.firebase.com/js/client/2.4.0/firebase.js'
 ];
 
 self.addEventListener('install', function(e) {

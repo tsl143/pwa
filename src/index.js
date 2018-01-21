@@ -10,6 +10,7 @@ import App from './components/App';
 import Chat from './components/Chat';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import registerServiceWorker from './registerServiceWorker';
+import initialize from "./initializeFirebase";
 
 const MyApp = props => (
   <MuiThemeProvider>
@@ -22,7 +23,7 @@ const MyChat = props => (
       <Chat route={props}/>
     </MuiThemeProvider>
   );
-
+initialize();
 ReactDomRender(
     <Provider store={ReduxStore}>
         <HashRouter>
