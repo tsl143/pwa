@@ -42,3 +42,16 @@ export const sortFriendList = (friends, lastMessage) => {
 	}
 	return friends;
 }
+
+export const formatTime = t => {
+	if(!t) return '';
+	const dateObj = new Date(parseInt(t, 10));
+	const tym = dateObj.toLocaleTimeString();
+	return `${tym.substring(0, 5)} ${tym.substr(tym.length - 2)}`;
+}
+
+export const formatDate = t => {
+	if(!t) return '';
+	const dateObj = new Date(parseInt(t, 10));
+	return dateObj.toDateString().substr(4);
+}

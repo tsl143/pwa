@@ -11,7 +11,7 @@ import RefreshIndicator from "material-ui/RefreshIndicator";
 import { cyan500 } from "material-ui/styles/colors";
 import { getLastMsg, sendPush } from '../../actions/friends';
 import initialize from "../../initializeFirebase";
-import { htmlDecode } from '../../utility';
+import { htmlDecode, formatTime, formatDate } from '../../utility';
 
 import Header from "../Header";
 
@@ -129,10 +129,11 @@ class Chat extends Component {
 			sentTime: Date.now(),
 			arrivedAt: Firebase.ServerValue.TIMESTAMP
 		};
+		this.setChat(chatObj);
 		writeFirebase.chat.push(chatObj).then(res => {
 			chatObj.id = res.key;
 			if (chatObj.id) {
-				this.setChat(chatObj);
+				this.storeChat(chatObj);
 			}
 			this.props.getLastMsg(this.props.data.meetingId, chatObj)
 		});
@@ -163,6 +164,7 @@ class Chat extends Component {
 				return true;
 			} else {
 				this.setChat(msg);
+				this.storeChat(msg);
 			}
 		});
 		myFirebase.on("value", snapshot => {
@@ -184,23 +186,20 @@ class Chat extends Component {
 		this.setState((prevState, props) => {
 			const chats = [...prevState.chats];
 			chats.push(msg);
-			localStorage.setItem(
-				`NG_PWA_CHAT_${props.data.meetingId}`,
-				JSON.stringify(chats)
-			);
 			return { chats, loading: false };
 		});
 	}
 
-	formatTime(t) {
-		const dateObj = new Date(parseInt(t, 10));
-		const tym = dateObj.toLocaleTimeString();
-		return `${tym.substring(0, 5)} ${tym.substr(tym.length - 2)}`;
-	}
-
-	formatDate(t) {
-		const dateObj = new Date(parseInt(t, 10));
-		return dateObj.toDateString().substr(4);
+	storeChat(msg) {
+		try {
+			const { data } = this.props;
+			const chats = JSON.parse(localStorage.getItem(`NG_PWA_CHAT_${data.meetingId}`)) || [];
+			chats.push(msg);
+			localStorage.setItem(
+				`NG_PWA_CHAT_${this.props.data.meetingId}`,
+				JSON.stringify(chats)
+			);
+		}catch(e){}
 	}
 
 	render() {
@@ -231,10 +230,10 @@ class Chat extends Component {
 				{this.state.chats.map((chat, index) => {
 					let newDay = "";
 					if (index === 0) {
-						newDay = this.formatDate(chat.sentTime);
+						newDay = formatDate(chat.sentTime);
 					} else {
-						const newDate = this.formatDate(chat.sentTime);
-						const oldDate = this.formatDate(
+						const newDate = formatDate(chat.sentTime);
+						const oldDate = formatDate(
 							this.state.chats[index - 1].sentTime
 						);
 						if (newDate !== oldDate) {
@@ -252,7 +251,7 @@ class Chat extends Component {
 							<Twemoji text={htmlDecode(chat.msg)} />
 						</span>
 						<span className={Styles.time}>
-							{this.formatTime(chat.sentTime)}
+							{formatTime(chat.sentTime)}
 						</span>
 					</div>);
 				})}
@@ -266,7 +265,7 @@ class Chat extends Component {
 					multiLine={true}
 					underlineStyle={{display: 'none'}}
 					onKeyPress={ev => {
-						if (ev.key === "Enter" && !ev.shiftKey) {
+						if (ev.key === "Enter" && ev.shiftKey) {
 							this.sendPlz();
 							ev.preventDefault();
 						}

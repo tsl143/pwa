@@ -50,9 +50,8 @@ class FriendList extends Component {
 					primaryText={<Twemoji text={htmlDecode(friend.name)} />}
 					containerElement={<Link to="/chat" />}
 					secondaryText={
-						lastChats[friend.meetingId] &&
-						lastChats[friend.meetingId].msg &&
-						<p><Twemoji text={htmlDecode(lastChats[friend.meetingId].msg.substr(0,200))} /></p>
+						friend.lastMsg &&
+						<p><Twemoji text={htmlDecode(friend.lastMsg.substr(0,200))} /></p>
 					}
 				/>
 	  		);
