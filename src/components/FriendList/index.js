@@ -17,6 +17,24 @@ class FriendList extends Component {
 
 	constructor(props) {
 		super(props);
+		this.state = {
+			loadCheck: []
+		}
+		this.handleImg = this.handleImg.bind(this);
+	}
+
+	handleImg(id, e) {
+		try {
+			if(!this.state.loadCheck.includes(id)) {
+				this.setState(prev => {
+					const loadCheck = [ ...loadCheck ];
+					loadCheck.push(id);
+					return { loadCheck }
+				})
+				e.target.src = AVTAR;
+			}
+			
+		}catch(e){}
 	}
 
 	populateFriendsList() {
@@ -27,7 +45,7 @@ class FriendList extends Component {
 	  		return (
 	  			<ListItem
 					key={friend.channelId}
-					leftAvatar={<Avatar src={`${AvtarUrl}${friend.imageUrl}`} />}
+					leftAvatar={<Avatar src={`${AvtarUrl}${friend.imageUrl}`} onError={this.handleImg.bind(this, friend.channelId)}/>}
 					onClick={() => this.props.setMeeting(friend.meetingId)}
 					primaryText={<Twemoji text={htmlDecode(friend.name)} />}
 					containerElement={<Link to="/chat" />}

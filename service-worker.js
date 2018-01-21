@@ -4,7 +4,8 @@ const filesToCache = [
     '/index.html',
     '/bundle.js',
     '/logo.png',
-    '/notify.png'
+    '/notify.png',
+    '/avtar.svg',
 ];
 
 self.addEventListener('install', function(e) {

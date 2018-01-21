@@ -56,6 +56,7 @@ module.exports = {
         new webpack.DefinePlugin({
             FIRBASE_URL: JSON.stringify('https://test-neargroup.firebaseio.com/'),
             API: JSON.stringify('https://temp.neargroup.me/rht/'),
+            AVTAR: JSON.stringify('avtar.svg'),
             'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'PRODUCTION')
         })
       ]

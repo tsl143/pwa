@@ -59,6 +59,9 @@ class Chat extends Component {
 		this.setState({
 			chats: myBotChat.concat(chatsRetrieved)
 		});
+		window.onresize = () => {
+			this.scrollUp();
+		}
 	}
 
 	componentDidMount() {
@@ -85,6 +88,14 @@ class Chat extends Component {
 	}
 
 	componentDidUpdate() {
+		this.scrollUp();
+	}
+
+	componentWillUnmount() {
+		window.onresize = {};
+	}
+
+	scrollUp() {
 		try{
 			const chatbox = document.getElementById('chatBox');
 			chatbox.scrollTo(0, chatbox.scrollHeight);
@@ -255,7 +266,7 @@ class Chat extends Component {
 					multiLine={true}
 					underlineStyle={{display: 'none'}}
 					onKeyPress={ev => {
-						if (ev.key === "Enter" && ev.shiftKey) {
+						if (ev.key === "Enter" && !ev.shiftKey) {
 							this.sendPlz();
 							ev.preventDefault();
 						}

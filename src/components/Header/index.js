@@ -13,11 +13,18 @@ export default class Header extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { open: false };
+        this.state = {
+            onlyOnce: true
+        };
     }
 
-    handleToggle() {
-        this.setState({ open: !this.state.open });
+    handleAvtar(e) {
+		try {
+			if(this.state.onlyOnce) {
+                e.target.src = AVTAR;
+				this.setState({ onlyOnce: false})
+			}
+		}catch(e){}
     }
 
     render() {
@@ -37,7 +44,7 @@ export default class Header extends Component {
                                 <ActionBack color={'white'}/>
                             </Link>
                         }
-                        <Avatar src={avtar} />
+                        <Avatar src={avtar} onError={this.handleAvtar.bind(this)}/>
                     </div>
                 }
                 title = { htmlDecode(name) }
