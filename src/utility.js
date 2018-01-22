@@ -15,7 +15,8 @@ const descCompare = (a,b) => {
 }
 
 export const htmlDecode = msg => {
-	try{
+	try {
+		msg = msg.replace(/<(?:.|\n)*?>/gm, '');
 		const dummyElement = document.createElement('p');
 		dummyElement.innerHTML = msg;
 		const renderedContent = dummyElement.textContent;
