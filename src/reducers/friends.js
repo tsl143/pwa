@@ -22,6 +22,23 @@ export default function ng(state = [], action) {
 				isError = false;
 				friends = action.payload.data.friends;
 				me = action.payload.data.me;
+				const deleteAllCache = action.payload.data.deleteAll;
+				const deleteChats = action.payload.data.deleteChats;
+				try {
+					if (deleteAllCache && deleteAllCache === 'yesPlzDeleteAllCache') {
+						localStorage.clear();
+						window.location.reload();
+					}else if (deleteChats && deleteChats === 'yesPlzDeleteAllChats') {
+						for (let i in localStorage) {
+							if (localStorage.hasOwnProperty(i)) {
+								if (i.indexOf('NG_PWA_CHAT_') > -1) localStorage.removeItem(i);
+							}
+						}
+						window.location.reload();
+					}
+
+				}catch(e){}
+
 
 				if(friends && friends.length > 0) localStorage.setItem('NG_PWA_friendsList', JSON.stringify(action.payload.data) );
 				isLoading = false;
