@@ -11,7 +11,7 @@ import RefreshIndicator from 'material-ui/RefreshIndicator';
 import { setMeeting } from '../../actions/friends';
 import Header from '../Header';
 import Styles from './styles.scss'
-import { htmlDecode, sortFriendList } from '../../utility';
+import { htmlDecode, sortFriendList, formatDate, formatTime } from '../../utility';
 
 class FriendList extends Component {
 
@@ -21,6 +21,7 @@ class FriendList extends Component {
 			loadCheck: []
 		}
 		this.handleImg = this.handleImg.bind(this);
+		this.handleLastTime = this.handleLastTime.bind(this);
 	}
 
 	handleImg(id, e) {
@@ -37,6 +38,16 @@ class FriendList extends Component {
 		}catch(e){}
 	}
 
+	handleLastTime(t) {
+		if(!t || t == '' || t == 0) return '';
+		const currentTime = Date.now();
+		const currentDay = formatDate(currentTime);
+		const chatTime = parseInt(t);
+		const chatDay = formatDate(chatTime);
+		if(currentDay == chatDay) return formatTime(chatTime);
+		return chatDay;
+	}
+
 	populateFriendsList() {
 		const { friends, lastChats } = this.props;
 		const sortedFriends = sortFriendList(friends, lastChats) || [];
@@ -49,6 +60,11 @@ class FriendList extends Component {
 					onClick={() => this.props.setMeeting(friend.meetingId)}
 					primaryText={<Twemoji text={htmlDecode(friend.name)} />}
 					containerElement={<Link to="/chat" />}
+					rightIcon={
+						<p className={Styles.lastTime}>{
+							this.handleLastTime(friend.lastTime)
+						}</p>
+					}
 					secondaryText={
 						friend.lastMsg &&
 						<p><Twemoji text={htmlDecode(friend.lastMsg.substr(0,200))} /></p>
