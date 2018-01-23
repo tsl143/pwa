@@ -35,8 +35,7 @@ class Chat extends Component {
 
 	componentWillMount() {
 		if(!this.props.data) return false;
-		const { data, fromId, botChats } = this.props;
-
+		const { data, fromId } = this.props;
 		this.props.setChats(data.meetingId);
 
 		window.onresize = () => {
@@ -44,9 +43,10 @@ class Chat extends Component {
 		}
 	}
 	componentWillReceiveProps(nextProps){
-		const { data, chats, childListeners } = nextProps;
+		const { data, chats, childListeners, fromId } = nextProps;
 		const myChats = chats[data.meetingId];
 		this.setState({ chats: myChats });
+		if(fromId) firebase.database().ref(`/isOnline/${fromId}`).set({ online: true });
 		if (!childListeners.includes(data.meetingId)) {
 			let lastChat;
 			if (myChats && myChats.length > 0) {
@@ -59,9 +59,6 @@ class Chat extends Component {
 	}
 
 	componentDidMount() {
-		const { data, fromId, childListeners } = this.props;
-		firebase.database().ref(`/isOnline/${fromId}`).set({ online: true });
-
 		this.scrollUp();
 	}
 
@@ -103,12 +100,12 @@ class Chat extends Component {
 		firebase
 			.database()
 			.ref(`/rooms/${data.meetingId}`)
-			.chat.push(chatObj).then(res => {
+			.push(chatObj).then(res => {
 				chatObj.id = res.key;
 				if (chatObj.id) {
 					this.storeChat(chatObj);
 				}
-				this.props.getLastMsg(this.props.data.meetingId, chatObj)
+				this.props.getLastMsg(data.meetingId, chatObj)
 			});
 		try {
 			this.refs["autoFocus"].select();
@@ -143,15 +140,16 @@ class Chat extends Component {
 		}
 
 		//manage self online and last seen
-		firebase.database().ref(`/isOnline/${fromId}`).onDisconnect().set({ online: false });
-		firebase.database().ref(`/lastSeen/${fromId}`).onDisconnect().set(Firebase.ServerValue.TIMESTAMP);
+		if(fromId) {
+			firebase.database().ref(`/isOnline/${fromId}`).onDisconnect().set({ online: false });
+			firebase.database().ref(`/lastSeen/${fromId}`).onDisconnect().set(Firebase.ServerValue.TIMESTAMP);
+		}
 
 		//check if other participant is online
 		firebase.database()
 		.ref(`/isOnline/${data.channelId}`)
 		.on("child_changed", snapshot => {
 			const isOtherOnline = snapshot.val();
-			console.log(data.name, isOtherOnline)
 			this.setState({ isOtherOnline });
 		});
 		//check if other participant is online
@@ -159,7 +157,6 @@ class Chat extends Component {
 		.ref(`/isOnline/${data.channelId}`)
 		.on("child_added", snapshot => {
 			const isOtherOnline = snapshot.val();
-
 			this.setState({ isOtherOnline });
 		});
 		this.props.addChildListener(data.meetingId);
@@ -284,7 +281,6 @@ const mapStateToProps = state => {
 	return {
 		fromId: (state.friends.me && state.friends.me.channelId) || '',
 		data: state.friends.meetingData || null,
-		botChats: state.friends.botChats || {},
 		childListeners: state.friends.childListeners || [],
 		chats: state.friends.chats || {},
 		triggerStamp: state.friends.triggerStamp || Date.now()
