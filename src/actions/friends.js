@@ -99,3 +99,17 @@ export const addChildListener = meetingId => {
         payload: meetingId
     }
 }
+
+export const setChats = meetingId => {
+    return {
+        type: 'SET_CHATS',
+        payload: meetingId
+    }
+}
+
+export const addChats = (meetingId, msg) => {
+    return {
+        type: 'ADD_CHATS',
+        payload: { meetingId, msg }
+    }
+}

@@ -44,7 +44,7 @@ export default function ng(state = [], action) {
 				isLoading = false;
 			}
 
-			return { ...tempState, friends, me, isLoading, timestamp: Date.now(), noReload: true }
+			return { ...tempState, friends, me, isLoading, timestamp: Date.now(), noReload: true, chats: {} }
 			break;
 
 		case 'SENT':
@@ -80,8 +80,35 @@ export default function ng(state = [], action) {
 
 		case 'ADD_CHILD_LISTENER':
 			const childListeners = tempState.childListeners ? [...tempState.childListeners] : [];
-			childListeners.push(action.payload);
+			if(!childListeners.includes(action.payload)) childListeners.push(action.payload);
 			return { ...tempState, childListeners }
+			break;
+
+		case 'SET_CHATS':
+			const chatMeetingId = action.payload;
+			const chats = { ...tempState.chats };
+			const triggerStamp = { ...tempState.triggerStamp };
+			triggerStamp[chatMeetingId] = Date.now();
+			if(chats[chatMeetingId]) return { ...tempState, triggerStamp };
+			let chatsRetrieved = [];
+			const checkBotChat = { ...tempState.botChats };
+			const myBotChats = checkBotChat[chatMeetingId] || [];
+			const cachedChats = localStorage.getItem(`NG_PWA_CHAT_${chatMeetingId}`);
+			if (cachedChats && cachedChats.length > 0) {
+				chatsRetrieved = JSON.parse(cachedChats);
+			}
+			chats[chatMeetingId] = myBotChats.concat(chatsRetrieved);
+			return { ...tempState, chats, triggerStamp };
+			break;
+
+		case 'ADD_CHATS':
+			const myMeetingId = action.payload.meetingId;
+			const myMsg = action.payload.msg;
+			const allChats = { ...tempState.chats };
+			const myChats = allChats[myMeetingId] ? [ ...allChats[myMeetingId] ] : [];
+			myChats.push(myMsg);
+			allChats[myMeetingId] = myChats;
+			return { ...tempState, chats: allChats };
 			break;
 
 		case 'BOT_CHAT':

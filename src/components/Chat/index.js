@@ -8,18 +8,13 @@ import TextField from "material-ui/TextField";
 import ActionSend from "material-ui/svg-icons/content/send";
 import RefreshIndicator from "material-ui/RefreshIndicator";
 import { cyan500 } from "material-ui/styles/colors";
-import { getLastMsg, sendPush, addChildListener } from '../../actions/friends';
+import { getLastMsg, sendPush, addChildListener, setChats, addChats } from '../../actions/friends';
 import initialize from "../../initializeFirebase";
 import { htmlDecode, formatTime, formatDate } from '../../utility';
 
 import Header from "../Header";
 
 import Styles from "./style.scss";
-
-let myFirebase;
-let isOtherOnlineRef;
-let writeFirebase = {};
-let lastChat = {};
 
 class Chat extends Component {
 	constructor(props) {
@@ -34,56 +29,38 @@ class Chat extends Component {
 		this.handleMsg = this.handleMsg.bind(this);
 		this.sendPlz = this.sendPlz.bind(this);
 		this.startListening = this.startListening.bind(this);
+		this.handleChildAdd = this.handleChildAdd.bind(this);
+		this.handleValue = this.handleValue.bind(this);
 	}
 
 	componentWillMount() {
 		if(!this.props.data) return false;
 		const { data, fromId, botChats } = this.props;
-		let myBotChat = [];
-		let chatsRetrieved = [];
-		if(botChats[data.meetingId] && botChats[data.meetingId].length !==0){
-			myBotChat = botChats[data.meetingId];
-		}
-		const cachedChats = localStorage.getItem(`NG_PWA_CHAT_${data.meetingId}`);
-		if (cachedChats && cachedChats.length > 0) {
-			chatsRetrieved = JSON.parse(cachedChats);
-			lastChat = chatsRetrieved[chatsRetrieved.length - 1];
-		}
-		this.setState({
-			chats: myBotChat.concat(chatsRetrieved)
-		});
+
+		this.props.setChats(data.meetingId);
+
 		window.onresize = () => {
 			this.scrollUp();
+		}
+	}
+	componentWillReceiveProps(nextProps){
+		const { data, chats, childListeners } = nextProps;
+		const myChats = chats[data.meetingId];
+		this.setState({ chats: myChats });
+		if (!childListeners.includes(data.meetingId)) {
+			let lastChat;
+			if (myChats && myChats.length > 0) {
+				lastChat = myChats[myChats.length - 1];
+			}
+            this.startListening(lastChat);
+        } else {
+            this.setState({ loading: false });
 		}
 	}
 
 	componentDidMount() {
 		const { data, fromId, childListeners } = this.props;
-
-		if (!data) return false;
-
-		writeFirebase = {
-			chat: firebase.database().ref(`/rooms/${data.meetingId}`),
-			isOnline: firebase.database().ref(`/isOnline/${fromId}`),
-			lastSeen: firebase.database().ref(`/lastSeen/${data.channelId}`),
-		};
-		writeFirebase.isOnline.set({ online: true });
-
-		if (!childListeners.includes(data.meetingId)) {
-            if (lastChat.id) {
-                myFirebase = firebase
-                    .database()
-                    .ref(`/rooms/${data.meetingId}`)
-                    .orderByKey()
-                    .startAt(lastChat.id);
-            } else {
-                myFirebase = firebase.database().ref(`/rooms/${data.meetingId}`);
-            }
-            isOtherOnlineRef = firebase.database().ref(`/isOnline/${data.channelId}`);
-            this.startListening();
-        } else {
-            this.setState({ loading: false });
-		}
+		firebase.database().ref(`/isOnline/${fromId}`).set({ online: true });
 
 		this.scrollUp();
 	}
@@ -123,13 +100,16 @@ class Chat extends Component {
 			arrivedAt: Firebase.ServerValue.TIMESTAMP
 		};
 		this.setChat(chatObj);
-		writeFirebase.chat.push(chatObj).then(res => {
-			chatObj.id = res.key;
-			if (chatObj.id) {
-				this.storeChat(chatObj);
-			}
-			this.props.getLastMsg(this.props.data.meetingId, chatObj)
-		});
+		firebase
+			.database()
+			.ref(`/rooms/${data.meetingId}`)
+			.chat.push(chatObj).then(res => {
+				chatObj.id = res.key;
+				if (chatObj.id) {
+					this.storeChat(chatObj);
+				}
+				this.props.getLastMsg(this.props.data.meetingId, chatObj)
+			});
 		try {
 			this.refs["autoFocus"].select();
 		} catch (e) {}
@@ -143,45 +123,70 @@ class Chat extends Component {
 		}
 	}
 
-	startListening() {
+	startListening(lastChat) {
+		const {data, fromId} = this.props;
+
 		//intercepts for any new message from firebase with check of lastchatId
-		myFirebase.on("child_added", snapshot => {
-			const msg = snapshot.val();
-			const msgId = snapshot.key;
-			msg.id = msgId;
-			if (
-				(lastChat.id && lastChat.id === msgId) ||
-				(msg.fromId === this.props.fromId &&
-				parseInt(msg.sentTime, 10) > this.state.sentTime)
-			) {
-				return true;
-			} else {
-				this.setChat(msg);
-				this.storeChat(msg);
-			}
-		});
-		myFirebase.on("value", snapshot => {
-			this.setState({ loading: false });
-		});
+		if (lastChat && lastChat.id) {
+			firebase
+				.database()
+				.ref(`/rooms/${data.meetingId}`)
+				.orderByKey()
+				.startAt(lastChat.id)
+				.on('child_added', snapshot => this.handleChildAdd(snapshot, lastChat));
+
+		} else {
+			firebase
+				.database()
+				.ref(`/rooms/${data.meetingId}`)
+				.on('child_added', snapshot => this.handleChildAdd(snapshot));
+		}
 
 		//manage self online and last seen
-		writeFirebase.isOnline.onDisconnect().set({ online: false });
-		writeFirebase.lastSeen.onDisconnect().set(Firebase.ServerValue.TIMESTAMP);
+		firebase.database().ref(`/isOnline/${fromId}`).onDisconnect().set({ online: false });
+		firebase.database().ref(`/lastSeen/${fromId}`).onDisconnect().set(Firebase.ServerValue.TIMESTAMP);
 
 		//check if other participant is online
-		isOtherOnlineRef.on("child_changed", snapshot => {
+		firebase.database()
+		.ref(`/isOnline/${data.channelId}`)
+		.on("child_changed", snapshot => {
 			const isOtherOnline = snapshot.val();
+			console.log(data.name, isOtherOnline)
 			this.setState({ isOtherOnline });
 		});
-		this.props.addChildListener(this.props.data.meetingId);
+		//check if other participant is online
+		firebase.database()
+		.ref(`/isOnline/${data.channelId}`)
+		.on("child_added", snapshot => {
+			const isOtherOnline = snapshot.val();
+
+			this.setState({ isOtherOnline });
+		});
+		this.props.addChildListener(data.meetingId);
 	}
 
+	handleChildAdd(snapshot, lastChat) {
+		const msg = snapshot.val();
+		const msgId = snapshot.key;
+		msg.id = msgId;
+		if (
+			(lastChat && lastChat.id && lastChat.id === msgId) ||
+			(msg.fromId === this.props.fromId &&
+			parseInt(msg.sentTime, 10) > this.state.sentTime)
+		) {
+			return true;
+		} else {
+			this.setChat(msg);
+			this.storeChat(msg);
+		}
+	}
+
+	handleValue(snapshot) {
+		this.setState({ loading: false });
+	};
+
 	setChat(msg) {
-		this.setState((prevState, props) => {
-			const chats = [...prevState.chats];
-			chats.push(msg);
-			return { chats, loading: false };
-		});
+		this.props.addChats(this.props.data.meetingId, msg)
 	}
 
 	storeChat(msg) {
@@ -280,7 +285,9 @@ const mapStateToProps = state => {
 		fromId: (state.friends.me && state.friends.me.channelId) || '',
 		data: state.friends.meetingData || null,
 		botChats: state.friends.botChats || {},
-		childListeners: state.friends.childListeners || []
+		childListeners: state.friends.childListeners || [],
+		chats: state.friends.chats || {},
+		triggerStamp: state.friends.triggerStamp || Date.now()
 	  }
 }
 
@@ -294,6 +301,12 @@ const mapDispatchToProps = dispatch => {
 		},
 		addChildListener: meetingId => {
 			dispatch(addChildListener(meetingId));
+		},
+		setChats: meetingId => {
+			dispatch(setChats(meetingId));
+		},
+		addChats: (meetingId, msg) => {
+			dispatch(addChats(meetingId, msg));
 		}
 	}
 }
