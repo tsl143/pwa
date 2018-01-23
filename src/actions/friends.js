@@ -92,3 +92,10 @@ export const setMeeting = meetingId => {
         payload: meetingId
     }
 }
+
+export const addChildListener = meetingId => {
+    return {
+        type: 'ADD_CHILD_LISTENER',
+        payload: meetingId
+    }
+}

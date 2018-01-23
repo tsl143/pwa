@@ -8,7 +8,7 @@ import TextField from "material-ui/TextField";
 import ActionSend from "material-ui/svg-icons/content/send";
 import RefreshIndicator from "material-ui/RefreshIndicator";
 import { cyan500 } from "material-ui/styles/colors";
-import { getLastMsg, sendPush } from '../../actions/friends';
+import { getLastMsg, sendPush, addChildListener } from '../../actions/friends';
 import initialize from "../../initializeFirebase";
 import { htmlDecode, formatTime, formatDate } from '../../utility';
 
@@ -17,10 +17,9 @@ import Header from "../Header";
 import Styles from "./style.scss";
 
 let myFirebase;
+let isOtherOnlineRef;
 let writeFirebase = {};
 let lastChat = {};
-let isOnline;
-let lastSeen;
 
 class Chat extends Component {
 	constructor(props) {
@@ -59,26 +58,33 @@ class Chat extends Component {
 	}
 
 	componentDidMount() {
-		if(!this.props.data) return false;
-		const { data, fromId } = this.props;
-		if (lastChat.id) {
-			myFirebase = firebase
-				.database()
-				.ref(`/rooms/${data.meetingId}`)
-				.orderByKey()
-				.startAt(lastChat.id);
-		} else {
-			myFirebase = firebase.database().ref(`/rooms/${data.meetingId}`);
-		}
+		const { data, fromId, childListeners } = this.props;
+
+		if (!data) return false;
 
 		writeFirebase = {
 			chat: firebase.database().ref(`/rooms/${data.meetingId}`),
 			isOnline: firebase.database().ref(`/isOnline/${fromId}`),
-			isOtherOnline: firebase.database().ref(`/isOnline/${data.channelId}`),
 			lastSeen: firebase.database().ref(`/lastSeen/${data.channelId}`),
 		};
 		writeFirebase.isOnline.set({ online: true });
-		this.startListening();
+
+		if (!childListeners.includes(data.meetingId)) {
+            if (lastChat.id) {
+                myFirebase = firebase
+                    .database()
+                    .ref(`/rooms/${data.meetingId}`)
+                    .orderByKey()
+                    .startAt(lastChat.id);
+            } else {
+                myFirebase = firebase.database().ref(`/rooms/${data.meetingId}`);
+            }
+            isOtherOnlineRef = firebase.database().ref(`/isOnline/${data.channelId}`);
+            this.startListening();
+        } else {
+            this.setState({ loading: false });
+		}
+
 		this.scrollUp();
 	}
 
@@ -163,10 +169,11 @@ class Chat extends Component {
 		writeFirebase.lastSeen.onDisconnect().set(Firebase.ServerValue.TIMESTAMP);
 
 		//check if other participant is online
-		writeFirebase.isOtherOnline.on("child_changed", snapshot => {
+		isOtherOnlineRef.on("child_changed", snapshot => {
 			const isOtherOnline = snapshot.val();
 			this.setState({ isOtherOnline });
 		});
+		this.props.addChildListener(this.props.data.meetingId);
 	}
 
 	setChat(msg) {
@@ -229,7 +236,7 @@ class Chat extends Component {
 					}
 					return(
 					<div key={index} className={chat.fromId == fromId ? Styles.self : ""}>
-						{newDay && 
+						{newDay &&
 							<div className={Styles.newDay}>
 								{newDay}
 							</div>
@@ -272,7 +279,8 @@ const mapStateToProps = state => {
 	return {
 		fromId: (state.friends.me && state.friends.me.channelId) || '',
 		data: state.friends.meetingData || null,
-		botChats: state.friends.botChats || {}
+		botChats: state.friends.botChats || {},
+		childListeners: state.friends.childListeners || []
 	  }
 }
 
@@ -283,7 +291,10 @@ const mapDispatchToProps = dispatch => {
 		},
 		sendPush: data => {
             dispatch(sendPush(data));
-        }
+		},
+		addChildListener: meetingId => {
+			dispatch(addChildListener(meetingId));
+		}
 	}
 }
 

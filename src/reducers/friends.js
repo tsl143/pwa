@@ -78,6 +78,12 @@ export default function ng(state = [], action) {
 			return { ...tempState, meetingData }
 			break;
 
+		case 'ADD_CHILD_LISTENER':
+			const childListeners = tempState.childListeners ? [...tempState.childListeners] : [];
+			childListeners.push(action.payload);
+			return { ...tempState, childListeners }
+			break;
+
 		case 'BOT_CHAT':
 			if(
 				action.payload &&
