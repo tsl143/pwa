@@ -32,6 +32,14 @@ export default function initialize(channelId) {
                 .catch(function(err) {
                     console.log('An error occurred while retrieving token. ', err);
                 });
+            messaging.onTokenRefresh(function() {
+                messaging
+                    .getToken()
+                    .then(function (refreshedToken) {
+                        if (currentToken)
+                            sendTokenToServer(refreshedToken, channelId);
+                    });
+            });
         })
         .catch(function(err) {
             console.log('Unable to get permission to notify.', err);

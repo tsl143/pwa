@@ -94,7 +94,7 @@ class List extends Component {
                 friendMeetingIds.push(friend.meetingId);
                 firebase.database().ref(`/rooms/${friend.meetingId}`)
                 .limitToLast(1)
-                .once('value', snap => {
+                .on('value', snap => {
                     const value = snap.val();
                     if (value) {
                         const msg = value[Object.keys(value)[0]];
