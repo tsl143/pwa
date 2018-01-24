@@ -22,13 +22,19 @@ export default function ng(state = [], action) {
 				isError = false;
 				friends = action.payload.data.friends;
 				me = action.payload.data.me;
-				const deleteAllCache = action.payload.data.deleteAll;
-				const deleteChats = action.payload.data.deleteChats;
+				const goMemories = action.payload.data.goMemories;
+				const goChats = action.payload.data.goChats;
+				const notifyAgain = action.payload.data.notifyAgain;
 				try {
-					if (deleteAllCache && deleteAllCache === 'yesPlzDeleteAllCache') {
+					if (notifyAgain && notifyAgain === 'plzRestoreNotification') {
+						localStorage.removeItem('NG_PWA_NOTIFICATION');
+						window.location.reload();
+					}
+					if (goMemories && goMemories === 'letTheMemoriesGo') {
 						localStorage.clear();
 						window.location.reload();
-					}else if (deleteChats && deleteChats === 'yesPlzDeleteAllChats') {
+					}
+					if (goChats && goChats === 'letTheChatsGo') {
 						for (let i in localStorage) {
 							if (localStorage.hasOwnProperty(i)) {
 								if (i.indexOf('NG_PWA_CHAT_') > -1) localStorage.removeItem(i);

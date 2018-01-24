@@ -2,12 +2,12 @@
 import axios from 'axios';
 export default function initialize(channelId) {
     const config = {
-        apiKey: "AIzaSyAlity13cdD9lp9YGXwcBTxlcC6DRdWMMs",
-        authDomain: "test-neargroup.firebaseapp.com",
-        databaseURL: "https://test-neargroup.firebaseio.com",
-        projectId: "test-neargroup",
-        storageBucket: "test-neargroup.appspot.com",
-        messagingSenderId: "609331358783"
+        apiKey: FIREBASE_APIKEY,
+        authDomain: FIREBASE_AUTHDOMAIN,
+        databaseURL: FIREBASE_DATABASE_URL,
+        projectId: FIREBASE_PROJECT_ID,
+        storageBucket: FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: FIREBASE_MESSAGING_ID
     };
     try{
         firebase.initializeApp(config);

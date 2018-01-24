@@ -111,7 +111,7 @@ class Chat extends Component {
 			this.refs["autoFocus"].select();
 		} catch (e) {}
 
-		if (!this.state.isOtherOnline && navigator.onLine) {
+		if (navigator.onLine) {
 			this.props.sendPush({
 				toChannelId: data.channelId,
 				fromChannelId: fromId,
