@@ -60,7 +60,7 @@ module.exports = {
             FIREBASE_PROJECT_ID : JSON.stringify('neargroup-lite'),
             FIREBASE_MESSAGING_ID : JSON.stringify('485643019459'),
             FIREBASE_STORAGE_BUCKET : JSON.stringify('neargroup-lite.appspot.com'),
-            API: JSON.stringify('https://temp.neargroup.me/rht/'),
+            API: JSON.stringify('https://lite.neargroup.me/pwa/'),
             AVTAR: JSON.stringify('avtar.svg'),
             'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'PRODUCTION')
         })
