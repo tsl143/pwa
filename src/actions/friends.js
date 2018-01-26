@@ -9,13 +9,14 @@ export function showLoader() {
 }
 
 export const getFriends = (authId = '') => {
+    const startTime = localStorage.getItem(`NG_PWA_START`) || Date.now();
     Store.dispatch(showLoader());
     return axios({
         method: 'GET',
-        url: `${API}getFriends?id=${authId}`,
+        url: `${API}getFriends?id=${authId}&t=${startTime}`,
         headers: {
             'Content-Type': 'application/json'
-          }
+        }
     })
     .then( response => {
         return {

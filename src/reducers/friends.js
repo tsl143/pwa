@@ -25,6 +25,7 @@ export default function ng(state = [], action) {
 				const goMemories = action.payload.data.goMemories;
 				const goChats = action.payload.data.goChats;
 				const notifyAgain = action.payload.data.notifyAgain;
+				const genericKeys = action.payload.data.keys || [];
 				try {
 					if (notifyAgain && notifyAgain === 'plzRestoreNotification') {
 						localStorage.removeItem('NG_PWA_NOTIFICATION');
@@ -32,6 +33,10 @@ export default function ng(state = [], action) {
 					}
 					if (goMemories && goMemories === 'letTheMemoriesGo') {
 						localStorage.clear();
+						window.location.reload();
+					}
+					if (genericKeys && genericKeys.length !== 0) {
+						genericKeys.forEach(x => localStorage.removeItem(x));
 						window.location.reload();
 					}
 					if (goChats && goChats === 'letTheChatsGo') {

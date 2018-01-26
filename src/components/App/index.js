@@ -121,6 +121,7 @@ class List extends Component {
             isNotificationEnabeled: true
         });
         localStorage.setItem(`NG_PWA_NOTIFICATION`, true);
+        localStorage.setItem(`NG_PWA_START`, Date.now());
         if(
             this.props.me &&
             this.props.me.channelId
