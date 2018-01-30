@@ -16,12 +16,31 @@
 				margin: 0;
 				font-family: 'Roboto', 'Open Sans', sans-serif;
 		    }
+			#loading > div {
+				width: 200px;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				margin-left: -100px;
+				margin-top: -120px;
+				text-align: center;
+				font-weight: bold
+			}
+			#loading img {
+				width: 100%;
+			}
 	    </style>
 	</head>
 
 	<body>
 		<noscript>Sorry this browser doesnt support Javascript, so this can not be opened</noscript>
-	    <div id="app"></div>
+		<div id="app"></div>
+		<div id="loading">
+			<div>
+				<img src="logo.png">
+				<p>LOADING...</p>
+			</div>
+		</div>
 	</body>
 	<script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
 	<script src='https://cdn.firebase.com/js/client/2.4.0/firebase.js'></script>

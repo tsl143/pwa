@@ -59,6 +59,7 @@ class Chat extends Component {
 	}
 
 	componentDidMount() {
+		if(document.getElementById('loading')) document.getElementById('loading').remove();
 		this.scrollUp();
 	}
 
@@ -73,6 +74,7 @@ class Chat extends Component {
 	scrollUp() {
 		try{
 			const chatbox = document.getElementById('chatBox');
+			chatbox.scrollTop = chatbox.scrollHeight;
 			chatbox.scrollTo(0, chatbox.scrollHeight);
 		}catch(e){}
 	}

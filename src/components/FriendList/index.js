@@ -9,7 +9,9 @@ import ListItem from 'material-ui/List/ListItem';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 
 import { setMeeting } from '../../actions/friends';
+
 import Header from '../Header';
+import NoFriends from '../NoFriends';
 import Styles from './styles.scss'
 import { htmlDecode, sortFriendList, formatDate, formatTime } from '../../utility';
 
@@ -24,6 +26,9 @@ class FriendList extends Component {
 		this.handleLastTime = this.handleLastTime.bind(this);
 	}
 
+	componentDidMount() {
+		if(document.getElementById('loading')) document.getElementById('loading').remove();
+	}
 	handleImg(id, e) {
 		try {
 			if(!this.state.loadCheck.includes(id)) {
@@ -75,7 +80,7 @@ class FriendList extends Component {
 	}
 
   	render() {
-  		const { loading } = this.props;
+		const { loading, friends } = this.props;
 	    return (
 			<div>
 				<Header name="Friends"/>
@@ -89,9 +94,17 @@ class FriendList extends Component {
 						      className={Styles.refresh}
 					    />
 					}
-					<List>
-						{this.populateFriendsList()}
-					</List>
+					{
+						friends.length === 0 &&
+						!loading &&
+						<NoFriends />
+					}
+					{
+						friends.length !== 0 &&
+						<List>
+							{this.populateFriendsList()}
+						</List>
+					}
 			    </div>
 		    </div>
     	);
