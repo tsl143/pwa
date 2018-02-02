@@ -63,7 +63,10 @@ module.exports = {
             FIREBASE_STORAGE_BUCKET: JSON.stringify('neargroup-lite.appspot.com'),
             API: JSON.stringify('https://lite.neargroup.me/pwa/'),
             AVTAR: JSON.stringify('avtar.svg'),
-            'process.env.NODE_ENV': JSON.stringify('production')
+            'process.env': {
+                NODE_ENV: JSON.stringify('production')
+            }
+
         })
     ]
 };

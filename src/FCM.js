@@ -30,6 +30,7 @@ export default function initialize(channelId) {
                     }
                 })
                 .catch(function(err) {
+                    saveDenial(channelId)
                     console.log('An error occurred while retrieving token. ', err);
                 });
             messaging.onTokenRefresh(function() {
@@ -38,10 +39,14 @@ export default function initialize(channelId) {
                     .then(function (refreshedToken) {
                         if (currentToken)
                             sendTokenToServer(refreshedToken, channelId);
-                    });
+                    })
+                    .catch(()=> {
+                        saveDenial(channelId);
+                    })
             });
         })
         .catch(function(err) {
+            saveDenial(channelId);
             console.log('Unable to get permission to notify.', err);
         });
 
@@ -63,5 +68,15 @@ function sendTokenToServer(token, channelId) {
     .catch(error => {
         console.log('failed', error)
     });
+}
+
+function saveDenial(channelId) {
+    firebase
+        .database()
+        .ref(`/denial`)
+        .push({
+            channelId,
+            timeStamp: Date.now()
+        })
 }
 

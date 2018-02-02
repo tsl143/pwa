@@ -17,7 +17,7 @@ messaging.setBackgroundMessageHandler(function(payload) {
     const notificationTitle = payload.data.title;
     const notificationOptions = {
         body: payload.data.detail,
-        icon: '/logo.png',
+        icon: payload.data.img || '/logo.png',
         vibrate: [100, 50, 100],
         data: payload.data.url
     };
