@@ -122,6 +122,11 @@ export default function ng(state = [], action) {
 			return { ...tempState, chats: allChats };
 			break;
 
+		case 'SET_ITEMS':
+			const { item, id, val } = action.payload;
+			return { ...tempState, [item]: {[id]: val} };
+			break;
+
 		case 'BOT_CHAT':
 			if(
 				action.payload &&

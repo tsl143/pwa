@@ -8,9 +8,6 @@ import setFCM from '../../FCM';
 
 import Styles from './style.scss';
 
-let lastTouchY = 0;
-let maybePreventPullToRefresh = false;
-
 class List extends Component {
 
     constructor(props) {
@@ -19,15 +16,11 @@ class List extends Component {
             error: false,
             firstCall: true
         };
-        this.touchstartHandler = this.touchstartHandler.bind(this);
-        this.stopTouchReload = this.stopTouchReload.bind(this);
         this.processNotifications = this.processNotifications.bind(this);
     }
 
     componentWillMount() {
         this.props.getFriendsCache();
-        document.addEventListener('touchstart', this.touchstartHandler, false);
-        document.addEventListener('touchmove', this.stopTouchReload, false);
         this.setState({
             isNotificationEnabeled: localStorage.getItem(`NG_PWA_NOTIFICATION`)
         });
@@ -38,29 +31,6 @@ class List extends Component {
             })
         }catch(e){}
     }
-
-    touchstartHandler(e) {
-        try{
-            if (e.touches.length != 1) return;
-            lastTouchY = e.touches[0].clientY;
-            maybePreventPullToRefresh = window.pageYOffset == 0;
-        }catch(e){}
-    }
-
-    stopTouchReload(e) {
-        try{
-            const touchY = e.touches[0].clientY;
-            var touchYDelta = touchY - lastTouchY;
-            lastTouchY = touchY;
-            if (maybePreventPullToRefresh) {
-                maybePreventPullToRefresh = false;
-                if (touchYDelta > 0) {
-                    e.preventDefault();
-                    return;
-                }
-            }
-        }catch(e){}
-      }
 
     componentDidMount() {
         if(navigator.onLine && !this.props.noReload){
@@ -104,6 +74,11 @@ class List extends Component {
                 });
             });
             this.setFriendsChat(props.me.channelId, friendMeetingIds);
+            if(props.me && props.me.channelId && navigator.onLine) {
+                firebase.database().ref(`/isOnline/${props.me.channelId}`).set({ online: true });
+                firebase.database().ref(`/isOnline/${props.me.channelId}`).onDisconnect().set({ online: false });
+                firebase.database().ref(`/lastSeen/${props.me.channelId}`).onDisconnect().set({ seenTime: Date.now() });
+            }
         }
     }
 
@@ -115,6 +90,7 @@ class List extends Component {
             if(newFriends.length !== 0) this.props.getFriendsChat(channelId, newFriends);
         }catch(e){}
     }
+
     processNotifications() {
         if (!navigator.onLine) return false;
         this.setState({

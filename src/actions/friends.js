@@ -114,3 +114,10 @@ export const addChats = (meetingId, msg) => {
         payload: { meetingId, msg }
     }
 }
+
+export const setItems = (item, id, val) => {
+    return {
+        type: 'SET_ITEMS',
+        payload: { item, id, val }
+    }
+}

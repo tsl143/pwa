@@ -1,5 +1,3 @@
-const API = 'http://localhost:8081/';
-
 import React from 'react';
 import { render as ReactDomRender } from 'react-dom';
 import { Route, HashRouter } from 'react-router-dom';

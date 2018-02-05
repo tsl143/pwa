@@ -1,5 +1,22 @@
+.chatHeader {
+    position: relative;
+
+    > span:first-child{
+        display: block;
+        line-height: 50px;
+    }
+
+    > span:last-child{
+        display: inline-block;
+        font-size: 14px;
+        font-weight: normal;
+        line-height: 14px;
+        position: absolute;
+        bottom: -3px;
+    }
+}
 .chatWindow {
-    background: #f9f9f9;
+    background: #DDE1E0;
     height: 100vh;
 }
 .refresh {
@@ -53,7 +70,7 @@
         font-size: 16px;
         display: inline-block;
         padding: 8px 10px;
-        background: #e1e1e1;
+        background: #fff;
         color: #444;
         margin: 5px;
         max-width: 80%;
@@ -67,18 +84,29 @@
     .time {
         font-size: 10px;
         position: absolute;
-        bottom: -10px;
+        bottom: -14px;
         left: 7px;
         font-style: italic;
         color: #888;
+
+        span {
+            display: inline-block;
+            vertical-align: middle;
+
+            svg {
+                height: 13px!important;
+                width: 13px!important;
+                margin-left: 4px;
+            }
+        }
     }
 }
 
 .self {
     text-align: right;
         .chatlet {
-            background: rgb(0, 188, 212);
-            color: #fff;
+            background: #B1E1F5;
+            color: #000;
             text-align: left;
         }
         .time {

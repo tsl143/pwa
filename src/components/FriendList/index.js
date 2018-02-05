@@ -7,6 +7,7 @@ import Avatar from 'material-ui/Avatar';
 import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
+import Timestamp from "react-timestamp";
 
 import { setMeeting } from '../../actions/friends';
 
@@ -49,7 +50,7 @@ class FriendList extends Component {
 		const currentDay = formatDate(currentTime);
 		const chatTime = parseInt(t);
 		const chatDay = formatDate(chatTime);
-		if(currentDay == chatDay) return formatTime(chatTime);
+		if(currentDay == chatDay) return <Timestamp time={new Date(chatTime)} format="time" />;
 		return chatDay;
 	}
 

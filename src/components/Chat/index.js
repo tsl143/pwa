@@ -3,12 +3,15 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 
 import { Twemoji } from "react-emoji-render";
+import Timestamp from "react-timestamp";
 import Avatar from "material-ui/Avatar";
 import TextField from "material-ui/TextField";
 import ActionSend from "material-ui/svg-icons/content/send";
+import ActionSeen from "material-ui/svg-icons/action/done-all";
+import ActionUnSeen from "material-ui/svg-icons/navigation/check";
 import RefreshIndicator from "material-ui/RefreshIndicator";
 import { cyan500 } from "material-ui/styles/colors";
-import { getLastMsg, sendPush, addChildListener, setChats, addChats } from '../../actions/friends';
+import { getLastMsg, sendPush, addChildListener, setChats, addChats, setItems } from '../../actions/friends';
 import initialize from "../../initializeFirebase";
 import { htmlDecode, formatTime, formatDate } from '../../utility';
 
@@ -24,13 +27,14 @@ class Chat extends Component {
 			chats: [],
 			loading: true,
 			isOtherOnline: false,
+			friendsLastSeen: '',
 			sentTime: Date.now()
 		};
 		this.handleMsg = this.handleMsg.bind(this);
 		this.sendPlz = this.sendPlz.bind(this);
 		this.startListening = this.startListening.bind(this);
 		this.handleChildAdd = this.handleChildAdd.bind(this);
-		this.handleValue = this.handleValue.bind(this);
+		this.headerValue = this.headerValue.bind(this);
 	}
 
 	componentWillMount() {
@@ -41,12 +45,28 @@ class Chat extends Component {
 		window.onresize = () => {
 			this.scrollUp();
 		}
+
+		//check if other participant is online
+		firebase.database()
+		.ref(`/isOnline/${data.channelId}`)
+		.once("value", snapshot => {
+			const isOnline = snapshot.val();
+			if( isOnline && isOnline.online) this.props.setItems('isOtherOnline', data.channelId, isOnline.online);
+		});
+
+		// get lastSeen of friend
+		firebase.database()
+		.ref(`/lastSeen/${data.channelId}`)
+		.once("value", snapshot => {
+			const lastSeen = snapshot.val();
+			if( lastSeen && lastSeen.seenTime ) this.props.setItems('friendsLastSeen', data.channelId, lastSeen.seenTime);
+		});
 	}
+
 	componentWillReceiveProps(nextProps){
 		const { data, chats, childListeners, fromId } = nextProps;
 		const myChats = chats[data.meetingId];
 		this.setState({ chats: myChats });
-		if(fromId) firebase.database().ref(`/isOnline/${fromId}`).set({ online: true });
 		if (!childListeners.includes(data.meetingId)) {
 			let lastChat;
 			if (myChats && myChats.length > 0) {
@@ -93,10 +113,8 @@ class Chat extends Component {
 		});
 		const chatObj = {
 			fromId,
-			toId: data.channelId,
 			msg: this.state.message,
-			sentTime: Date.now(),
-			arrivedAt: Firebase.ServerValue.TIMESTAMP
+			sentTime: Date.now()
 		};
 		this.setChat(chatObj);
 		firebase
@@ -141,26 +159,20 @@ class Chat extends Component {
 				.on('child_added', snapshot => this.handleChildAdd(snapshot));
 		}
 
-		//manage self online and last seen
-		if(fromId) {
-			firebase.database().ref(`/isOnline/${fromId}`).onDisconnect().set({ online: false });
-			firebase.database().ref(`/lastSeen/${fromId}`).onDisconnect().set(Firebase.ServerValue.TIMESTAMP);
-		}
-
-		//check if other participant is online
 		firebase.database()
 		.ref(`/isOnline/${data.channelId}`)
 		.on("child_changed", snapshot => {
 			const isOtherOnline = snapshot.val();
-			this.setState({ isOtherOnline });
+			if(isOtherOnline!==null && typeof isOtherOnline !== 'undefined') this.props.setItems('isOtherOnline', data.channelId, isOtherOnline);
 		});
-		//check if other participant is online
+
 		firebase.database()
-		.ref(`/isOnline/${data.channelId}`)
-		.on("child_added", snapshot => {
-			const isOtherOnline = snapshot.val();
-			this.setState({ isOtherOnline });
+		.ref(`/lastSeen/${data.channelId}`)
+		.on("child_changed", snapshot => {
+			const friendsLastSeen = snapshot.val();
+			if(friendsLastSeen) this.props.setItems('friendsLastSeen', data.channelId, friendsLastSeen);
 		});
+
 		this.props.addChildListener(data.meetingId);
 	}
 
@@ -180,10 +192,6 @@ class Chat extends Component {
 		}
 	}
 
-	handleValue(snapshot) {
-		this.setState({ loading: false });
-	};
-
 	setChat(msg) {
 		this.props.addChats(this.props.data.meetingId, msg)
 	}
@@ -200,6 +208,22 @@ class Chat extends Component {
 		}catch(e){}
 	}
 
+	headerValue(name) {
+		const { data, isOtherOnline, friendsLastSeen } = this.props;
+		let subHead = '';
+		if (isOtherOnline && isOtherOnline[data.channelId])
+			subHead = <span>Online</span>;
+		else if(friendsLastSeen && friendsLastSeen[data.channelId]){
+			const lastSeenObj = new Date(friendsLastSeen[data.channelId]);
+			subHead = <span>Last seen {<Timestamp time={lastSeenObj} />}</span>;
+		}
+		else subHead = 'Not yet on NG lite'
+		return <div className={Styles.chatHeader}>
+			<span>{name}</span>
+			<span>{subHead}</span>
+		</div>
+	}
+
 	render() {
 		const { data, fromId } = this.props;
 		if(!data){
@@ -209,7 +233,7 @@ class Chat extends Component {
 		return (
 		<div className={Styles.chatWindow}>
 			<Header
-				name={data.name}
+				name={this.headerValue(data.name)}
 				avtar={AvtarUrl}
 				action='home'
 			/>
@@ -238,6 +262,7 @@ class Chat extends Component {
 							newDay = newDate;
 						}
 					}
+					const chatTime = chat.sentTime?new Date(parseInt(chat.sentTime,10)):null;
 					return(
 					<div key={index} className={chat.fromId == fromId ? Styles.self : ""}>
 						{newDay &&
@@ -249,7 +274,10 @@ class Chat extends Component {
 							<Twemoji text={htmlDecode(chat.msg)} />
 						</span>
 						<span className={Styles.time}>
-							{formatTime(chat.sentTime)}
+							{
+								chatTime &&
+								<Timestamp time={chatTime} format='time'/>
+							}
 						</span>
 					</div>);
 				})}
@@ -259,7 +287,7 @@ class Chat extends Component {
 					onChange={this.handleMsg}
 					value={this.state.message}
 					fullWidth={true}
-					hintText="Message"
+					hintText="Type a message..."
 					multiLine={true}
 					underlineStyle={{display: 'none'}}
 					onKeyPress={ev => {
@@ -285,7 +313,9 @@ const mapStateToProps = state => {
 		data: state.friends.meetingData || null,
 		childListeners: state.friends.childListeners || [],
 		chats: state.friends.chats || {},
-		triggerStamp: state.friends.triggerStamp || Date.now()
+		triggerStamp: state.friends.triggerStamp || Date.now(),
+		isOtherOnline: state.friends.isOtherOnline || {},
+		friendsLastSeen: state.friends.friendsLastSeen || {},
 	  }
 }
 
@@ -305,6 +335,9 @@ const mapDispatchToProps = dispatch => {
 		},
 		addChats: (meetingId, msg) => {
 			dispatch(addChats(meetingId, msg));
+		},
+		setItems: (item, id, value) => {
+			dispatch(setItems(item, id, value));
 		}
 	}
 }
