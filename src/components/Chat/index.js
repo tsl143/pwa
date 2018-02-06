@@ -61,6 +61,14 @@ class Chat extends Component {
 			const lastSeen = snapshot.val();
 			if( lastSeen && lastSeen.seenTime ) this.props.setItems('friendsLastSeen', data.channelId, lastSeen.seenTime);
 		});
+
+		// if user is offline, get last seen of friend from cache
+		if(!navigator.onLine) {
+			try{
+				const lastSeens = JSON.parse(localStorage.getItem('NG_PWA_FRIEND_LAST_SEEN'));
+				if(lastSeens[data.channelId]) this.props.setItems('friendsLastSeen', data.channelId, lastSeens[data.channelId]);
+			} catch(e){}
+		}
 	}
 
 	componentWillReceiveProps(nextProps){
@@ -211,13 +219,15 @@ class Chat extends Component {
 	headerValue(name) {
 		const { data, isOtherOnline, friendsLastSeen } = this.props;
 		let subHead = '';
-		if (isOtherOnline && isOtherOnline[data.channelId])
+		if(navigator.onLine) {
+			if (isOtherOnline && isOtherOnline[data.channelId])
 			subHead = <span>Online</span>;
-		else if(friendsLastSeen && friendsLastSeen[data.channelId]){
-			const lastSeenObj = new Date(friendsLastSeen[data.channelId]);
-			subHead = <span>Last seen {<Timestamp time={lastSeenObj} />}</span>;
+			else if(friendsLastSeen && friendsLastSeen[data.channelId]){
+				const lastSeenObj = new Date(friendsLastSeen[data.channelId]);
+				subHead = <span>Last seen {<Timestamp time={lastSeenObj} />}</span>;
+			}
+			else subHead = 'Not yet on NG lite';
 		}
-		else subHead = 'Not yet on NG lite'
 		return <div className={Styles.chatHeader}>
 			<span>{name}</span>
 			<span>{subHead}</span>
@@ -225,7 +235,7 @@ class Chat extends Component {
 	}
 
 	render() {
-		const { data, fromId } = this.props;
+		const { data, fromId, isOtherOnline, friendsLastSeen } = this.props;
 		if(!data){
 			return <Redirect to="/" push />
 		}
@@ -277,6 +287,17 @@ class Chat extends Component {
 							{
 								chatTime &&
 								<Timestamp time={chatTime} format='time'/>
+							}
+							{
+								chat.fromId == fromId &&
+								<span className={Styles.isSeen}>
+									{
+										(isOtherOnline && isOtherOnline[data.channelId]) ||
+										(friendsLastSeen && (chat.sentTime <= friendsLastSeen[data.channelId]))
+										? <ActionSeen color={cyan500}/>
+										: <ActionUnSeen/>
+									}
+								</span>
 							}
 						</span>
 					</div>);

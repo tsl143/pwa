@@ -124,7 +124,12 @@ export default function ng(state = [], action) {
 
 		case 'SET_ITEMS':
 			const { item, id, val } = action.payload;
-			return { ...tempState, [item]: {[id]: val} };
+			const itemData = { ...tempState[item] };
+			itemData[id] = val;
+			if(item === 'friendsLastSeen') {
+				localStorage.setItem('NG_PWA_FRIEND_LAST_SEEN', JSON.stringify(itemData));
+			}
+			return { ...tempState, [item]: itemData };
 			break;
 
 		case 'BOT_CHAT':
@@ -138,7 +143,7 @@ export default function ng(state = [], action) {
 				const newChats = action.payload.data;
 				const cacheBotChats = JSON.parse(localStorage.getItem('NG_PWA_BOT_CHATS')) || {};
 				botChats = Object.assign(cacheBotChats, newChats);
-				localStorage.setItem('NG_PWA_BOT_CHATS', JSON.stringify(botChats) );
+				localStorage.setItem('NG_PWA_BOT_CHATS', JSON.stringify(botChats));
 			}
 			return { ...tempState, botChats}
 

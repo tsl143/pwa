@@ -34,6 +34,7 @@ export const sortFriendList = (friends, lastMessage) => {
 			if(lastMessage && lastMessage[friend.meetingId]) {
 				theFriend.lastMsg = lastMessage[friend.meetingId].msg;
 				theFriend.lastTime = lastMessage[friend.meetingId].sentTime;
+				theFriend.msgFrom = lastMessage[friend.meetingId].fromId;
 			} else {
 				theFriend.lastTime = 0;
 			}

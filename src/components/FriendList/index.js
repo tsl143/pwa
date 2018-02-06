@@ -30,8 +30,10 @@ class FriendList extends Component {
 	componentDidMount() {
 		if(document.getElementById('loading')) document.getElementById('loading').remove();
 	}
+
 	handleImg(id, e) {
 		try {
+			// to prevent infinite loop if fallback avtar even fails
 			if(!this.state.loadCheck.includes(id)) {
 				this.setState(prev => {
 					const loadCheck = [ ...loadCheck ];
@@ -55,10 +57,11 @@ class FriendList extends Component {
 	}
 
 	populateFriendsList() {
-		const { friends, lastChats } = this.props;
+		const { friends, lastChats, me } = this.props;
 		const sortedFriends = sortFriendList(friends, lastChats) || [];
 	  	const AvtarUrl = 'https://img.neargroup.me/project/forcesize/50x50/profile_';
 		return sortedFriends.map( friend => {
+			const sentByMe = (friend.msgFrom == me.channelId) ? true: false;
 	  		return (
 	  			<ListItem
 					key={friend.channelId}
@@ -73,7 +76,7 @@ class FriendList extends Component {
 					}
 					secondaryText={
 						friend.lastMsg &&
-						<p><Twemoji text={htmlDecode(friend.lastMsg.substr(0,200))} /></p>
+						<p><span>{sentByMe && 'You: '}</span><Twemoji text={htmlDecode(friend.lastMsg.substr(0,200))} /></p>
 					}
 				/>
 	  		);
@@ -114,7 +117,8 @@ class FriendList extends Component {
 
 const mapStateToProps = state => {
     return {
-    	friends: state.friends.friends || [],
+		friends: state.friends.friends || [],
+		me: state.friends.me || {},
     	loading: state.friends.isLoading || false,
 		timestamp : state.friends.timestamp || 0,
 		lastChats: state.friends.lastChats || {}
