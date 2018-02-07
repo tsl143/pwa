@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import FriendList from '../FriendList';
 import Chat from '../Chat';
 import { getFriends, getFriendsCache, getLastMsg, getFriendsChat } from '../../actions/friends';
-import initialize from "../../initializeFirebase";
 import setFCM from '../../FCM';
 
 import Styles from './style.scss';
@@ -77,7 +76,9 @@ class List extends Component {
             if(props.me && props.me.channelId && navigator.onLine) {
                 firebase.database().ref(`/isOnline/${props.me.channelId}`).set({ online: true });
                 firebase.database().ref(`/isOnline/${props.me.channelId}`).onDisconnect().set({ online: false });
-                firebase.database().ref(`/lastSeen/${props.me.channelId}`).onDisconnect().set({ seenTime: Date.now() });
+                try {
+                    firebase.database().ref(`/lastSeen/${props.me.channelId}`).onDisconnect().set({ seenTime: Firebase.ServerValue.TIMESTAMP });
+                }catch(e){}
             }
         }
     }
@@ -113,6 +114,7 @@ class List extends Component {
         return (
             <div>
                 {!this.state.isNotificationEnabeled &&
+                    false &&
                     <div>
                         <div className={Styles.overlay} />
                         <div

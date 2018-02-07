@@ -12,7 +12,6 @@ import ActionUnSeen from "material-ui/svg-icons/navigation/check";
 import RefreshIndicator from "material-ui/RefreshIndicator";
 import { cyan500 } from "material-ui/styles/colors";
 import { getLastMsg, sendPush, addChildListener, setChats, addChats, setItems } from '../../actions/friends';
-import initialize from "../../initializeFirebase";
 import { htmlDecode, formatTime, formatDate } from '../../utility';
 
 import Header from "../Header";
