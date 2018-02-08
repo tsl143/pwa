@@ -113,7 +113,7 @@ class Chat extends Component {
 	}
 
 	sendPlz() {
-		const { data, fromId } = this.props;
+		const { data, fromId, isOtherOnline } = this.props;
 		if (this.state.message.trim() === "") return false;
 		this.setState({
 			message: ""
@@ -138,7 +138,7 @@ class Chat extends Component {
 			this.refs["autoFocus"].select();
 		} catch (e) {}
 
-		if (navigator.onLine) {
+		if (navigator.onLine && !(isOtherOnline && isOtherOnline[data.channelId])) {
 			this.props.sendPush({
 				toChannelId: data.channelId,
 				fromChannelId: fromId,

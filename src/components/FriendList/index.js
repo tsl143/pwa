@@ -90,13 +90,16 @@ class FriendList extends Component {
 				<Header name="Friends"/>
 				<div className={Styles.FriendList}>
 					{loading &&
-						<RefreshIndicator
-						      size={40}
-						      left={10}
-						      top={0}
-						      status="loading"
-						      className={Styles.refresh}
-					    />
+						<div>
+							<div className={Styles.overlay} />
+							<RefreshIndicator
+								size={40}
+								left={10}
+								top={0}
+								status="loading"
+								className={Styles.refresh}
+							/>
+						</div>
 					}
 					{
 						friends.length === 0 &&
