@@ -91,7 +91,7 @@ class FriendList extends Component {
 				<div className={Styles.FriendList}>
 					{loading &&
 						<div>
-							<div className={Styles.overlay} />
+
 							<RefreshIndicator
 								size={40}
 								left={10}

@@ -34,6 +34,7 @@ class Chat extends Component {
 		this.startListening = this.startListening.bind(this);
 		this.handleChildAdd = this.handleChildAdd.bind(this);
 		this.headerValue = this.headerValue.bind(this);
+		this.processChat = this.processChat.bind(this);
 	}
 
 	componentWillMount() {
@@ -87,6 +88,21 @@ class Chat extends Component {
 
 	componentDidMount() {
 		if(document.getElementById('loading')) document.getElementById('loading').remove();
+		if(navigator.onLine) {
+			const { data } = this.props;
+			try{
+				let offlineChats = localStorage.getItem(`NG_PWA_OFFLINE_CHATS`);
+				if(offlineChats) {
+					offlineChats = JSON.parse(offlineChats);
+					const myOfflineChats = offlineChats[data.meetingId] || [];
+					if(myOfflineChats.length > 0){
+						myOfflineChats.forEach(chatObj => this.processChat(chatObj))
+						delete(offlineChats[data.meetingId]);
+						localStorage.setItem(`NG_PWA_OFFLINE_CHATS`, JSON.stringify(offlineChats));
+					}
+				}
+			}catch(e){}
+		}
 		this.scrollUp();
 	}
 
@@ -124,6 +140,30 @@ class Chat extends Component {
 			sentTime: Date.now()
 		};
 		this.setChat(chatObj);
+		if(navigator.onLine){
+			this.processChat(chatObj);
+		}else {
+			this.cacheSentChat(chatObj);
+		}
+	}
+
+	cacheSentChat(chatObj) {
+		const { data, fromId, isOtherOnline } = this.props;
+		let offlineChats = localStorage.getItem(`NG_PWA_OFFLINE_CHATS`);
+		let myOfflineChats = [];
+		if(offlineChats) {
+			offlineChats = JSON.parse(offlineChats);
+			myOfflineChats = offlineChats[data.meetingId] || [];
+		} else {
+			offlineChats = {};
+		}
+		myOfflineChats.push(chatObj);
+		offlineChats[data.meetingId] = myOfflineChats;
+		localStorage.setItem(`NG_PWA_OFFLINE_CHATS`, JSON.stringify(offlineChats));
+	}
+
+	processChat(chatObj) {
+		const { data, fromId, isOtherOnline } = this.props;
 		firebase
 			.database()
 			.ref(`/rooms/${data.meetingId}`)
