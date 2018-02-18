@@ -149,6 +149,15 @@ export default function ng(state = [], action) {
 
 			break;
 
+		case 'UNFRIEND':
+			if(action.payload.status >= 200 && action.payload.status < 300) {
+				window.location.reload();
+			} else {
+				alert("Something went wrong!");
+			}
+			return { ...tempState, isLoading: false };
+			break;
+
 		default:
 			return tempState;
 	}

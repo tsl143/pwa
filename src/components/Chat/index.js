@@ -6,12 +6,14 @@ import { Twemoji } from "react-emoji-render";
 import Timestamp from "react-timestamp";
 import Avatar from "material-ui/Avatar";
 import TextField from "material-ui/TextField";
+import Dialog from 'material-ui/Dialog';
+import RaisedButton from 'material-ui/RaisedButton';
 import ActionSend from "material-ui/svg-icons/content/send";
 import ActionSeen from "material-ui/svg-icons/action/done-all";
 import ActionUnSeen from "material-ui/svg-icons/navigation/check";
 import RefreshIndicator from "material-ui/RefreshIndicator";
 import { cyan500 } from "material-ui/styles/colors";
-import { getLastMsg, sendPush, addChildListener, setChats, addChats, setItems } from '../../actions/friends';
+import { getLastMsg, sendPush, addChildListener, setChats, addChats, setItems, unfriend } from '../../actions/friends';
 import { htmlDecode, formatTime, formatDate } from '../../utility';
 
 import Header from "../Header";
@@ -27,7 +29,8 @@ class Chat extends Component {
 			loading: true,
 			isOtherOnline: false,
 			friendsLastSeen: '',
-			sentTime: Date.now()
+			sentTime: Date.now(),
+			isUnfriend: false
 		};
 		this.handleMsg = this.handleMsg.bind(this);
 		this.sendPlz = this.sendPlz.bind(this);
@@ -273,6 +276,35 @@ class Chat extends Component {
 		</div>
 	}
 
+	unfriendActionButtons() {
+		return [
+			<RaisedButton
+				label="No"
+				primary={false}
+				onClick={this.toggleUnfriendDialog.bind(this, true)}
+				disabled={this.props.isLoading}
+			/>,
+			<span>&nbsp;&nbsp;</span>,
+			<RaisedButton
+				label="Yes"
+				primary={true}
+				keyboardFocused={true}
+				onClick={this.unfriendAction.bind(this)}
+				disabled={this.props.isLoading}
+			/>
+		]
+	}
+
+	toggleUnfriendDialog(isOpen) {
+		const isUnfriend = isOpen || false
+		this.setState({ isUnfriend: !isUnfriend });
+	}
+
+	unfriendAction() {
+		const { data, fromId } = this.props;
+		this.props.unfriend(data.channelId, fromId);
+	}
+
 	render() {
 		const { data, fromId, isOtherOnline, friendsLastSeen } = this.props;
 		if(!data){
@@ -285,6 +317,7 @@ class Chat extends Component {
 				name={this.headerValue(data.name)}
 				avtar={AvtarUrl}
 				action='home'
+				unfriend={this.toggleUnfriendDialog.bind(this)}
 			/>
 			{
 				this.state.loading &&
@@ -362,6 +395,15 @@ class Chat extends Component {
 					<ActionSend color={cyan500} />
 				</a>
 			</div>
+			<Dialog
+				title="Unfriend"
+				actions={this.unfriendActionButtons()}
+				modal={false}
+				open={this.state.isUnfriend}
+				className={Styles.unfriendDialog}
+				>
+				<div className={Styles.dialogbody}>{`Are you sure you want to unfriend ${data.name}?`}</div>
+			</Dialog>
 		</div>
 		);
 	}
@@ -376,6 +418,7 @@ const mapStateToProps = state => {
 		triggerStamp: state.friends.triggerStamp || Date.now(),
 		isOtherOnline: state.friends.isOtherOnline || {},
 		friendsLastSeen: state.friends.friendsLastSeen || {},
+		isLoading: state.friends.isLoading || false
 	  }
 }
 
@@ -398,6 +441,9 @@ const mapDispatchToProps = dispatch => {
 		},
 		setItems: (item, id, value) => {
 			dispatch(setItems(item, id, value));
+		},
+		unfriend: (me, notFriend) => {
+			dispatch(unfriend(me, notFriend));
 		}
 	}
 }

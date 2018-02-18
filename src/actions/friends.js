@@ -121,3 +121,15 @@ export const setItems = (item, id, val) => {
         payload: { item, id, val }
     }
 }
+
+export const unfriend = (channelId, unfriendChannelId) => {
+    Store.dispatch(showLoader());
+    return {
+        type: 'UNFRIEND',
+        payload: axios({
+            method: 'POST',
+            url: `${API}unfriendsUser`,
+            data: { channelId, unfriendChannelId }
+        })
+    }
+}

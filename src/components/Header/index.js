@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom';
 import AppBar from 'material-ui/AppBar';
 import Avatar from 'material-ui/Avatar';
 import ActionBack from 'material-ui/svg-icons/hardware/keyboard-backspace';
-import {white500} from 'material-ui/styles/colors';
+import {white} from 'material-ui/styles/colors';
 import { htmlDecode } from '../../utility';
+import MoreButton from './moreButton';
 
 import Styles from './style.scss';
 
@@ -28,7 +29,7 @@ export default class Header extends Component {
     }
 
     render() {
-        const { name } = this.props;
+        const { action, name, unfriend } = this.props;
 		const avtar = this.props.avtar || 'logo.png';
 
         return ( 
@@ -38,8 +39,8 @@ export default class Header extends Component {
             	iconElementLeft = {
                     <div className={Styles.avtar}>
                         {
-                            this.props.action &&
-                            this.props.action === 'home' &&
+                            action &&
+                            action === 'home' &&
                             <Link to="/">
                                 <ActionBack color={'white'}/>
                             </Link>
@@ -48,6 +49,7 @@ export default class Header extends Component {
                     </div>
                 }
                 title = { htmlDecode(name) }
+                iconElementRight = { action==='home' ? <MoreButton unfriend={unfriend} /> : <p/> }
             />
             </div>
         );

@@ -62,8 +62,9 @@ module.exports = {
             FIREBASE_STORAGE_BUCKET : JSON.stringify('test-neargroup.appspot.com'),
             API: JSON.stringify('https://stark-chamber-45207.herokuapp.com/'),
             AVTAR: JSON.stringify('avtar.svg'),
+            ISDEV: true,
             'process.env': {
-                NODE_ENV: JSON.stringify('production')
+                NODE_ENV: JSON.stringify('dev')
             }
 
         })

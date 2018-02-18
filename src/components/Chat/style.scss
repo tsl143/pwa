@@ -113,3 +113,19 @@
             right: 7px;
         }
 }
+
+.unfriendDialog {
+    h3 {
+        background: #00BCD4 !important;
+        color: #fff !important;
+        text-align: center !important;
+        padding: 10px !important;
+    }
+    .dialogbody {
+        line-height: 1.3;
+        padding-top: 24px;
+    }
+    button {
+        margin-left: 10px;
+    }
+}
