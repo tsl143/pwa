@@ -133,3 +133,11 @@ export const unfriend = (channelId, unfriendChannelId) => {
         })
     }
 }
+
+export const setUnreadChatCount = (meetingId, count, msg) => {
+  console.log("setUnreadChatCount= ", meetingId, count, msg);
+    return {
+        type: 'SET_UNREAD_CHAT_COUNT',
+        payload: { meetingId, count , msg}
+    }
+}

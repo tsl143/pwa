@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import FriendList from '../FriendList';
 import Chat from '../Chat';
-import { getFriends, getFriendsCache, getLastMsg, getFriendsChat } from '../../actions/friends';
+import {setUnreadChatCount, getFriends, getFriendsCache, getLastMsg, getFriendsChat } from '../../actions/friends';
 import setFCM from '../../FCM';
 
 import Styles from './style.scss';
@@ -20,6 +20,12 @@ class List extends Component {
 
     componentWillMount() {
         this.props.getFriendsCache();
+        if(localStorage.getItem("CHAT_BOX_CLOSED") == null || localStorage.getItem("CHAT_BOX_CLOSED") == undefined) {
+          localStorage.setItem("CHAT_BOX_CLOSED", false)
+        }
+        if(localStorage.getItem("NG_PWA_LAST_MSG") == null || localStorage.getItem("NG_PWA_LAST_MSG") == undefined) {
+          localStorage.setItem("NG_PWA_LAST_MSG", JSON.stringify({}))
+        }
         this.setState({
             isNotificationEnabeled: localStorage.getItem(`NG_PWA_NOTIFICATION`)
         });
@@ -50,6 +56,7 @@ class List extends Component {
     }
 
     componentWillReceiveProps(props) {
+      console.log("App receive props= ", props);
         if(
             navigator.onLine &&
             props.friends &&
@@ -57,18 +64,80 @@ class List extends Component {
             this.state.firstCall &&
             !this.props.noReload
         ) {
+            // let initialCall = true
             const friendMeetingIds = [];
+            console.log("firstCall= ", !this.state.firstCall);
             this.setState({ firstCall: false });
             props.friends.forEach(friend => {
                 friendMeetingIds.push(friend.meetingId);
                 firebase.database().ref(`/rooms/${friend.meetingId}`)
                 .limitToLast(1)
                 .on('value', snap => {
+
                     const value = snap.val();
+                    console.log("value on value= ", value);
                     if (value) {
                         const msg = value[Object.keys(value)[0]];
-                        this.props.getLastMsg(friend.meetingId, msg);
+                        console.log("localStorage on initial lastMsg= ", localStorage, msg, friend.meetingId);
+                        var showUnreadCount = localStorage.getItem("CHAT_BOX_CLOSED")
+                        var lastChat = JSON.parse(localStorage.getItem("NG_PWA_LAST_MSG"))[friend.meetingId]
+                        console.log("localstorage lastChat in lastChat= ", lastChat);
+                        console.log('getLastMsg in App receive props= ', friend.meetingId, msg);
+                        console.log('CHAT_BOX_CLOSED in App receive props= ', showUnreadCount);
+                        // console.log('2nd condition= ', lastChat.sentTime != msg.sentTime);
+                        // console.log('2nd condition= ', lastChat == undefined || lastChat == null );
+                        // if(lastChat == undefined || lastChat == null || lastChat.sentTime == msg.sentTime) {
+                        //   console.log("initialCall--");
+                        //   this.props.getLastMsg(friend.meetingId, msg);
+                        //   // initialCall = false
+                        // } else {
+                        let lastChatNull = (lastChat == undefined || lastChat == null)
+                        let lastChatNew, lastChatNotMe
+                        if(lastChatNull) {
+                          console.log("lastChatNull NO SHOW");
+                          lastChatNew = false
+                          lastChatNotMe = false
+                        } else {
+                          console.log("lastChatNull SHOW");
+                          lastChatNew = (lastChat.sentTime != msg.sentTime)
+                          lastChatNotMe = msg.fromId != props.me.channelId
+                        }
+                        let ll = lastChatNull || lastChatNew
+                        console.log("lastChatNull= ", ll);
+                        console.log("lastChatNotMe: ", showUnreadCount == "true", ll, lastChatNotMe);
+                        console.log("result= ", showUnreadCount == "true" && ll && lastChatNotMe);
+                          if(showUnreadCount == "true" && ( lastChatNull || lastChatNew ) && lastChatNotMe) {
+                            console.log('NOT initialCall');
+                            let unreadCountsState = JSON.parse(localStorage.getItem("NG_PWA_UNREAD_COUNTS"))  //props.unreadChatCounts
+                            console.log('getLastMsg 222 in App receive props= ', friend.meetingId, msg);
+                            let unreadMsgsCount = unreadCountsState[friend.meetingId]
+                            console.log('unreadMsgsCount= ',friend.meetingId, " : ", unreadMsgsCount, unreadCountsState);
+                            console.log("msg--", msg);
+                            if(unreadMsgsCount == undefined || unreadMsgsCount == null){
+                              this.props.setUnreadChatCount(friend.meetingId, 0, msg);
+                            } else {
+                              this.props.setUnreadChatCount(friend.meetingId, Number(unreadMsgsCount) + 1, msg);
+                            }
+
+                            // if(unreadMsgsCount == null || unreadMsgsCount == undefined) {
+                            //   unreadMsgsCount = localStorage.getItem("NG_PWA_UNREAD_COUNTS")
+                            //   console.log("unreadMsgsCount null");
+                            //   // unreadMsgsCount[friend.meetingId] = 1
+                            //   // localStorage.setItem(NG_PWA_UNREAD_COUNTS, unreadMsgsCount)
+                            // } else {
+                            //   console.log("unreadMsgsCount NOT null= ", unreadMsgsCount);
+                            //   unreadMsgsCount = Number(unreadMsgsCount) + 1
+                            //   localStorage.setItem(`NG_PWA_UNREAD_COUNT_${friend.meetingId}`, unreadMsgsCount)
+                            // }
+                          } else {
+                            console.log("initialCall--");
+                            this.props.getLastMsg(friend.meetingId, msg);
+                          }
+                        // }
+
+
                     }
+
 
                 });
             });
@@ -109,32 +178,39 @@ class List extends Component {
 
     render() {
         const { me } = this.props;
+        console.log("render App -= ", this.state.error, me);
 
-        if(this.state.error || !me.channelId) return <div />;
+        if(this.state.error || !me.channelId) {
+          console.log("render error ");
+          return <div />
+        }
+        // false &&
         return (
             <div>
                 {!this.state.isNotificationEnabeled &&
-                    false &&
-                    <div>
+                    (<div>
                         <div className={Styles.overlay} />
                         <div
                             className={Styles.popup}
                             style={{background: 'url(notify.png)'}}
                             onClick={this.processNotifications}
                         />
-                    </div>
+                    </div>)
                 }
-                <FriendList />
+                <FriendList ucc={this.props.unreadChatCounts} />
             </div>
         );
     }
 }
 
 const mapStateToProps = state => {
+  console.log("mapStateToProps in App= ", state);
     return {
         me: state.friends.me || {},
         friends: state.friends.friends || [],
-        noReload: state.friends.noReload || false
+        noReload: state.friends.noReload || false,
+        meetingData: state.friends.meetingData || null,
+        unreadChatCounts: state.friends.unreadChatCounts || {}
     }
 }
 
@@ -151,7 +227,10 @@ const mapDispatchToProps = dispatch => {
         },
         getLastMsg: (id, msg) => {
             dispatch(getLastMsg(id, msg));
-        }
+        },
+        setUnreadChatCount: (id, count, msg) => {
+            dispatch(setUnreadChatCount(id, count, msg));
+        },
     }
 }
 

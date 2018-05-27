@@ -13,7 +13,7 @@ import ActionSeen from "material-ui/svg-icons/action/done-all";
 import ActionUnSeen from "material-ui/svg-icons/navigation/check";
 import RefreshIndicator from "material-ui/RefreshIndicator";
 import { cyan500 } from "material-ui/styles/colors";
-import { getLastMsg, sendPush, addChildListener, setChats, addChats, setItems, unfriend } from '../../actions/friends';
+import { getLastMsg, sendPush, addChildListener, setChats, addChats, setItems, unfriend, setUnreadChatCount } from '../../actions/friends';
 import { htmlDecode, formatTime, formatDate } from '../../utility';
 
 import Header from "../Header";
@@ -38,11 +38,16 @@ class Chat extends Component {
 		this.handleChildAdd = this.handleChildAdd.bind(this);
 		this.headerValue = this.headerValue.bind(this);
 		this.processChat = this.processChat.bind(this);
+		this.updateOnlineStatus = this.updateOnlineStatus.bind(this);
 	}
 
 	componentWillMount() {
+		console.log("in willMount Chat");
+		localStorage.setItem("CHAT_BOX_CLOSED", false)
 		if(!this.props.data) return false;
 		const { data, fromId } = this.props;
+		localStorage.setItem(`NG_PWA_UNREAD_COUNT_${data.meetingId}`, 0)
+		this.props.setUnreadChatCount(this.props.data.meetingId, 0);
 		this.props.setChats(data.meetingId);
 
 		window.onresize = () => {
@@ -55,6 +60,14 @@ class Chat extends Component {
 		.once("value", snapshot => {
 			const isOnline = snapshot.val();
 			if( isOnline && isOnline.online) this.props.setItems('isOtherOnline', data.channelId, isOnline.online);
+		});
+
+		firebase.database()
+		.ref(`/isOnline/${fromId}`)
+		.once("value", snapshot => {
+			const isOnline = snapshot.val();
+			console.log("SELF ONLINE status-- ", isOnline)
+
 		});
 
 		// get lastSeen of friend
@@ -72,25 +85,59 @@ class Chat extends Component {
 				if(lastSeens[data.channelId]) this.props.setItems('friendsLastSeen', data.channelId, lastSeens[data.channelId]);
 			} catch(e){}
 		}
+
+
+	}
+
+	updateOnlineStatus() {
+		let {data} = this.props
+		console.log("in updateOnlineStatus");
+		if(navigator.onLine) {
+		console.log("navigator online");
+			try{
+				let offlineChats = localStorage.getItem(`NG_PWA_OFFLINE_CHATS`);
+				console.log("offlineChats =", offlineChats, data);
+				if(offlineChats) {
+					offlineChats = JSON.parse(offlineChats);
+					const myOfflineChats = offlineChats[data.meetingId] || [];
+					if(myOfflineChats.length > 0){
+						console.log("got OFFLINE CHATS");
+						myOfflineChats.forEach(chatObj => {
+							console.log("myOfflineChats = ", chatObj);
+							this.processChat(chatObj)
+						})
+						delete(offlineChats[data.meetingId]);
+						localStorage.setItem(`NG_PWA_OFFLINE_CHATS`, JSON.stringify(offlineChats));
+					}
+				}
+			}catch(e){}
+		}
 	}
 
 	componentWillReceiveProps(nextProps){
+		console.log("Chat receive props= ", nextProps);
 		const { data, chats, childListeners, fromId } = nextProps;
 		const myChats = chats[data.meetingId];
 		this.setState({ chats: myChats });
+		console.log("in condition= ", myChats, !childListeners.includes(data.meetingId));
 		if (!childListeners.includes(data.meetingId)) {
+			console.log("childListeners includes - ");
 			let lastChat;
 			if (myChats && myChats.length > 0) {
 				lastChat = myChats[myChats.length - 1];
 			}
+			console.log("call startListening -- ", lastChat);
             this.startListening(lastChat);
-        } else {
+    } else {
+			console.log("else - ");
             this.setState({ loading: false });
 		}
 	}
 
 	componentDidMount() {
+		console.log("componentDidMount ++");
 		if(document.getElementById('loading')) document.getElementById('loading').remove();
+		if(document.getElementById('fullscreen')) document.getElementById('fullscreen').remove();
 		if(navigator.onLine) {
 			const { data } = this.props;
 			try{
@@ -99,7 +146,10 @@ class Chat extends Component {
 					offlineChats = JSON.parse(offlineChats);
 					const myOfflineChats = offlineChats[data.meetingId] || [];
 					if(myOfflineChats.length > 0){
-						myOfflineChats.forEach(chatObj => this.processChat(chatObj))
+						myOfflineChats.forEach(chatObj => {
+							console.log("myOfflineChats = ", chatObj);
+							this.processChat(chatObj)
+						})
 						delete(offlineChats[data.meetingId]);
 						localStorage.setItem(`NG_PWA_OFFLINE_CHATS`, JSON.stringify(offlineChats));
 					}
@@ -107,9 +157,16 @@ class Chat extends Component {
 			}catch(e){}
 		}
 		this.scrollUp();
+
+		window.addEventListener('online',  this.updateOnlineStatus);
+	}
+
+	componentWillUpdate() {
+		console.log("componentWillUpdate ++");
 	}
 
 	componentDidUpdate() {
+		console.log("componentDidUpdate ++");
 		this.scrollUp();
 	}
 
@@ -132,6 +189,7 @@ class Chat extends Component {
 	}
 
 	sendPlz() {
+		console.log("in sendPlz");
 		const { data, fromId, isOtherOnline } = this.props;
 		if (this.state.message.trim() === "") return false;
 		this.setState({
@@ -151,6 +209,7 @@ class Chat extends Component {
 	}
 
 	cacheSentChat(chatObj) {
+		console.log("in cacheSentChat ", chatObj);
 		const { data, fromId, isOtherOnline } = this.props;
 		let offlineChats = localStorage.getItem(`NG_PWA_OFFLINE_CHATS`);
 		let myOfflineChats = [];
@@ -166,6 +225,7 @@ class Chat extends Component {
 	}
 
 	processChat(chatObj) {
+		console.log("in processChat ", chatObj);
 		const { data, fromId, isOtherOnline } = this.props;
 		firebase
 			.database()
@@ -175,22 +235,29 @@ class Chat extends Component {
 				if (chatObj.id) {
 					this.storeChat(chatObj);
 				}
+				console.log('getLastMsg in processChat= ', data.meetingId, chatObj);
 				this.props.getLastMsg(data.meetingId, chatObj)
 			});
 		try {
 			this.refs["autoFocus"].select();
 		} catch (e) {}
 
-		if (navigator.onLine && !(isOtherOnline && isOtherOnline[data.channelId])) {
+		if (navigator.onLine && !(isOtherOnline && isOtherOnline[data.channelId])) { //
+			console.log("sendPush= ", {
+				toChannelId: data.channelId,
+				fromChannelId: fromId,
+				msg: chatObj.msg  //this.state.message.substring(0,200)
+			});
 			this.props.sendPush({
 				toChannelId: data.channelId,
 				fromChannelId: fromId,
-				msg: this.state.message.substring(0,200)
+				msg: chatObj.msg  //this.state.message.substring(0,200)
 			});
 		}
 	}
 
 	startListening(lastChat) {
+		console.log('in startListening -- ', lastChat);
 		const {data, fromId} = this.props;
 
 		//intercepts for any new message from firebase with check of lastchatId
@@ -227,8 +294,10 @@ class Chat extends Component {
 	}
 
 	handleChildAdd(snapshot, lastChat) {
+		console.log('handleChildAdd = ', snapshot, lastChat, this.props.fromId);
 		const msg = snapshot.val();
 		const msgId = snapshot.key;
+		console.log('msg in handleChildAdd= ', msg);
 		msg.id = msgId;
 		if (
 			(lastChat && lastChat.id && lastChat.id === msgId) ||
@@ -237,6 +306,7 @@ class Chat extends Component {
 		) {
 			return true;
 		} else {
+			console.log("set and store chat on handleChildAdd");
 			this.setChat(msg);
 			this.storeChat(msg);
 		}
@@ -259,19 +329,23 @@ class Chat extends Component {
 	}
 
 	headerValue(name) {
-		const { data, isOtherOnline, friendsLastSeen } = this.props;
+		const { data, isOtherOnline, friendsLastSeen  } = this.props;
+		const localfriendsLastSeen = JSON.parse(localStorage.getItem("NG_PWA_FRIEND_LAST_SEEN"))
+		console.log("headerValue = ", friendsLastSeen, localfriendsLastSeen, data.channelId);
+
 		let subHead = '';
 		if(navigator.onLine) {
 			if (isOtherOnline && isOtherOnline[data.channelId])
 			subHead = <span>Online</span>;
 			else if(friendsLastSeen && friendsLastSeen[data.channelId]){
 				const lastSeenObj = new Date(friendsLastSeen[data.channelId]);
+				console.log('friendsLastSeen data ok show header= ', lastSeenObj);
 				subHead = <span>Last seen {<Timestamp time={lastSeenObj} />}</span>;
 			}
 			else subHead = 'Not yet on NG lite';
 		}
 		return <div className={Styles.chatHeader}>
-			<span>{name}</span>
+			<span>{htmlDecode(name)}</span>
 			<span>{subHead}</span>
 		</div>
 	}
@@ -307,10 +381,19 @@ class Chat extends Component {
 
 	render() {
 		const { data, fromId, isOtherOnline, friendsLastSeen } = this.props;
+		let navOnline = navigator.online
 		if(!data){
 			return <Redirect to="/" push />
 		}
 		const AvtarUrl = `https://img.neargroup.me/project/50x50/forcesize/50x50/profile_${data.imageUrl}`;
+		const uccChat = localStorage.getItem("NG_PWA_UNREAD_COUNTS")
+
+		let lastTriggerStamp = localStorage.getItem(`CHAT_LAST_TRIGGERSTAMP_${data.meetingId}`)
+		console.log('lastTriggerStamp in render= ', lastTriggerStamp);
+		// let newTriggerStamp = triggerStamp
+		console.log("actionsend= ", navOnline, isOtherOnline, isOtherOnline[data.channelId], navOnline && isOtherOnline && isOtherOnline[data.channelId], isOtherOnline && isOtherOnline[data.channelId])
+		console.log("also= ", navOnline && (isOtherOnline && isOtherOnline[data.channelId]));
+
 		return (
 		<div className={Styles.chatWindow}>
 			<Header
@@ -318,6 +401,7 @@ class Chat extends Component {
 				avtar={AvtarUrl}
 				action='home'
 				unfriend={this.toggleUnfriendDialog.bind(this)}
+				style={{backgroundColor: '#AA00FF'}}
 			/>
 			{
 				this.state.loading &&
@@ -333,6 +417,7 @@ class Chat extends Component {
 			<div className={Styles.ChatBox} id="chatBox">
 				{this.state.chats.map((chat, index) => {
 					let newDay = "";
+					let showUnreadMessage = false
 					if (index === 0) {
 						newDay = formatDate(chat.sentTime);
 					} else {
@@ -345,11 +430,33 @@ class Chat extends Component {
 						}
 					}
 					const chatTime = chat.sentTime?new Date(parseInt(chat.sentTime,10)):null;
+					// console.log("showUnreadMessage condition= ", index, Number(chat.sentTime), Number(lastTriggerStamp));
+					// if(index > 0) {
+					// 	console.log(" -- ", Number(this.state.chats[index-1].sentTime));
+					// }
+					console.log("this.props.fromId= ", this.props.fromId);
+					if(index > 0
+						&& Number(chat.sentTime) > Number(lastTriggerStamp)
+						&& Number(this.state.chats[index-1].sentTime) < Number(lastTriggerStamp)
+						&& chat.fromId != this.props.fromId
+					) {
+						showUnreadMessage = true
+					}
+					// if(Number(Number(index) + Number(uccChat[data.meetingId])) == Number(this.state.chats.length)) {
+					// 	showUnreadMessage = true
+					// }
+					// console.log("showUnreadMessage= ", showUnreadMessage, index, uccChat, data.meetingId, this.state.chats.length);
+					// console.log("=== ", index, uccChat[data.meetingId.toString()], (index) + uccChat[data.meetingId.toString()], this.state.chats);
 					return(
 					<div key={index} className={chat.fromId == fromId ? Styles.self : ""}>
 						{newDay &&
 							<div className={Styles.newDay}>
 								{newDay}
+							</div>
+						}
+						{showUnreadMessage &&
+							<div className={Styles.newDay}>
+								<Twemoji text={htmlDecode("Unread Messages")} />
 							</div>
 						}
 						<span className={Styles.chatlet}>
@@ -444,7 +551,10 @@ const mapDispatchToProps = dispatch => {
 		},
 		unfriend: (me, notFriend) => {
 			dispatch(unfriend(me, notFriend));
-		}
+		},
+		setUnreadChatCount: (id, count) => {
+			dispatch(setUnreadChatCount(id, count));
+		},
 	}
 }
 

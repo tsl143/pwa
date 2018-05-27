@@ -3,13 +3,13 @@
 
 	<head>
 	    <meta charset="UTF-8">
-	    <title>NearGroup Lite</title>
+	    <title>WISP Friends</title>
 		<meta charset="utf-8">
 		<meta name="mobile-web-app-capable" content="yes">
 	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	    <meta name="theme-color" content="#00BCD4">
 	    <link rel="manifest" href="manifest.json">
-	    <link rel="shortcut icon" href="logo.png">
+	    <link rel="shortcut icon" href="wisp.png">
 	    <link rel="preconnect" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" crossorigin>
 	    <style type="text/css">
 		    body {
@@ -30,17 +30,36 @@
 				width: 100%;
 			}
 	    </style>
+			<meta name="theme-color" content="#aa00ff" />
+
+
 	</head>
 
-	<body>
+	<body onClick="gofull()" style="width: 100%; height: 100vh;">
 		<noscript>Sorry this browser doesnt support Javascript, so this can not be opened</noscript>
 		<div id="app"></div>
 		<div id="loading">
 			<div>
-				<img src="logo.png">
+				<img src="wisp.png">
+				<p>LOADING...</p>
 			</div>
 		</div>
 	</body>
+	<script>
+
+	// document.documentElement.on('click', gofull());
+		function gofull() {
+			console.log('lets fullsceeeee');
+			var element = document.documentElement;
+			if(element.requestFullScreen) {
+        element.requestFullScreen();
+      } else if(element.webkitRequestFullScreen ) {
+        element.webkitRequestFullScreen();
+      } else if(element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+      }
+		}
+	</script>
 	<script src="firebasejs4-8-1.js"></script>
 	<script src='firebase-client.js'></script>
 	<script src="bundle.js"></script>

@@ -17,8 +17,29 @@ export default class MoreButton extends Component {
         this.props.unfriend();
     }
 
+    fullScreen(element) {
+      console.log('in fullScreen= ', element);
+      // console.log("document Fullscreen enabled= ", document.webkitFullscreenEnabled, document.fullscreenEnabled );
+      if(element.requestFullScreen) {
+        element.requestFullScreen();
+      } else if(element.webkitRequestFullScreen ) {
+        element.webkitRequestFullScreen();
+      } else if(element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+      }
+
+    }
+
+    goFullScreen() {
+      console.log('in goFullScreen');
+      var html = document.documentElement;
+      this.fullScreen(html);
+      // document.webkitRequestFullscreen()
+      // document.requestFullscreen()
+    }
+
     render() {
-        return ( 
+        return (
             <IconMenu
                 iconButtonElement={
                     <IconButton ><MoreVertIcon color={white} /></IconButton>
@@ -27,6 +48,7 @@ export default class MoreButton extends Component {
                 anchorOrigin={{horizontal: 'right', vertical: 'top'}}
                 >
                 <MenuItem primaryText="Unfriend" onClick={this.unfriendAction.bind(this)}/>
+                <MenuItem primaryText="Fullscreen" onClick={this.goFullScreen.bind(this)}/>
             </IconMenu>
         );
     }

@@ -28,21 +28,26 @@ export default class Header extends Component {
 		}catch(e){}
     }
 
+    updateTriggerStamp() {
+      console.log("updateTriggerStamp= ");
+      // localStorage.setItem("CURRENT_CHAT_LAST_TRIGGERSTAMP", Date.now())
+    }
+
     render() {
         const { action, name, unfriend } = this.props;
-		const avtar = this.props.avtar || 'logo.png';
+		const avtar = this.props.avtar || 'wisp-1024pxcircle.png';
 
-        return ( 
+        return (
         	<div className = { Styles.Header } >
             <AppBar
-            	style = { { position: 'fixed' } }
+            	style = { {...this.props.style, position: 'fixed' } }
             	iconElementLeft = {
-                    <div className={Styles.avtar}>
+                    <div className={Styles.avtar} onClick={this.updateTriggerStamp}>
                         {
                             action &&
                             action === 'home' &&
                             <Link to="/">
-                                <ActionBack color={'white'}/>
+                                <ActionBack color={'white'} />
                             </Link>
                         }
                         <Avatar src={avtar} onError={this.handleAvtar.bind(this)}/>

@@ -1,10 +1,12 @@
-const cacheName = 'NG_TSL_API_PWA_3';
+const cacheName = 'WP_NEW_API_PWA_2_2';
 const filesToCache = [
     '/',
     '/index.html',
     '/bundle.js',
     '/logo.png',
     '/notify.png',
+    '/wisp-1024pxcircle.png',
+    '/wisp.png',
     '/avtar.svg',
     'noFriends.svg',
     'firebasejs4-8-1.js',
@@ -23,7 +25,7 @@ self.addEventListener('install', function(e) {
     e.waitUntil(
         caches.keys().then(function(keyList) {
             return Promise.all(keyList.map(key => {
-                if (key.startsWith('NG_TSL') && key !== cacheName) {
+                if (key.startsWith('WP_') && key !== cacheName) {
                     console.info('[ServiceWorker] Removing old cache', key);
                     return caches.delete(key);
                 }
@@ -50,11 +52,18 @@ self.addEventListener('activate', function(e) {
 });
 
 self.addEventListener('fetch', event => {
+  console.info('[ServiceWorker] Fetch', event.request.cache, event.request.mode);
+  // if (event.request.cache === 'only-if-cached' && event.request.mode !== 'same-origin') {
     event.respondWith(
-        caches.open(cacheName).then(function (cache) {
-            return caches.match(event.request).then(response => {
-                return response || fetch(event.request);
-            });
+      caches.open(cacheName).then(function (cache) {
+        console.log("cache when fetch: ", cache, cacheName, );
+        return caches.match(event.request).then(response => {
+          console.log("response for ", event.request, response)
+          return response || fetch(event.request.clone());
+        }).catch(e => {
+            console.log("service-woeker fetch ERROR= ", e)
         })
+      })
     );
+  // }
 });
