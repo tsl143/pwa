@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import FriendList from '../FriendList';
 import Chat from '../Chat';
-import {setUnreadChatCount, getFriends, getFriendsCache, getLastMsg, getFriendsChat } from '../../actions/friends';
+import {setUnreadChatCount, getFriends, getFriendsCache, getLastMsg, getFriendsChat, processChat } from '../../actions/friends';
 import setFCM from '../../FCM';
 
 import Styles from './style.scss';
@@ -16,6 +16,7 @@ class List extends Component {
             firstCall: true
         };
         this.processNotifications = this.processNotifications.bind(this);
+        this.sendOffliceMessages = this.sendOffliceMessages.bind(this);
     }
 
     componentWillMount() {
@@ -38,6 +39,7 @@ class List extends Component {
     }
 
     componentDidMount() {
+      console.log('in App didMount');
         if(navigator.onLine && !this.props.noReload){
             let authId;
             const searchText = this.props.route.location.search;
@@ -53,6 +55,64 @@ class List extends Component {
             }
             this.props.getFriends(authId);
         }
+
+        // send offline chats once online
+        // this.sendOffliceMessages()
+        // window.addEventListener('online',  this.sendOffliceMessages);
+        window.addEventListener('offline',  () => {
+          console.log("YOU ARE OFFLINE!!-------------------");
+        });
+    }
+
+    sendOffliceMessages() {
+      console.log('in sendOffliceMessages -- ', localStorage.getItem(`NG_PWA_OFFLINE_CHATS`));
+      const { meetingData, me, isOtherOnline } = this.props;
+			try{
+				let offlineChats = localStorage.getItem(`NG_PWA_OFFLINE_CHATS`);
+        console.log('offline chats in storage= ', offlineChats);
+				if(offlineChats) {
+          offlineChats = JSON.parse(offlineChats);
+          console.log("got offlineChats ok= ", offlineChats);
+          for(var meetingid in offlineChats) {
+            console.log("sending offline chats for meetingid ", meetingid);
+            const myOfflineChats = offlineChats[meetingid] || [];
+            if(myOfflineChats.length > 0){
+              myOfflineChats.forEach(chatObj => {
+                console.log("myOfflineChats = ", chatObj);
+                // this.processChat(chatObj)
+                // this.props.processChat(chatObj, meetingid, me.channelId, isOtherOnline);
+
+                firebase
+                  .database()
+                  .ref(`/rooms/${data}`)
+                  .push(chatObj).then(res => {
+                    console.log('push offline msg to firebase');
+                    chatObj.id = res.key;
+                    if (chatObj.id) {
+                      // this.storeChat(chatObj);
+
+                      const chats = JSON.parse(localStorage.getItem(`NG_PWA_CHAT_${data}`)) || [];
+                      chats.push(chatObj);
+                      localStorage.setItem(
+                        `NG_PWA_CHAT_${this.props.data}`,
+                        JSON.stringify(chats)
+                      );
+
+                    }
+                    console.log('getLastMsg in processChat= ', data, chatObj);
+                    // this.props.
+                    this.props.getLastMsg(meetingid, chatObj)
+                  });
+                  // sendPush
+
+              })
+              delete(offlineChats[data.meetingId]);
+              localStorage.setItem(`NG_PWA_OFFLINE_CHATS`, JSON.stringify(offlineChats));
+            }
+          }
+
+				}
+			}catch(e){}
     }
 
     componentWillReceiveProps(props) {
@@ -187,16 +247,7 @@ class List extends Component {
         // false &&
         return (
             <div>
-                {!this.state.isNotificationEnabeled &&
-                    (<div>
-                        <div className={Styles.overlay} />
-                        <div
-                            className={Styles.popup}
-                            style={{background: 'url(notify.png)'}}
-                            onClick={this.processNotifications}
-                        />
-                    </div>)
-                }
+
                 <FriendList ucc={this.props.unreadChatCounts} />
             </div>
         );
@@ -210,7 +261,8 @@ const mapStateToProps = state => {
         friends: state.friends.friends || [],
         noReload: state.friends.noReload || false,
         meetingData: state.friends.meetingData || null,
-        unreadChatCounts: state.friends.unreadChatCounts || {}
+        unreadChatCounts: state.friends.unreadChatCounts || {},
+        isOtherOnline: state.friends.isOtherOnline || {},
     }
 }
 
@@ -231,7 +283,21 @@ const mapDispatchToProps = dispatch => {
         setUnreadChatCount: (id, count, msg) => {
             dispatch(setUnreadChatCount(id, count, msg));
         },
+        processChat: (obj, meetingid,  me, isOtherOnline) => {
+          dispatch(processChat(obj, meetingid, me, isOtherOnline));
+        },
     }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(List);
+
+// {!this.state.isNotificationEnabeled &&
+//     (<div>
+//         <div className={Styles.overlay} />
+//         <div
+//             className={Styles.popup}
+//             style={{background: 'url(notify.png)'}}
+//             onClick={this.processNotifications}
+//         />
+//     </div>)
+// }

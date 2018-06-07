@@ -198,7 +198,8 @@ class Chat extends Component {
 		const chatObj = {
 			fromId,
 			msg: this.state.message,
-			sentTime: Date.now()
+			sentTime: Date.now(),
+			toId: data.channelId
 		};
 		this.setChat(chatObj);
 		if(navigator.onLine){
@@ -222,6 +223,9 @@ class Chat extends Component {
 		myOfflineChats.push(chatObj);
 		offlineChats[data.meetingId] = myOfflineChats;
 		localStorage.setItem(`NG_PWA_OFFLINE_CHATS`, JSON.stringify(offlineChats));
+
+		// send offline chats once offline
+		window.addEventListener('online',  this.sendOffliceMessages);
 	}
 
 	processChat(chatObj) {
@@ -242,16 +246,16 @@ class Chat extends Component {
 			this.refs["autoFocus"].select();
 		} catch (e) {}
 
-		if (navigator.onLine && !(isOtherOnline && isOtherOnline[data.channelId])) { //
+		if (navigator.onLine ) { //&& !(isOtherOnline && isOtherOnline[data.channelId])
 			console.log("sendPush= ", {
 				toChannelId: data.channelId,
 				fromChannelId: fromId,
-				msg: chatObj.msg  //this.state.message.substring(0,200)
+				msg: chatObj.msg.substring(0,200)  //this.state.message.substring(0,200)
 			});
 			this.props.sendPush({
 				toChannelId: data.channelId,
 				fromChannelId: fromId,
-				msg: chatObj.msg  //this.state.message.substring(0,200)
+				msg: chatObj.msg.substring(0,200)  //this.state.message.substring(0,200)
 			});
 		}
 	}

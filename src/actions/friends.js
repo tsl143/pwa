@@ -59,13 +59,18 @@ export const getFriendsChat = (channelId, friends) => {
 }
 
 export const sendPush = data => {
-    if(typeof data === 'object') data.isRegistered = 1;
+  console.log("in sendPush 222-- ", data);
+    if(typeof data === 'object') {
+      console.log("data type object");
+       data.isRegistered = 1;
+     }
     return axios({
         method: 'POST',
         url: `${API}notifyUser`,
         data
     })
     .then( response => {
+      console.log("notifyUser response-- ", res);
         return {
             type: 'SENT',
             payload: response
@@ -81,6 +86,7 @@ export const getFriendsCache = () => {
 }
 
 export const getLastMsg = (id, msg) => {
+  console.log("in LAST_MSG");
     return {
         type: 'LAST_MSG',
         payload: { id, msg }
@@ -135,9 +141,74 @@ export const unfriend = (channelId, unfriendChannelId) => {
 }
 
 export const setUnreadChatCount = (meetingId, count, msg) => {
-  console.log("setUnreadChatCount= ", meetingId, count, msg);
     return {
         type: 'SET_UNREAD_CHAT_COUNT',
         payload: { meetingId, count , msg}
     }
 }
+
+// export const processChat = (chatobj, data, fromId, isOtherOnline) => {
+//   console.log('processChat action chatobj= ', chatobj, data, fromId, isOtherOnline);
+//   console.log("firebase n processChat=", firebase, navigator.onLine && !(isOtherOnline && isOtherOnline[chatobj.toId]));
+//   // const { data, fromId, isOtherOnline } = this.props;
+//   let testref= firebase.database().ref(`/rooms/${data}`)
+//   console.log("testref= ", testref);
+//   testref.once("value")
+//   .then(function(snapshot) {
+//     var key = snapshot.key; // "ada"
+//     console.log('snapshot key= ', key);
+//     //var childKey = snapshot.child("name/last").key; // "last"
+//   });
+//
+//   firebase
+//     .database()
+//     .ref(`/rooms/${data}`)
+//     .push(chatObj).then(res => {
+//       console.log('push offline msg to firebase');
+//       chatObj.id = res.key;
+//       if (chatObj.id) {
+//         // this.storeChat(chatObj);
+//
+//         const chats = JSON.parse(localStorage.getItem(`NG_PWA_CHAT_${data}`)) || [];
+//         chats.push(chatObj);
+//         localStorage.setItem(
+//           `NG_PWA_CHAT_${this.props.data}`,
+//           JSON.stringify(chats)
+//         );
+//
+//       }
+//       console.log('getLastMsg in processChat= ', data, chatObj);
+//       // this.props.
+//       getLastMsg(data, chatObj)
+//     });
+//   // try {
+//   //   //this.refs["autoFocus"].select();
+//   // } catch (e) {}
+//
+//   if (navigator.onLine && !(isOtherOnline && isOtherOnline[chatobj.toId])) { //
+//     console.log("sendPush= ", {
+//       toChannelId: chatobj.toId,
+//       fromChannelId: fromId,
+//       msg: chatObj.msg  //this.state.message.substring(0,200)
+//     });
+//     // this.props.
+//     sendPush({
+//       toChannelId: chatobj.toId,
+//       fromChannelId: fromId,
+//       msg: chatObj.msg  //this.state.message.substring(0,200)
+//     });
+//   }
+//
+// }
+
+// export const storeChat = (msg) => {
+//   try {
+//     const { data } = this.props;
+//     const chats = JSON.parse(localStorage.getItem(`NG_PWA_CHAT_${data.meetingId}`)) || [];
+//     chats.push(msg);
+//     localStorage.setItem(
+//       `NG_PWA_CHAT_${this.props.data.meetingId}`,
+//       JSON.stringify(chats)
+//     );
+//   }catch(e){}
+// }

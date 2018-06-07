@@ -11,7 +11,7 @@ import ListItem from 'material-ui/List/ListItem';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 import Timestamp from "react-timestamp";
 
-import { setMeeting } from '../../actions/friends';
+import { setMeeting, getLastMsg, sendPush } from '../../actions/friends';
 
 import Header from '../Header';
 import NoFriends from '../NoFriends';
@@ -28,6 +28,8 @@ class FriendList extends Component {
 		}
 		this.handleImg = this.handleImg.bind(this);
 		this.handleLastTime = this.handleLastTime.bind(this);
+		this.processChat = this.processChat.bind(this);
+		this.updateOnlineStatus = this.updateOnlineStatus.bind(this);
 	}
 
 	componentWillMount() {
@@ -68,6 +70,80 @@ class FriendList extends Component {
 	componentDidMount() {
 		if(document.getElementById('loading')) document.getElementById('loading').remove();
 		if(document.getElementById('fullscreen')) document.getElementById('fullscreen').remove();
+
+		// send offline messages when app is re launched
+		this.updateOnlineStatus()
+	}
+
+	updateOnlineStatus() {
+		let {data} = this.props
+		console.log("in updateOnlineStatus 222");
+		if(navigator.onLine) {
+		console.log("navigator online 222");
+			try{
+				let offlineChats = localStorage.getItem(`NG_PWA_OFFLINE_CHATS`);
+				console.log("offlineChats 222 =", offlineChats, data);
+				if(offlineChats) {
+					offlineChats = JSON.parse(offlineChats);
+
+					Object.keys(offlineChats).forEach(item => {
+						const myOfflineChats = offlineChats[item] || [];
+						if(myOfflineChats.length > 0){
+							console.log("got OFFLINE CHATS");
+							myOfflineChats.forEach(chatObj => {
+								console.log("myOfflineChats = ", chatObj);
+								this.processChat(chatObj, item)
+							})
+							console.log('process all offline chats');
+							delete(offlineChats[item]);
+							localStorage.setItem(`NG_PWA_OFFLINE_CHATS`, JSON.stringify(offlineChats));
+						}
+					})
+
+				}
+			}catch(e){}
+		}
+	}
+
+	processChat(chatObj, item) {
+		console.log("in processChat 222 ", chatObj, item, `/rooms/${item}`);
+		const { data, fromId, isOtherOnline } = this.props;
+		firebase
+			.database()
+			.ref(`/rooms/${item}`)
+			.push(chatObj).then(res => {
+				console.log("processChat 222 push offline chat ", res.key);
+				chatObj.id = res.key;
+				if (chatObj.id) {
+					console.log("got firebase res key ok= ", chatObj.id);
+					// this.storeChat(chatObj);
+					try {
+						// const { data } = this.props;
+						const chats = JSON.parse(localStorage.getItem(`NG_PWA_CHAT_${item}`)) || [];
+						chats.push(msg);
+						localStorage.setItem(
+							`NG_PWA_CHAT_${item}`,
+							JSON.stringify(chats)
+						);
+					}catch(e){}
+				}
+				console.log('getLastMsg in processChat= ', item, chatObj);
+				this.props.getLastMsg(item, chatObj)
+			});
+
+		try {
+
+			if (navigator.onLine ) { //&& !(isOtherOnline && isOtherOnline[data.channelId])
+				console.log("sendPush 222-= ");
+				this.props.sendPush({
+					toChannelId: chatObj.toId,
+					fromChannelId: chatObj.fromId,
+					msg: chatObj.msg.substring(0,200)  //this.state.message.substring(0,200)
+				});
+			}
+		} catch (e) {
+			console.log("sendPush 222 catch error- ", e);
+		}
 	}
 
 	handleImg(id, e) {
@@ -196,7 +272,10 @@ const mapStateToProps = state => {
 	    loading: state.friends.isLoading || false,
 			timestamp : state.friends.timestamp || 0,
 			lastChats: state.friends.lastChats || {},
-			unreadChatCounts: state.friends.unreadChatCounts || {}
+			unreadChatCounts: state.friends.unreadChatCounts || {},
+			fromId: (state.friends.me && state.friends.me.channelId) || '',
+			data: state.friends.meetingData || null,
+			isOtherOnline: state.friends.isOtherOnline || {},
     }
 }
 
@@ -204,7 +283,13 @@ const mapDispatchToProps = dispatch => {
     return {
         setMeeting: meetingId =>{
             dispatch(setMeeting(meetingId));
-        }
+        },
+				getLastMsg: (id, msg) => {
+					dispatch(getLastMsg(id, msg));
+				},
+				sendPush: data => {
+		            dispatch(sendPush(data));
+				},
     }
 }
 

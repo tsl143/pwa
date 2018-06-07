@@ -1,4 +1,4 @@
-const cacheName = 'WP_NEW_API_PWA_2_2';
+const cacheName = 'WP_NEW_API_PWA_2_5';
 const filesToCache = [
     '/',
     '/index.html',
