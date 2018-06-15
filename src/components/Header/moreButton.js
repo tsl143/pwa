@@ -48,7 +48,7 @@ export default class MoreButton extends Component {
                 anchorOrigin={{horizontal: 'right', vertical: 'top'}}
                 >
                 <MenuItem primaryText="Unfriend" onClick={this.unfriendAction.bind(this)}/>
-                <MenuItem primaryText="Fullscreen" onClick={this.goFullScreen.bind(this)}/>
+                {/**<MenuItem primaryText="Fullscreen" onClick={this.goFullScreen.bind(this)}/>**/}
             </IconMenu>
         );
     }

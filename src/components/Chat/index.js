@@ -250,12 +250,14 @@ class Chat extends Component {
 			console.log("sendPush= ", {
 				toChannelId: data.channelId,
 				fromChannelId: fromId,
-				msg: chatObj.msg.substring(0,200)  //this.state.message.substring(0,200)
+				msg: chatObj.msg.substring(0,200),  //this.state.message.substring(0,200)
+				meetingId: data.meetingId
 			});
 			this.props.sendPush({
 				toChannelId: data.channelId,
 				fromChannelId: fromId,
-				msg: chatObj.msg.substring(0,200)  //this.state.message.substring(0,200)
+				msg: chatObj.msg.substring(0,200),  //this.state.message.substring(0,200)
+				meetingId: data.meetingId
 			});
 		}
 	}
@@ -389,7 +391,7 @@ class Chat extends Component {
 		if(!data){
 			return <Redirect to="/" push />
 		}
-		const AvtarUrl = `https://img.neargroup.me/project/50x50/forcesize/50x50/profile_${data.imageUrl}`;
+		const AvtarUrl = `https://s3-us-west-2.amazonaws.com/ng-image/ng/thumb/512_512_profile_${data.imageUrl}`   //`https://img.neargroup.me/project/50x50/forcesize/50x50/profile_${data.imageUrl}`;
 		const uccChat = localStorage.getItem("NG_PWA_UNREAD_COUNTS")
 
 		let lastTriggerStamp = localStorage.getItem(`CHAT_LAST_TRIGGERSTAMP_${data.meetingId}`)
@@ -513,7 +515,10 @@ class Chat extends Component {
 				open={this.state.isUnfriend}
 				className={Styles.unfriendDialog}
 				>
-				<div className={Styles.dialogbody}>{`Are you sure you want to unfriend ${data.name}?`}</div>
+				<div className={Styles.dialogbody}>
+					<Twemoji text={htmlDecode(`Are you sure you want to unfriend ${data.name}?`)} />
+					{/** `Are you sure you want to unfriend ${data.name}?` **/}
+				</div>
 			</Dialog>
 		</div>
 		);

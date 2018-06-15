@@ -70,7 +70,7 @@ export const sendPush = data => {
         data
     })
     .then( response => {
-      console.log("notifyUser response-- ", res);
+      console.log("notifyUser response-- ", response);
         return {
             type: 'SENT',
             payload: response

@@ -177,7 +177,7 @@ class FriendList extends Component {
 		const { ucc} = this.state
 		console.log('lastChats in populateFriendsList= ', lastChats);
 		const sortedFriends = sortFriendList(friends, lastChats) || [];
-	  	const AvtarUrl = 'https://img.neargroup.me/project/forcesize/50x50/profile_';
+	  	const AvtarUrl = 'https://s3-us-west-2.amazonaws.com/ng-image/ng/thumb/512_512_profile_'  //'https://img.neargroup.me/project/forcesize/50x50/profile_';
 		return sortedFriends.map( friend => {
 			console.log("populate friendslist friend= ", friend);
 			const sentByMe = (friend.msgFrom == me.channelId) ? true: false;

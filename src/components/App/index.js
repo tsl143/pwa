@@ -4,6 +4,7 @@ import FriendList from '../FriendList';
 import Chat from '../Chat';
 import {setUnreadChatCount, getFriends, getFriendsCache, getLastMsg, getFriendsChat, processChat } from '../../actions/friends';
 import setFCM from '../../FCM';
+import querystring from 'query-string';
 
 import Styles from './style.scss';
 
@@ -42,18 +43,33 @@ class List extends Component {
       console.log('in App didMount');
         if(navigator.onLine && !this.props.noReload){
             let authId;
+            let onlyGetPermission
             const searchText = this.props.route.location.search;
             if(searchText && searchText.trim != ""){
-                const searchParams = searchText.split('=');
-                if(searchParams.length > 2) this.setState({ error: true });
-                authId = searchParams.pop();
+              const searchParams = querystring.parse(searchText)
+              authId = searchParams.channelId
+              onlyGetPermission = searchParams.only_permission
+              console.log("got url params- ", authId, onlyGetPermission);
+
+                // const searchParams = searchText.split('=');
+                // if(searchParams.length > 2) this.setState({ error: true });
+                // authId = searchParams.pop();
                 localStorage.setItem('NG_PWA_AUTHID', JSON.stringify(authId));
+                this.setState({onlyGetPermission})
             } else {
                 try{
                     authId = JSON.parse(localStorage.getItem('NG_PWA_AUTHID'));
                 }catch(e){}
             }
-            this.props.getFriends(authId);
+
+            if(onlyGetPermission) {
+              console.log('GET ONLY PERMISSIOIN');
+              setFCM(authId)
+            } else {
+              console.log('GET fRIENDS');
+              this.props.getFriends(authId);
+            }
+
         }
 
         // send offline chats once online
@@ -240,6 +256,13 @@ class List extends Component {
         const { me } = this.props;
         console.log("render App -= ", this.state.error, me);
 
+        if(this.state.error && this.state.onlyGetPermission) {
+          console.log('APP render only permission');
+          return (
+            <div />
+          )
+        }
+
         if(this.state.error || !me.channelId) {
           console.log("render error ");
           return <div />
@@ -247,7 +270,17 @@ class List extends Component {
         // false &&
         return (
             <div>
-
+                {
+                  !this.state.isNotificationEnabeled &&
+                    <div>
+                        <div className={Styles.overlay} />
+                        <div
+                            className={Styles.popup}
+                            style={{background: 'url(notify.png)'}}
+                            onClick={this.processNotifications}
+                        />
+                    </div>
+                }
                 <FriendList ucc={this.props.unreadChatCounts} />
             </div>
         );

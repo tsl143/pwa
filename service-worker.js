@@ -1,12 +1,10 @@
-const cacheName = 'WP_NEW_API_PWA_2_5';
+const cacheName = 'NG_SD_API_PWA_2_5';
 const filesToCache = [
     '/',
     '/index.html',
     '/bundle.js',
     '/logo.png',
     '/notify.png',
-    '/wisp-1024pxcircle.png',
-    '/wisp.png',
     '/avtar.svg',
     'noFriends.svg',
     'firebasejs4-8-1.js',
@@ -25,7 +23,7 @@ self.addEventListener('install', function(e) {
     e.waitUntil(
         caches.keys().then(function(keyList) {
             return Promise.all(keyList.map(key => {
-                if (key.startsWith('WP_') && key !== cacheName) {
+                if (key.startsWith('NG_SD') && key !== cacheName) {
                     console.info('[ServiceWorker] Removing old cache', key);
                     return caches.delete(key);
                 }

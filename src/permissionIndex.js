@@ -13,21 +13,21 @@ import initialize from "./initializeFirebase";
 
 const MyApp = props => (
   <MuiThemeProvider>
-    <App route={props}/>
+    <Permission route={props}/>
   </MuiThemeProvider>
 );
-
-const MyChat = props => (
-    <MuiThemeProvider>
-      <Chat route={props}/>
-    </MuiThemeProvider>
-  );
-
-const FCMPermission = props => (
-    <MuiThemeProvider>
-      <Permission route={props}/>
-    </MuiThemeProvider>
-  );
+//
+// const MyChat = props => (
+//     <MuiThemeProvider>
+//       <Chat route={props}/>
+//     </MuiThemeProvider>
+//   );
+//
+// const FCMPermission = props => (
+//     <MuiThemeProvider>
+//       <Permission route={props}/>
+//     </MuiThemeProvider>
+//   );
 
 initialize();
 ReactDomRender(
@@ -35,8 +35,10 @@ ReactDomRender(
         <HashRouter>
             <div>
                 <Route exact path="/" component={MyApp} />
-                <Route exact path="/chat" component={MyChat} />
+                {/**
+                  <Route exact path="/chat" component={MyChat} />
                 <Route exact path="/permission" component={FCMPermission} />
+                **/}
             </div>
         </HashRouter>
     </Provider>,

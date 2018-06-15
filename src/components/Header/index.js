@@ -35,7 +35,7 @@ export default class Header extends Component {
 
     render() {
         const { action, name, unfriend } = this.props;
-		const avtar = this.props.avtar || 'wisp-1024pxcircle.png';
+		const avtar = this.props.avtar || 'logo.png';
 
         return (
         	<div className = { Styles.Header } >

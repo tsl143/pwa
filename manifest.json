@@ -1,9 +1,9 @@
 {
-	"short_name": "WISP Friends",
-	"name": "WISP Friends",
+	"short_name": "NG Friends",
+	"name": "NearGroup Friends",
 	"icons": [
 		{
-		"src": "wisp.png",
+		"src": "logo.png",
 		"sizes": "192x192",
 		"type": "image/png"
 		}

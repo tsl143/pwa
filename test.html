@@ -1,0 +1,2192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Edit Profile</title>
+<meta charset="utf-8" />
+    <meta name="theme-color" content="#ff3d8e" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Cache-Control" content="max-age=86400" />
+	<meta http-equiv="Expires" content="0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+<link rel="shortcut icon" type="image/png" href="images/icon.png" />
+<link rel="stylesheet"
+	href="//fonts.googleapis.com/icon?family=Material+Icons" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<!-- <link rel="stylesheet" href="css/intlTelInput.min.css"> -->
+<link rel="stylesheet" href="css/styles.min.css">
+<!-- <link rel="stylesheet" href="css/range.min.css"> -->
+<style>
+body {
+	background-color: #F5F5F5;
+}
+
+body::-webkit-scrollbar-track {
+	/*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);*/
+	background-color: #F5F5F5;
+	border-radius: 10px;
+}
+
+body::-webkit-scrollbar {
+	width: 6px;
+	background-color: #F5F5F5;
+}
+
+body::-webkit-scrollbar-thumb {
+	border-radius: 10px;
+	background-color: #eeeeee;
+}
+
+.red {
+	border-color: red;
+}
+
+.green {
+	border-color: green;
+}
+
+.rdoControl-3>label {
+	width: 32%;
+}
+
+.blurimage_text, .dob-text, .country-text .gender-change-alert .dob-change-alert {
+	/* color: rgba(0,0,0,.26); */
+	color: #8f8f8f;
+	font-size: 12px;
+	text-align: center;
+	width: 100%;
+	padding-top: 5px;
+	font-weight: 700;
+}
+
+.heightfeetinch {
+	width: 25%;
+	display: inline-block;
+}
+
+.iti-flag {
+	background-image: url("images/flags.png");
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2) , only screen and
+		(min--moz-device-pixel-ratio: 2) , only screen and
+		(-o-min-device-pixel-ratio: 2 / 1) , only screen and
+		(min-device-pixel-ratio: 2) , only screen and (min-resolution: 192dpi)
+		, only screen and (min-resolution: 2dppx) {
+	.iti-flag {
+		background-image: url("images/flags@2x.png");
+	}
+}
+
+.image {
+	top: 0px;
+}
+
+.md1__change-but {
+	margin-top: 10px;
+	margin-left: -16px;
+	display: inline-block;
+}
+
+.change-but {
+	padding: 5px 20px;
+	font-size: 13px;
+}
+
+.pay_container label {
+	text-align: center;
+	display: block;
+}
+
+.pay_container label img {
+	height: auto;
+	width: 100px;
+}
+
+.que {
+	margin-top: 12px;
+}
+
+#country_text {
+	margin-top: 8px;
+}
+</style>
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.252.1.min.js"></script>
+</head>
+<body>
+	<div id="maincontainer">
+	<div class="modal-body">
+		<!-- Place at bottom of page -->
+	</div>
+	<div class="container maincontainer hidden">
+		<div class="menubar">
+			<!--<div class="back">
+                 <button class="mdl-button mdl-js-button mdl-button--icon" id="btn_back">
+                    <i class="material-icons">keyboard_backspace</i>
+                </button>
+            </div>
+            <div class="heading">
+                Edit Profile
+            </div>-->
+			<div class="action">
+				<button class="btn-outline" id="btn_save"
+					style="margin-right: -12px;">Save</button>
+				<!--class="deactivate" -->
+				<!-- <button class="btn-outline" id="btn_save">Save</button> -->
+			</div>
+		</div>
+
+		<div class="controls">
+			<!-- <label style="margin-top: 15px;">Share profile (to get more
+                followers)</label>
+            <div class="social-buttons">
+                <div class="mdl-textfield mdl-js-textfield">
+                    <span class="icon">@</span> <input class="mdl-textfield__input"
+                        type="text" id="fname"> <label
+                        class="mdl-textfield__label" for="fname">FB username</label>
+                </div>
+                <div class="mdl-textfield mdl-js-textfield">
+                    <span class="icon">@</span> <input class="mdl-textfield__input"
+                        type="text" id="fname"> <label
+                        class="mdl-textfield__label" for="fname">Insta username</label>
+                </div>
+                <div class="mdl-textfield mdl-js-textfield">
+                    <span class="icon">@</span> <input class="mdl-textfield__input"
+                        type="text" id="fname"> <label
+                        class="mdl-textfield__label" for="fname">Twitter username</label>
+                </div>
+                 <button class="facebook mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                    <i class="fa fa-facebook"></i>Login with facebook
+                </button>
+                <button class="twitter mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                    <i class="fa fa-twitter"></i>Twitter Profile
+                </button>
+            </div> -->
+			<!-- <div class="mdl-textfield mdl-js-textfield">
+                <img class="icon-image" src="images/calender.png" />
+                <i class="fa fa-calendar icon-image"></i>
+                <input class="mdl-textfield__input" type="text" id="fname">
+                <label class="mdl-textfield__label" for="fname">MM/DD/YYYY</label>
+            </div> -->
+
+			<div class="questions">
+				<!-- <div class="question" id="pic_sec">
+					<img src="" id="uploadimg" class="uploadimg hidden"> <label
+						class="profileimage" id="profileimage" for="browseimage">
+						<img src="" id="imgprofile" onerror="" />
+						<div>Upload new profile image</div> <input type="file"
+						id="browseimage" name='browseimage' class="hidden"
+						onchange="readURL(this);" />
+					</label>
+				</div> -->
+				<div class="question" id="pic_sec">
+					<label class="head"
+						style="width: 100%; text-align: -webkit-center; text-align: center; padding-bottom: 0; margin-bottom: 0;">
+						Photos</label> <label class="blurimage_text"
+						style="margin-bottom: 10px;">Your photo is blurred and will slowly be revealed to your chatmate as you chat longer.</label>
+					<div style="text-align: center; max-width: 400px; max-height:  120px;">
+						<img src="https://p.in/120x120/forcesize/demo_boy" id="imgprofile" onerror=""
+							class="imgprofile" style="border-radius: 5%; max-width: 400px; max-height:  120px;"
+						/>
+					</div>
+
+					<!--
+					<div style="margin-top: 5px; font-size: 12px;" class="image-upload-issue-alert" id="image-upload-issue-alert">
+						<div style="float: left; margin-right: 5px; margin-top: 5px;">
+							<i class="material-icons" style="color:orange;font-size:25px;">warning</i>
+						</div>
+						<div style="padding-top:5px;" id="image-upload-issue-alert">Image upload is under maintenance. Sorry for the inconvenience!.</div>
+					</div>
+					-->
+
+
+					<span style="margin-left: 1.5px;"> <img src=""
+						id="uploadimg-1" class="uploadimg hidden"> <i
+						class="material-icons uploadimg" id="img-1">add_box</i> <span
+						class="profileimage"> <img src="https://img.neargroup.in/60x60/forcesize/demo_boy"
+							id="imgprofile-1" onerror="" /> <input type="file"
+							id="browseimage-1" name='browseimage-1' class="hidden"
+							onchange="readURL(this);" />
+					</span> <img src="" id="uploadimg-2" class="uploadimg hidden"> <i
+						class="material-icons uploadimg" id="img-2">add_box</i> <span
+						class="profileimage"> <img src="https://img.neargroup.in/60x60/forcesize/demo_boy"
+							id="imgprofile-2" onerror="" /> <input type="file"
+							id="browseimage-2" name='browseimage-2' class="hidden"
+							onchange="readURL(this);" />
+					</span> <img src="" id="uploadimg-3" class="uploadimg hidden"> <i
+						class="material-icons uploadimg" id="img-3">add_box</i> <span
+						class="profileimage"> <img src="https://img.neargroup.in/60x60/forcesize/demo_boy"
+							id="imgprofile-3" onerror="" /> <input type="file"
+							id="browseimage-3" name='browseimage-3' class="hidden"
+							onchange="readURL(this);" />
+					</span> <img src="" id="uploadimg-4" class="uploadimg hidden"> <i
+						class="material-icons uploadimg" id="img-4">add_box</i> <span
+						class="profileimage"> <img src="https://img.neargroup.in/60x60/forcesize/demo_boy"
+							id="imgprofile-4" onerror="" /> <input type="file"
+							id="browseimage-4" name='browseimage-4' class="hidden"
+							onchange="readURL(this);" />
+					</span>
+					</span>
+					<div style="padding-top:5px;" id="image-upload-fail" class="hidden">Sorry, something went wrong. Please, try again later.</div>
+
+				</div>
+
+				<div class="question" id="gender_sec">
+					<label class="head"> <!-- Q<span id="q">1</span>. -->Gender<span class="s">*</span>
+					</label>
+					<!--  <label class="blurimage_text" Style="display: inline;">
+						(can only be changed once..)</label>
+					-->
+					<div class="rdoControl">
+						<label for="radioMale"> <input type="radio" value="Male"
+							id="radioMale" name="gender" />Male
+						</label>
+						<label for="radioFemale" class="pull-right"> <input
+							type="radio" value="Female" id="radioFemale" name="gender" />Female
+						</label>
+					</div>
+					<div style="margin-top: 5px; font-size: 12px;" class="gender-change-alert hidden" id="gender-change-alert">
+						<div style="float: left; margin-right: 5px;">
+							<i class="material-icons" style="color:orange;font-size:20px;">warning</i>
+						</div>
+						<div style="padding-top:5px;">You can only change your info a limited number of times.</div>
+					</div>
+				</div>
+				<div class="question" id="dob_sec">
+					<label class="head">Birth Year<span class="s">*</span>
+					</label>
+					<!-- <label class="blurimage_text" Style="display: inline;">
+						(can only be changed once..)</label> -->
+					<!-- <div id="dob_text"></div>  -->
+					<!-- -->
+					<div class="dropdown" onClick="changeDob()">
+						<select class="mdl-textfield__input" id="dob">
+							<option value="0" id="0">Select your birth-year</option>
+						</select>
+					</div>
+					<!-- -->
+					<!-- <span class="md1__change-but"><button
+							class="btn-outline change-but" id="dob_change_but">Change</button>
+							<button
+							class="btn-outline change-but hidden" id="dob_save_but">Save</button>
+					</span>  -->
+					<br />
+					<!-- <span class="dob-text">(change allowed once a week)</span> -->
+					<!-- <span class="dob-change-alert hidden" id="dob-change-alert" >
+						<i class="material-icons" style="margin-top: 5px;color:red">warning</i> You can only change your info a limited number of times.
+					</span> -->
+					<div style="margin-top: 5px; font-size: 12px;" class="dob-change-alert hidden" id="dob-change-alert">
+						<div style="float: left; margin-right: 5px;">
+							<i class="material-icons" style="color:orange;font-size:20px;">warning</i>
+						</div>
+						<div style="padding-top:5px;">You can only change your info a limited number of times.</div>
+					</div>
+					<!-- -->
+				</div>
+				<div class="question" id="matchgender_sec">
+					<label class="head">Preferred Chatmate<span
+						class="s">*</span>
+					</label>
+					<div class="rdoControl rdoControl-3">
+						<label for="radioMatchMale"> <input type="radio"
+							value="Male" id="radioMatchMale" name="matchgender" />Male
+						</label> <label for="radioMatchFemale" class="pull-center"> <input
+							type="radio" value="Female" id="radioMatchFemale"
+							name="matchgender" />Female
+						</label> <label for="radioMatchAnyone" class="pull-right"> <input
+							type="radio" value="Anyone" id="radioMatchAnyone"
+							name="matchgender" />Anyone
+						</label>
+					</div>
+				</div>
+
+				<div class="question" id="bio_sec">
+					<label class="head">About Me
+					</label>
+					<!-- <div id="bio_text"></div>  -->
+					<div class="bio_input">
+						<!--
+							<label for="radioMatchMale"> <input type="radio"
+								value="Male" id="radioMatchMale" name="matchgender" />Male
+							</label> <label for="radioMatchFemale" class="pull-center"> <input
+								type="radio" value="Female" id="radioMatchFemale"
+								name="matchgender" />Female
+							</label> <label for="radioMatchAnyone" class="pull-right"> <input
+								type="radio" value="Anyone" id="radioMatchAnyone"
+								name="matchgender" />Anyone
+							</label>
+						-->
+						<p id="bio_test_input" onClick="showBioEdit()"></p>
+						<textarea id="bio_input" name="bio" class="bio_input" placeholder="Something about yourself.."
+							 wrap="soft" style="width: 100%;min-height: 70px;max-height: 100px;padding: 5px;border:0.2px solid grey;"></textarea>
+					</div>
+					<!-- <span class="md1__change-but">
+						<button class="btn-outline change-but" id="bio_change_but" onClick="bioChange();">Change</button>
+						<button class="btn-outline change-but hidden"
+							id="bio_save_but">Save</button>
+					</span>  -->
+				</div>
+
+				<div class="question" id="country_sec">
+					<label class="head">Location<span class="s">*</span></label>
+					<div class="mdl-textfield mdl-js-textfield" onClick="changeLocation()">
+						<span class="icon"><i class="material-icons">edit_location</i></span>
+						<!-- <div id="country_text"></div>  -->
+						<input class="mdl-textfield__input" type="text"
+							name="country" id="country"
+							placeholder="locality or district or zipcode or city"
+							autocomplete>
+					</div>
+					<!-- <span class="md1__change-but">
+						<button class="btn-outline change-but" id="country_change_but">Change</button>
+						<button class="btn-outline change-but hidden"
+							id="country_save_but">Save</button>
+					</span> -->
+					<br />
+					<!-- <span class="location-change-alert hidden" id="location-change-alert" >
+						<i class="material-icons" style="font-size:48px;color:red">warning</i> You can only change your info a limited number of times.
+					</span> -->
+					<div style="margin-top: 5px; font-size: 12px;" class="location-change-alert hidden" id="location-change-alert">
+						<div style="float: left; margin-right: 5px;">
+							<i class="material-icons" style="color:orange;font-size:20px;">warning</i>
+						</div>
+						<div style="padding-top:5px;">You can only change your info a limited number of times.</div>
+					</div>
+					<!-- <span class="country-text">can be changed once a week</span>  -->
+				</div>
+
+				<div class="question" id="wantNG_sec">
+					<label class="head">Looking For</label>
+					<div class="rdoControl-Circle" id="rdoControl-Circle">
+						<label for="radio41"> <input type="radio"
+							value="Serious Dating" id="radio41" name="want-ng" /> Serious
+							Dating
+						</label> <label for="radio42"> <input type="radio"
+							value="Just Friends" id="radio42" name="want-ng" />Just Friends
+						</label> <label for="radio43"> <input type="radio"
+							value="Casual Dating" id="radio43" name="want-ng" />Casual
+							Dating
+						</label>
+						<!-- <label for="radio44">
+                            <input type="radio" value="Skip" id="radio44" name="want-ng" /> Skip</label> -->
+					</div>
+				</div>
+
+				<div class="question" id="proud_sec">
+					<label class="head">Traits You are Proud Of</label>
+					<div class="checkbox-list" id="checkbox_list_proud">
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxproud-1"
+								class="checkbox__input" name="proud" value="1"> <label
+								class="checkbox__label" for="checkboxproud-1">looks</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxproud-2"
+								class="checkbox__input" name="proud" value="2"> <label
+								class="checkbox__label" for="checkboxproud-2">athletic</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxproud-3"
+								class="checkbox__input" name="proud" value="3">
+							<label class="checkbox__label" for="checkboxproud-3">intelligence</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxproud-4"
+								class="checkbox__input" name="proud" value="4"> <label
+								class="checkbox__label" for="checkboxproud-4">caring</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxproud-5"
+								class="checkbox__input" name="proud" value="5"> <label
+								class="checkbox__label" for="checkboxproud-5">height</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxproud-6"
+								class="checkbox__input" name="proud" value="6"> <label
+								class="checkbox__label" for="checkboxproud-6">funny</label>
+						</div>
+					</div>
+				</div>
+
+				<div class="question" id="ms_sec">
+					<label class="head">Relationship Status</label>
+					<div class="rdoControl-Circle" id="rdoControl-Circle"
+						id="rdoControl-Circle">
+						<label for="radio1"> <input type="radio" value="Single"
+							id="radio1" name="ms" /> Single
+						</label> <label for="radio2"> <input type="radio" value="Married"
+							id="radio2" name="ms" />Married
+						</label> <label for="radio3"> <input type="radio"
+							value="In a Relationship" id="radio3" name="ms" />In a
+							Relationship
+						</label> <label for="radio4"> <input type="radio"
+							value="Divorced/Separated" id="radio4" name="ms" />Divorced/Separated
+						</label>
+						<!--  <label for="radio5"> <input type="radio"
+							value="Divorced/Separated" id="radio5" name="ms" />Divorced/Separated
+						</label> -->
+						<!-- <label for="radio6">
+                            <input type="radio" value="Skip" id="radio6" name="ms" />Skip</label> -->
+					</div>
+				</div>
+
+				<div class="question" id="chatmate_sec">
+					<label class="head">Traits of your Ideal Chatmate</label>
+					<div class="checkbox-list" id="checkbox_list_chatmate">
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxchatmate-1"
+								class="checkbox__input" name="chatmate" value="1"> <label
+								class="checkbox__label" for="checkboxchatmate-1">looks</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxchatmate-2"
+								class="checkbox__input" name="chatmate" value="2">
+							<label class="checkbox__label" for="checkboxchatmate-2">athletic</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxchatmate-3"
+								class="checkbox__input" name="chatmate" value="3">
+							<label class="checkbox__label" for="checkboxchatmate-3">intelligence</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxchatmate-4"
+								class="checkbox__input" name="chatmate" value="4">
+							<label class="checkbox__label" for="checkboxchatmate-4">caring</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxchatmate-5"
+								class="checkbox__input" name="chatmate" value="5"> <label
+								class="checkbox__label" for="checkboxchatmate-5">height</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxchatmate-6"
+								class="checkbox__input" name="chatmate" value="6">
+							<label class="checkbox__label" for="checkboxchatmate-6">funny</label>
+						</div>
+					</div>
+				</div>
+
+			<!-- <div class="question" id="goverment_sec">
+					<label class="head"> Do you like current government of your
+						country? </label>
+					<div class="rdoControl">
+						<label for="radioGovermentYes"> <input type="radio"
+							value="Yes" id="radioGovermentYes" name="goverment" />Yes
+						</label> <label for="radioGovermentNo" class="pull-right"> <input
+							type="radio" value="No" id="radioGovermentNo" name="goverment" />No
+						</label>
+					</div>
+				</div> -->
+
+				<!-- <div class="question" id="firstname_sec">
+					<label class="head"> How should your name be displayed? </label>
+					<div class="rdoControl rdoControl-3 rdoControl-name">
+						<label for="radioFNFull"> <input type="radio" value="3"
+							id="radioFNFull" name="firstname" />Full
+						</label> <label for="radioFNFirst" class="pull-center"> <input
+							type="radio" value="1" id="radioFNFirst" name="firstname" />First
+							Name
+						</label> <label for="radioFNHide" class="pull-right"> <input
+							type="radio" value="2" id="radioFNHide" name="firstname" />Don't
+							display
+						</label>
+					</div>
+					<div class="que hidden" id="user_name">
+						<label class="head">Create your NG username</label>
+						<div class="mdl-textfield mdl-js-textfield">
+							<span class="icon"><i class="material-icons">face</i></span> <input
+								class="mdl-textfield__input" type="text" id="username"
+								name="username" placeholder="NG username"> <span
+								id="ImageUsername" class="image hidden"> <img src=""
+								id="LoadingImageUsername" />
+							</span> <input type="hidden" name="succeedUsername" />
+						</div>
+					</div>
+				</div> -->
+
+				<!-- <div class="question" id="languages_sec">
+					<label class="head">My Language</label>
+					<div class="checkbox-list" id="checkbox_list_languages">
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxlan-1" class="checkbox__input"
+								name="languages" value="English"> <label
+								for="checkboxlan-1" class="checkbox__label">English</label>
+						</div>
+
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxlan-2" class="checkbox__input"
+								name="languages" value="Filipino"> <label
+								for="checkboxlan-2" class="checkbox__label">Filipino</label>
+						</div>
+
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxlan-3" class="checkbox__input"
+								name="languages" value="Spanish"> <label
+								for="checkboxlan-3" class="checkbox__label">Spanish</label>
+						</div>
+
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxlan-4" class="checkbox__input"
+								name="languages" value="Arabic"> <label
+								for="checkboxlan-4" class="checkbox__label">Arabic</label>
+						</div>
+
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxlan-5" class="checkbox__input"
+								name="languages" value="Portuguese"> <label
+								for="checkboxlan-5" class="checkbox__label">Portuguese</label>
+						</div>
+
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxlan-6" class="checkbox__input"
+								name="languages" value="Vietnamese"> <label
+								for="checkboxlan-6" class="checkbox__label">Vietnamese</label>
+						</div>
+
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxlan-7" class="checkbox__input"
+								name="languages" value="French"> <label
+								for="checkboxlan-7" class="checkbox__label">French</label>
+						</div>
+
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxlan-8" class="checkbox__input"
+								name="languages" value="German"> <label
+								for="checkboxlan-8" class="checkbox__label">German</label>
+						</div>
+
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxlan-9" class="checkbox__input"
+								name="languages" value="Russian"> <label
+								for="checkboxlan-9" class="checkbox__label">Russian</label>
+						</div>
+
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxlan-10"
+								class="checkbox__input" name="languages" value="Italian">
+							<label for="checkboxlan-10" class="checkbox__label">Italian</label>
+						</div>
+
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxlan-11"
+								class="checkbox__input" name="languages" value="Polish">
+							<label for="checkboxlan-11" class="checkbox__label">Polish</label>
+						</div>
+
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxlan-12"
+								class="checkbox__input" name="languages" value="Other">
+							<label for="checkboxlan-12" class="checkbox__label">Other</label>
+						</div>
+
+					</div>
+				</div> -->
+
+				<!-- <div class="question" id="distance_sec"
+					style="padding-bottom: 30px;">
+					<label class="head"> Max Distance Search (in KM) </label>
+					<div class="range" id="rangec">
+						<input type="range" min="1" max="4" steps="1" name="distance">
+					</div>
+					<ul class="range-labels">
+						<li id="range1">25</li>
+						<li id="range2">75</li>
+						<li id="range3">150</li>
+						<li id="range4">country</li>
+					</ul>
+				</div> -->
+
+				<!-- <div class="question" id="ps_sec">
+					<label class="head"> What's your professional status?</label>
+					<div class="rdoControl-Circle" id="rdoControl-Circle"
+						id="rdoControl-Circle">
+						<label for="radio61"> <input type="radio" value="Student"
+							id="radio61" name="ps" /> Student
+						</label> <label for="radio62"> <input type="radio"
+							value="Full-Time Job" id="radio62" name="ps" />Full-Time Job
+						</label> <label for="radio63"> <input type="radio"
+							value="Part-Time/Freelance" id="radio63" name="ps" />Part-Time/Freelance
+						</label> <label for="radio64"> <input type="radio"
+							value="Business" id="radio64" name="ps" />Business
+						</label> <label for="radio65"> <input type="radio"
+							value="Homemaker" id="radio65" name="ps" />Homemaker
+						</label> </label> <label for="radio66"> <input type="radio"
+							value="Retired" id="radio66" name="ps" />Retired
+						</label>
+					</div>
+				</div> -->
+
+				<!-- <div class="question" id="height_sec">
+					<label class="head">What's your height? </label>
+					<div class="dropdown">
+						<select class="mdl-textfield__input heightfeetinch" id="feet">
+							<option value="00" id="ft00">ft</option>
+							<option value="3" id="ft3">3 ft</option>
+							<option value="4" id="ft4">4 ft</option>
+							<option value="5" id="ft5">5 ft</option>
+							<option value="6" id="ft6">6 ft</option>
+							<option value="7" id="ft7">7 ft</option>
+						</select> <select class="mdl-textfield__input heightfeetinch" id="inch"
+							style="margin-left: 10px;">
+							<option value="00" id="i00">inch</option>
+							<option value="0" id="i0">0 inch</option>
+							<option value="1" id="i1">1 inch</option>
+							<option value="2" id="i2">2 inch</option>
+							<option value="3" id="i3">3 inch</option>
+							<option value="4" id="i4">4 inch</option>
+							<option value="5" id="i5">5 inch</option>
+							<option value="6" id="i6">6 inch</option>
+							<option value="7" id="i7">7 inch</option>
+							<option value="8" id="i8">8 inch</option>
+							<option value="9" id="i9">9 inch</option>
+							<option value="10" id="i10">10 inch</option>
+							<option value="11" id="i11">11 inch</option>
+						</select>
+					</div>
+				</div> -->
+
+				<!-- <div class="question" id="bodytype_sec">
+					<label class="head">What's your body type?</label>
+					<div class="rdoControl-Circle" id="rdoControl-Circle"
+						id="rdoControl-Circle">
+						<label for="radio71"> <input type="radio" value="Thin"
+							id="radio71" name="bodytype" /> Thin
+						</label> <label for="radio72"> <input type="radio"
+							value="Athletic" id="radio72" name="bodytype" />Athletic
+						</label> <label for="radio73"> <input type="radio" value="Average"
+							id="radio73" name="bodytype" />Average
+						</label> <label for="radio74"> <input type="radio" value="Chubby"
+							id="radio74" name="bodytype" />Chubby
+						</label>
+					</div>
+				</div> -->
+
+				<!-- <div class="question">
+                    <label class="head">Q<span id="q">4</span>. What's your
+                        residence locality or city ?
+                    </label>
+                    <div class="dropdown">
+                        <select class="mdl-textfield__input select2">
+                            <option>Select your country</option>
+                            <option>United States</option>
+                            <option>Canada</option>
+                            <option>India</option>
+                        </select>
+                    </div>
+                </div> -->
+
+				<!-- <div class="question">
+                    <label class="head">Q<span id="q">6</span>. What's your favourite pastime?
+                    </label>
+                    <div class="rdoControl-Circle" id="rdoControl-Circle">
+                        <label for="radio11">
+                            <input type="radio" value="Chat/Internet" id="radio11" name="pastime" /> Chat/Internet
+                        </label>
+                        <label for="radio12">
+                            <input type="radio" value="Movies/TV" id="radio12" name="pastime" /> Movies/TV</label>
+                        <label for="radio13">
+                            <input type="radio" value="Books/Wikipedia" id="radio13" name="pastime" /> Books/Wikipedia</label>
+                        <label for="radio14">
+                            <input type="radio" value="Sleeping" id="radio14" name="pastime" />Sleep</label>
+                        <label for="radio15">
+                            <input type="radio" value="Exercise/Sports" id="radio15" name="pastime" />Exercise/Sports</label>
+                        <label for="radio16">
+                            <input type="radio" value="Work/Job" id="radio16" name="pastime" />Work/Job</label>
+                        <label for="radio17">
+                            <input type="radio" value="Skip" id="radio17" name="pastime" /> Skip</label>
+                    </div>
+                </div> -->
+
+				<!-- <div class="question" id="bestTrait_sec">
+					<label class="head"> What's your best trait? </label>
+					<div class="rdoControl-Circle" id="rdoControl-Circle">
+						<label for="radio21"> <input type="radio"
+							value="Face/Looks" id="radio21" name="best-trait" /> Face/Looks
+						</label> <label for="radio22"> <input type="radio"
+							value="Body/Figure" id="radio22" name="best-trait" />Body/Figure
+						</label> <label for="radio23"> <input type="radio"
+							value="Intelligence/Humor" id="radio23" name="best-trait" />
+							Intelligence/Humor
+						</label> <label for="radio24"> <input type="radio"
+							value="Success/Fame" id="radio24" name="best-trait" />Success/Fame
+						</label>
+					</div>
+				</div> -->
+
+				<!--  <div class="question" id="traitDate_sec">
+                    <label class="head"> What trait you wish to see in you chat-mate?
+                    </label>
+                    <div class="rdoControl-Circle" id="rdoControl-Circle">
+                        <label for="radio31">
+                            <input type="radio" value="Face/Looks" id="radio31" name="trait-chatmate" /> Face/Looks
+                        </label>
+                        <label for="radio32">
+                            <input type="radio" value="Body/Figure" id="radio32" name="trait-chatmate" />Body/Figure</label>
+                        <label for="radio33">
+                            <input type="radio" value="Intelligence/Humor" id="radio33" name="trait-chatmate" /> Intelligence/Humor</label>
+                        <label for="radio34">
+                            <input type="radio" value="Success/Fame" id="radio34" name="trait-chatmate" />Success/Fame</label>
+                    </div>
+                </div> -->
+
+				<!-- <div class="question" id="blurimage_sec">
+					<label class="head"> How should your image be displayed? </label>
+					<div class="rdoControl rdoControl-3 rdoControl-image">
+						<label for="radioUnblur"> <input type="radio" value="0"
+							id="radioUnblur" name="blurimage" />Slow Unblur
+						</label> <label for="radioBlur" class="pull-center"> <input
+							type="radio" value="1" id="radioBlur" name="blurimage" />Blurred
+						</label> <label for="radioReal" class="pull-right"> <input
+							type="radio" value="2" id="radioReal" name="blurimage" />Original
+						</label>
+					</div>
+					<label class="blurimage_text" id="blurimage_text"></label>
+				</div> -->
+
+				<!-- <div class="question" id="advices_sec">
+					<label class="head"> Posts you wish to view </label>
+					<div class="checkbox-list" id="checkbox_list_advices">
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxadv-1" class="checkbox__input"
+								name="advices" value="#WittyLines"> <label
+								for="checkboxadv-1" class="checkbox__label">Witty Lines</label>
+						</div>
+
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxadv-2" class="checkbox__input"
+								name="advices" value="#AskQuestion"> <label
+								for="checkboxadv-2" class="checkbox__label">Ask Question</label>
+						</div>
+
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxadv-3" class="checkbox__input"
+								name="advices" value="#CaptionThis"> <label
+								for="checkboxadv-3" class="checkbox__label">Caption This</label>
+						</div>
+
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxadv-4" class="checkbox__input"
+								name="advices" value="#AnswerThis"> <label
+								for="checkboxadv-4" class="checkbox__label">Answer This</label>
+						</div>
+
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxadv-5" class="checkbox__input"
+								name="advices" value="#Audio"> <label
+								for="checkboxadv-5" class="checkbox__label">Karaoke</label>
+						</div>
+
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxadv-6" class="checkbox__input"
+								name="advices" value="#DailyRants"> <label
+								for="checkboxadv-6" class="checkbox__label">Daily Rants</label>
+						</div>
+
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxadv-7" class="checkbox__input"
+								name="advices" value="#Personals"> <label
+								for="checkboxadv-7" class="checkbox__label">Personals</label>
+						</div>
+
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxadv-8" class="checkbox__input"
+								name="advices" value="#YouTube"> <label
+								for="checkboxadv-8" class="checkbox__label">YouTube</label>
+						</div>
+
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxadv-9"
+								class="checkbox__input" name="advices" value="#Confession">
+							<label for="checkboxadv-9" class="checkbox__label">Confession</label>
+						</div>
+
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxadv-10"
+								class="checkbox__input" name="advices" value="#WritingContest">
+							<label for="checkboxadv-10" class="checkbox__label">Writing Contest</label>
+						</div>
+
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxadv-11" class="checkbox__input"
+								name="advices" value="#LGBT"> <label for="checkboxadv-11"
+								class="checkbox__label">LGBT</label>
+						</div>
+					</div>
+				</div> -->
+
+				<!-- <div class="question" id='follow_sec'>
+                    <label class="head"> Do you want followers on FB/IG? </label>
+                    <div class="rdoControl">
+                        <label for="followyes">
+                            <input type="radio" value="yes"
+                                   id="followyes" name="follow" />YES
+                        </label> <label for="followno" class="pull-right">
+                            <input type="radio" value="no" id="followno" name="follow" />NO
+                        </label>
+                    </div>
+                    <div class="que hidden" id="shareprof">
+                        <label class="head">Enter one profile link</label>
+                        <div class="mdl-textfield mdl-js-textfield">
+                            <span class="icon www">WWW.<i class="material-icons">link</i></span>
+                            <input class="mdl-textfield__input" type="text" id="social-prof"
+                                   name="social-prof"
+                                   placeholder="Facebook.com/NearGroup OR Instagram.com/near.group ">
+                            <span id="Image" class="image hidden">
+                                <img src=""
+                                     id="LoadingImage" />
+                            </span> <input type="hidden" name="succeed" />
+                        </div>
+                    </div>
+                </div> -->
+
+				<!-- <div class="question" id='follow_sec'>
+                    <label class="head"> Do you
+						want followers on FB & Twitter? </label>
+                    <div class="rdoControl">
+                        <label for="followyes">
+                            <input type="radio" value="yes"
+                                   id="followyes" name="follow" />YES
+                        </label> <label for="followno" class="pull-right">
+                            <input type="radio" value="no" id="followno" name="follow" />NO
+                        </label>
+                    </div>
+                    <div class="que hidden" id="shareprof">
+                    <label class="blurimage_text">Connect your FB or Twitter to get followers.</label>
+					<div id="fb_but">
+						<button type="button" class="btn-outline fbprofbutton set"
+							style="font-family: 'Circular Std Book';" id="fb_login">
+							<img src="images/fb.png"
+								style="width: 18px; margin: 0 6px -5px -24px;">Get
+							Followers on FB
+						</button>
+					</div>
+					<div id="ig_but" style="margin: 13px 0;">
+                        <a href="loginInsta?channelid=" class="btn-outline igprofbutton" style="font-family: 'Circular Std Book';" id="ig_login"><img src="images/ig.png" style="width: 18px; margin: 0 6px -5px -24px;">Continue with Instagram</a>
+                    </div>
+					<div id="twitter_but" style="margin: 22px 0;">
+						<a href="loginTwitter?channelid="
+							class="btn-outline fbprofbutton twitterprofbutton set"
+							style="font-family: 'Circular Std Book';" id="twitter_login"><img
+							src="images/twitter.png"
+							style="width: 18px; margin: 0 6px -5px -24px;">Get
+							Followers on Twitter</a>
+					</div>
+                    </div>
+                </div> -->
+
+				<!-- <div class="question" id='follow_sec'>
+					<label class="head" style="padding-bottom: 5px;"> Do you
+						want followers on FB & Twitter? </label>
+					<div id="fb_but">
+						<button type="button" class="btn-outline fbprofbutton set"
+							style="font-family: 'Circular Std Book';" id="fb_login">
+							<img src="images/fb.png"
+								style="width: 18px; margin: 0 6px -5px -24px;">Get
+							Followers on FB
+						</button>
+					</div>
+					<div id="ig_but" style="margin: 13px 0;">
+                        <a href="loginInsta?channelid=" class="btn-outline igprofbutton" style="font-family: 'Circular Std Book';" id="ig_login"><img src="images/ig.png" style="width: 18px; margin: 0 6px -5px -24px;">Continue with Instagram</a>
+                    </div>
+					<div id="twitter_but" style="margin: 22px 0;">
+						<a href="loginTwitter?channelid="
+							class="btn-outline fbprofbutton twitterprofbutton set"
+							style="font-family: 'Circular Std Book';" id="twitter_login"><img
+							src="images/twitter.png"
+							style="width: 18px; margin: 0 6px -5px -24px;">Get
+							Followers on Twitter</a>
+					</div>
+
+					<div class="que hidden" id="shareLink">
+						<label class="head"> Do you wish to show your other(FB, Twitter) profile links on NearGroup posts and profile? </label>
+						<div class="rdoControl">
+							<label for="radioShareYes"> <input type="radio" value="yes"
+								id="radioShareYes" name="shareLink" />Yes
+							</label> <label for="radioShareNo" class="pull-right"> <input
+								type="radio" value="no" id="radioShareNo" name="shareLink" />No
+							</label>
+						</div>
+					</div>
+
+				</div> -->
+
+				<div class="question" id="passion_sec">
+					<label class="head">Interests</label>
+					<div class="checkbox-list" id="checkbox_list_passions">
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-1"
+								class="checkbox__input" name="passions"
+								value="American TV series"> <label
+								class="checkbox__label" for="checkboxpass-1">American TV series</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-2"
+								class="checkbox__input" name="passions" value="Anime/Manga">
+							<label class="checkbox__label" for="checkboxpass-2">Anime/Manga</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-3"
+								class="checkbox__input" name="passions" value="Books/Reading">
+							<label class="checkbox__label" for="checkboxpass-3">Books/Reading</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-4"
+								class="checkbox__input" name="passions" value="Dancing">
+							<label class="checkbox__label" for="checkboxpass-4">Dancing</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-5"
+								class="checkbox__input" name="passions" value="Fashion">
+							<label class="checkbox__label" for="checkboxpass-5">Fashion</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-6"
+								class="checkbox__input" name="passions" value="Food"> <label
+								class="checkbox__label" for="checkboxpass-6">Food</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-7"
+								class="checkbox__input" name="passions" value="Gaming">
+							<label class="checkbox__label" for="checkboxpass-7">Gaming</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-8"
+								class="checkbox__input" name="passions" value="Gym">
+							<label class="checkbox__label" for="checkboxpass-8">Gym</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-9"
+								class="checkbox__input" name="passions" value="Hollywood Movies">
+							<label class="checkbox__label" for="checkboxpass-9">Hollywood Movies</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-10"
+								class="checkbox__input" name="passions" value="Internet/Chatting"> <label
+								class="checkbox__label" for="checkboxpass-10">Internet/Chatting</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-11"
+								class="checkbox__input" name="passions"
+								value="Karaoke"> <label
+								class="checkbox__label" for="checkboxpass-11">Karaoke</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-12"
+								class="checkbox__input" name="passions" value="Korean Culture"> <label
+								class="checkbox__label" for="checkboxpass-12">Korean Culture</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-13"
+								class="checkbox__input" name="passions" value="Musical Instrument">
+							<label class="checkbox__label" for="checkboxpass-13">Musical Instrument</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-14"
+								class="checkbox__input" name="passions" value="Painting/Doodling">
+							<label class="checkbox__label" for="checkboxpass-14">Painting/Doodling</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-15"
+								class="checkbox__input" name="passions" value="Pets">
+							<label class="checkbox__label" for="checkboxpass-15">Pets</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-16"
+								class="checkbox__input" name="passions" value="Photography">
+							<label class="checkbox__label" for="checkboxpass-16">Photography</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-17"
+								class="checkbox__input" name="passions" value="Religion">
+							<label class="checkbox__label" for="checkboxpass-17">Religion</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-18"
+								class="checkbox__input" name="passions" value="Running/Cycling">
+							<label class="checkbox__label" for="checkboxpass-18">Running/Cycling</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-19"
+								class="checkbox__input" name="passions" value="Science/Tech">
+							<label class="checkbox__label" for="checkboxpass-19">Science/Tech</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-20"
+								class="checkbox__input" name="passions" value="Sports">
+							<label class="checkbox__label" for="checkboxpass-20">Sports</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-21"
+								class="checkbox__input" name="passions" value="Traveling">
+							<label class="checkbox__label" for="checkboxpass-21">Traveling</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-22"
+								class="checkbox__input" name="passions" value="Volunteering">
+							<label class="checkbox__label" for="checkboxpass-22">Volunteering</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-23"
+								class="checkbox__input" name="passions" value="Writing">
+							<label class="checkbox__label" for="checkboxpass-23">Writing</label>
+						</div>
+						<div class="checkbox">
+							<input type="checkbox" id="checkboxpass-24"
+								class="checkbox__input" name="passions" value="Yoga/Meditation">
+							<label class="checkbox__label" for="checkboxpass-24">Yoga/Meditation</label>
+						</div>
+					</div>
+				</div>
+
+				<div class="question" id='follow_sec'>
+					<label class="head">Verify your account via FB</label> <span
+						id="follow">
+						<div id="fb_but" style="text-align: center; margin-bottom: 10px;">
+							<button type="button" class="btn-outline fbprofbutton set"
+								style="font-family: 'Circular Std Book'; margin-top: 0; margin-left: 0 !important;"
+								id="fb_login1">
+								<img src="images/fb.png"
+									style="width: 18px; margin: 0 6px -5px -24px;">Connect
+								your FB
+							</button>
+						</div> <label class="blurimage_text" style="text-align: unset;">
+							We will:<br> ✅ Put you on priority & match you faster<br>
+							✅ Find users who like similar FB pages<br> ✅ Verify your
+							account (if you have 100+ FB friends)<br> <br> We will never:<br>
+							❌ Steal your login details<br> ❌ Post on your behalf<br>
+							❌ Show your info to NG users<br> ❌ Send messages to your FB
+							friends<br>
+					</label>
+					</span>
+				</div>
+
+				<div class="question hidden" id="interest_sec">
+					<label class="head"> Select FB Pages (will match users who also like selected pages)</label>
+					<div class="checkbox-list" id="checkbox_list_interest"></div>
+				</div>
+
+				<div class="question" id="notitime_sec">
+					<label class="head">Time to Introduce to New People</label>
+					<div class="rdoControl-Circle" id="rdoControl-Circle"
+						id="rdoControl-Circle">
+						<label for="radio91"> <input type="radio" value="1"
+							id="radio91" name="notitime" /> 5 am - 9 am
+						</label> <label for="radio92"> <input type="radio"
+							value="2" id="radio92" name="notitime" /> 9 am - 12 noon
+						</label> <label for="radio93"> <input type="radio"
+							value="3" id="radio93" name="notitime" /> 12 pm - 3 pm
+						</label> <label for="radio94"> <input type="radio" value="4"
+							id="radio94" name="notitime" /> 3 pm - 6 pm
+						</label> <label for="radio95"> <input type="radio" value="5"
+							id="radio95" name="notitime" /> 6 pm - 9 pm
+						</label> <label for="radio96"> <input type="radio"
+							value="6" id="radio96" name="notitime" /> 9 pm - 12 am
+						</label>
+						<!--
+						<label for="radio90"> <input type="radio" value="0"
+							id="radio90" name="notitime" /> Never
+						</label>
+						 -->
+					</div>
+				</div>
+
+				<div class="question" id="languages_sec">
+					<label class="head">Language</label>
+					<div class="rdoControl-Circle" id="rdoControl-Circle"
+						id="rdoControl-Circle">
+						<label for="radio51"> <input type="radio" value="English"
+							id="radio51" name="languages" /> English
+						</label> <label for="radio52"> <input type="radio"
+							value="Filipino" id="radio52" name="languages" /> Filipino
+						</label> <label for="radio53"> <input type="radio"
+							value="Vietnamese" id="radio53" name="languages" /> Vietnamese
+						</label> <label for="radio54"> <input type="radio" value="Thai"
+							id="radio54" name="languages" /> Thai
+						</label> <label for="radio55"> <input type="radio" value="Malay"
+							id="radio55" name="languages" /> Malay
+						</label> <label for="radio56"> <input type="radio"
+							value="Indonesian" id="radio56" name="languages" /> Indonesian
+						</label> <label for="radio57"> <input type="radio" value="Khmer"
+							id="radio57" name="Languages" /> Khmer
+						</label> <label for="radio58"> <input type="radio"
+							value="Portuguese" id="radio58" name="languages" /> Portuguese
+						</label> <label for="radio59"> <input type="radio" value="Spanish"
+							id="radio59" name="Languages" /> Spanish
+						</label> <label for="radio510"> <input type="radio" value="French"
+							id="radio510" name="languages" /> French
+						</label> <label for="radio511"> <input type="radio"
+							value="Chinese" id="radio511" name="languages" /> Chinese
+						</label> <label for="radio512"> <input type="radio"
+							value="Japanese" id="radio512" name="languages" /> Japanese
+						</label> <label for="radio513"> <input type="radio" value="Korean"
+							id="radio513" name="languages" /> Korean
+						</label> <label for="radio514"> <input type="radio"
+							value="Russian" id="radio514" name="languages" /> Russian
+						</label> <label for="radio515"> <input type="radio" value="Arabic"
+							id="radio515" name="languages" /> Arabic
+						</label> <label for="radio516"> <input type="radio" value="Other"
+							id="radio516" name="languages" /> Other
+						</label>
+					</div>
+				</div>
+
+				<!-- <div class="question" id="notification_sec">
+					<label class="head"> Do you wish to receive notification on
+						NearGroup? </label>
+					<div class="rdoControl">
+						<label for="radioNotiYes"> <input type="radio" value="yes"
+							id="radioNotiYes" name="Notification" />Yes
+						</label> <label for="radioNotiNo" class="pull-right"> <input
+							type="radio" value="no" id="radioNotiNo" name="Notification" />No
+						</label>
+					</div>
+				</div> -->
+
+				<!-- <div class="question" id="mobile_sec">
+					<label class="head"> Enter your mobile number. Its for
+						verification & will never be visible to anyone (no country code
+						needed) </label>
+
+					<div class="mdl-textfield mdl-js-textfield">
+						<span class="icon"><i class="material-icons">phone</i></span> <input
+							class="mdl-textfield__input" type="tel" id="mobile" name="mobile"
+							placeholder="9999999999" maxlength="10"> <span id="Imagemobile"
+							class="image"><span id="valid-msg" class="hidden"><img
+								src="images/checked.png" /></span><span id="error-msg" class="hidden"><img
+								src="images/cancel.png" /></span> </span>
+								<input type="hidden" name="succeedMobile" />
+					</div>
+				</div> -->
+
+			</div>
+
+		</div>
+
+		<button class="btn-outline btn-deacti" id="btndeactivate" onClick="deactivate()">
+			Deactivate Account</button>
+		<!-- <a href="paynow.jsp" class="btn-outline btn-deacti">pay</a>
+		class="deactivate"  -->
+
+	</div>
+	<div class="container deactivate_container hidden">
+		<div class="controls">
+			<div class="questions">
+				<div class="question">
+					<label class="head">Your account is currently deactivated</label>
+					<button class="btn-outline" id="btnactivate" onClick="activateAccount()">Activate
+						Account</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="container pay_container hidden">
+		<div class="controls">
+			<div class="questions">
+				<div class="question">
+					<label class="head">&nbsp;</label> <label class="head">
+						<h1>Please wait! Now you are redirect on MOL Money Online.</h1>
+					</label> <label class="head">
+						<h4>MOL is the faster, safer way to send money, make an
+							online payment, receive money or set up a merchant account.</h4>
+					</label> <label class="head"> <img src="images/mol_loader.gif" />
+						<label class="head">
+							<h2>NearGroup (neargroup.me)</h2>
+					</label>
+					</label> <label class="head">&nbsp;</label>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="lean-overlay" id="overlayContact"></div>
+	<div id="myModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						onclick="CloseModal();">
+						<i class="material-icons">close</i>
+					</button>
+					<h4 class="modal-title" id="model_title_text"></h4>
+					<h6 class="modal-title modal-text" id="model_t_text"></h6>
+					<button type="button" class="btn btn-default followbutton"
+						id="btnok">OK</button>
+					<button type="button" class="btn btn-default followbutton"
+						id="btncancel">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="toast-message" class="mdl-js-snackbar mdl-snackbar"
+		style="width: 100%;">
+		<div class="mdl-snackbar__text"></div>
+		<button class="mdl-snackbar__action" type="button"></button>
+	</div>
+</div>
+</body>
+</html>
+<script
+	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDIpBdmQINB580TRRZysXjyDDHgOQdQvXA&libraries=places&language=en"></script>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://connect.facebook.com/en_US/messenger.Extensions.js"></script>
+<!-- <script src="js/intlTelInput.min.js"></script> -->
+<script src="js/profile.js" charset="UTF-8"></script>
+<script src="js/fblogin.min.js" charset="UTF-8"></script>
+<script type="text/javascript" charset="UTF-8">
+/* var telInput = $("#mobile"),
+errorMsg = $("#error-msg"),
+validMsg = $("#valid-msg");
+
+//initialise plugin
+telInput.intlTelInput({
+utilsScript: "js/utils.js",
+initialCountry: "auto",
+geoIpLookup: function(callback) {
+    $.get('https://ipinfo.io', function() {}, "jsonp").always(function(resp) {
+        var countryCode = (resp && resp.country) ? resp.country : "";
+        callback(countryCode);
+    });
+},
+preferredCountries: ["ph", "us", "gb"],
+//nationalMode: false,//show code in line
+autoHideDialCode: false,
+formatOnDisplay: false
+    // SET THIS!!!
+});
+
+var reset = function() {
+$('#mobile_sec').removeClass("error");
+errorMsg.addClass("hidden");
+validMsg.addClass("hidden");
+};
+ */
+//on blur: validate
+/* telInput.keyup(function() {
+reset();
+if ($.trim(telInput.val())) {
+    if (telInput.intlTelInput('isValidNumber')) {
+        validMsg.removeClass('hidden');
+        $('input[name="mobile"]').addClass('green').removeClass('red');
+    } else {
+        $('#mobile_sec').addClass('error');
+        errorMsg.removeClass('hidden');
+        $('input[name="mobile"]').removeClass('green').addClass('red');
+    }
+}
+}); */
+
+//on keyup / change flag: reset
+/* telInput.on("keyup change", reset); */
+
+$body = $('body');
+var channelid = '';
+var gender = 'female';
+var backcolor = '#fa5194';
+var blurimage = '0';
+var favs = getUrlParameter("kJhuW");
+$(function() {
+$body.addClass("loading");
+$.ajax({
+        type: "POST",
+        url: "userPreferences",
+        //crossDomain: true,
+        dataType: 'json',
+        data: JSON.stringify({
+            "channelid": getUrlParameter("channelid"),
+        }),
+        cache: false,
+        contentType: 'application/json',
+        mimeType: 'application/json',
+        success: function(data) {
+            $body.removeClass("loading");
+            console.log("initial userPreferences");
+            if (data) {
+                if ("edit_profile" in data) {
+                    $('.maincontainer').removeClass('hidden');
+                    $('.deactivate_container').html('');
+                    channelid = data.edit_profile.channelid;
+
+                    var bio = data.edit_profile.bio
+                    console.log("got bio = " , bio);
+                    if(bio != undefined && bio != "" && bio != null && bio != "null") {
+                    	console.log("bio ok "+ bio);
+                    	//$('#bio_text').removeClass("hidden");
+
+                    	$('#bio_input').val(bio);
+                    	$('#bio_input').addClass("hidden");
+                    	$('#bio_test_input').html(bio)
+
+                    	//decodeURIComponent(JSON.parse('"' + bio.replace(/\"/g, '\\"') + '"') )
+                    	//$('#bio_change_but').removeClass("hidden");
+                    	//$('#bio_save_but').addClass("hidden");
+                    }else {
+                    	console.log("bio blahhh");
+                    	//$('#bio_text').addClass("hidden");
+                    	//$('#bio_input').removeClass("hidden");
+                    	$('#bio_input').val("");
+                    	//$('#bio_change_but').addClass("hidden");
+                    	//$('#bio_save_but').removeClass("hidden");
+                    }
+
+                    gender = data.edit_profile.gender.toLowerCase();
+                    blurimage = data.edit_profile.blurimage;
+                    if (gender != "female") {
+                        $("#radioMale").prop("checked", true)
+                            .parent().addClass("active");
+                        $("#imgprofile, #imgprofile-1, #imgprofile-2, #imgprofile-3, #imgprofile-4").attr("onerror",
+                            "imgsrc('boy', 'edit', this)");
+                    } else {
+                        $("#radioFemale").prop("checked", true)
+                            .parent().addClass("active");
+                        $("#imgprofile, #imgprofile-1, #imgprofile-2, #imgprofile-3, #imgprofile-4").attr("onerror",
+                            "imgsrc('girl', 'edit', this)");
+                    }
+                    if (blurimage == 2) {
+                    	$("#imgprofile").attr("src","https://s3-us-west-2.amazonaws.com/ng-image/ng/profile/profile_" + data.edit_profile.image_name); //https://img.neargroup.in/project/120x120/forcesize/profile_
+                        $("#imgprofile-1").attr("src","https://s3-us-west-2.amazonaws.com/ng-image/ng/thumb/512_512_profile_" + data.edit_profile.image_name); //https://img.neargroup.in/project/60x60/forcesize/profile_
+                        $("#imgprofile-2").attr("src","https://s3-us-west-2.amazonaws.com/ng-image/ng/thumb/512_512_profile_" + data.edit_profile.image_name2); //https://img.neargroup.in/project/60x60/forcesize/profile_
+                        $("#imgprofile-3").attr("src","https://s3-us-west-2.amazonaws.com/ng-image/ng/thumb/512_512_profile_" + data.edit_profile.image_name3); //https://img.neargroup.in/project/60x60/forcesize/profile_
+                        $("#imgprofile-4").attr("src","https://s3-us-west-2.amazonaws.com/ng-image/ng/thumb/512_512_profile_" + data.edit_profile.image_name4); //https://img.neargroup.in/project/60x60/forcesize/profile_
+                    } else {
+                    	$("#imgprofile").attr("src","https://s3-us-west-2.amazonaws.com/ng-image/ng/pix/40_profile_" + data.edit_profile.image_name); //https://img.neargroup.in/project/120x120/forcesize/pixelate_6/profile_
+                        $("#imgprofile-1").attr("src","https://s3-us-west-2.amazonaws.com/ng-image/ng/pix/25_profile_" + data.edit_profile.image_name); //https://img.neargroup.in/project/60x60/forcesize/pixelate_3/profile_
+                        $("#imgprofile-2").attr("src","https://s3-us-west-2.amazonaws.com/ng-image/ng/pix/25_profile_" + data.edit_profile.image_name2); //https://img.neargroup.in/project/60x60/forcesize/pixelate_3/profile_
+                        $("#imgprofile-3").attr("src","https://s3-us-west-2.amazonaws.com/ng-image/ng/pix/25_profile_" + data.edit_profile.image_name3); //https://img.neargroup.in/project/60x60/forcesize/pixelate_3/profile_
+                        $("#imgprofile-4").attr("src","https://s3-us-west-2.amazonaws.com/ng-image/ng/pix/25_profile_" + data.edit_profile.image_name4); //https://img.neargroup.in/project/60x60/forcesize/pixelate_3/profile_
+                    }
+                    $('#img-1, #img-2, #img-3, #img-4').html('clear').addClass('uploadcancel');
+                    if (data.edit_profile.mgender !== undefined) {
+                        if (data.edit_profile.mgender.toLowerCase() == "male") {
+                            $("#radioMatchMale").prop("checked",
+                                true).parent().addClass(
+                                "active");
+                            $("#radioMatchFemale").prop("checked",
+                                false);
+                            $("#radioMatchAnyone").prop("checked",
+                                false);
+                        } else if (data.edit_profile.mgender.toLowerCase() == "female") {
+                            $("#radioMatchFemale").prop("checked",
+                                true).parent().addClass(
+                                "active");
+                            $("#radioMatchMale").prop("checked",
+                                false);
+                            $("#radioMatchAnyone").prop("checked",
+                                false);
+                        } else if (data.edit_profile.mgender.toLowerCase() == "anyone") {
+                            $("#radioMatchAnyone").prop("checked",
+                                true).parent().addClass(
+                                "active");
+                            $("#radioMatchMale").prop("checked",
+                                false);
+                            $("#radioMatchFemale").prop("checked",
+                                false);
+                        }
+                    }
+                    if(data.edit_profile.followlink!='' || data.edit_profile.twitter_isFollow!='0'){
+                    	$('#followyes').click();
+                    }else{
+                    	$('#followno').click();
+                    }
+                    if (data.edit_profile.DOB_change !== undefined && data.edit_profile.DOB_change != 'null') {
+                    	console.log("dob dropdown html data.edit_profile.DOB_change ", data.edit_profile.fb_dob)
+                    	$('#dob_sec').find('.blurimage_text').html('').parent().find('.s').html('');
+                    	if (data.edit_profile.fb_active !== undefined && data.edit_profile.fb_active == '0' && data.edit_profile.fb_dob !== undefined && data.edit_profile.fb_dob != 'null' && data.edit_profile.fb_dob != '0') {
+                    		//$('#dob_sec').find('.dropdown').html(data.edit_profile.fb_dob);
+
+                    		//$('#dob_sec').find('#dob_text').html(data.edit_profile.fb_dob);
+
+                    		$('#dob_sec').find('#dob').val(data.edit_profile.fb_dob);
+                   	 	}else{
+                   	 		//$('#dob_sec').find('.dropdown').html(data.edit_profile.dob);
+
+                   	 		//$('#dob_sec').find('#dob_text').html(data.edit_profile.dob);
+
+                   	 		$('#dob_sec').find('#dob').val(data.edit_profile.fb_dob);
+                   	 	}
+                    }
+                    if (data.edit_profile.gender_change !== undefined && data.edit_profile.gender_change != 'null') {
+                    	$('#gender_sec').find('.blurimage_text').html('').parent().find('.s').html('');
+                    	//if (data.edit_profile.fb_active !== undefined && data.edit_profile.fb_active == '0' && data.edit_profile.gender_sec !== undefined && data.edit_profile.gender_sec != 'null') {
+                    		//$('#gender_sec').find('.rdoControl').addClass('hidden').html('').parent().append('<div>'+data.edit_profile.gender+'</div>');
+                    		//$('#gender_sec').append('<div>'+data.edit_profile.gender+'</div>');
+                   	 	//}else{
+                   	 		//$('#gender_sec').find('.rdoControl').addClass('hidden').html('').parent().append('<div>'+data.edit_profile.gender+'</div>');
+                   	 	//}
+                    }
+                    if (data.edit_profile.fb_active !== undefined && data.edit_profile.fb_active == '0') {
+                        /* $('#fb_but').html('<button type="button" class="btn-outline fbprofbutton set" onclick="removefb()" id="removefb" style="font-family: \'Circular Std Book\';"><img src="images/fb.png" style="width: 18px; margin: 0 6px -5px -24px;">Log Out</button>'); */
+                    	$('#follow_sec').find('.head').html('Connect with FB');
+                    	$('#follow').html('<br>Account Verified!<br>');
+                    	 if (data.edit_profile.frnd_count !== undefined && data.edit_profile.frnd_count != 'null') {
+                    		$('#follow').append('<br>Your Friends: '+data.edit_profile.frnd_count);
+                    	 }
+                    	 if (data.edit_profile.fb_gender !== undefined && data.edit_profile.fb_gender != 'null') {
+                    		 $('#follow').append('<br>Gender: '+data.edit_profile.fb_gender);
+                    	 }
+                    	 if (data.edit_profile.fb_dob !== undefined && data.edit_profile.fb_dob != '0' && data.edit_profile.fb_dob != 'null') {
+                    		 console.log("dob dropdown data.edit_profile.fb_dob", data.edit_profile.fb_dob)
+                    		 $('#follow').append('<br>Age: '+data.edit_profile.fb_dob);
+                    		 $('#dob_sec').find('#dob_text').html(data.edit_profile.fb_dob);
+                    		 //$('#dob_sec').find('.dropdown').html(data.edit_profile.fb_dob);
+                    		 $('#dob_sec').find('.blurimage_text').html('  (FB verified)').parent().find('.s').html('');
+                    	 }
+
+                    }
+                    /* if (data.edit_profile.ig_isDeactivate !== undefined && data.edit_profile.ig_isDeactivate == '0') {
+                        $('#ig_but')
+                            .html(
+                                '<a href="javascript:void(0)" class="btn-outline igprofbutton" onclick="socialDeactivate(\'InstaProfile\');" style="font-family: \'Circular Std Book\';"><img src="images/ig.png" style="width: 18px; margin: 0 6px -5px -24px;">Log Out</a>');
+                    } */
+                    if (data.edit_profile.twitter_isDeactivate !== undefined && data.edit_profile.twitter_isDeactivate == '0') {
+                        $('#twitter_but')
+                            .html(
+                                '<a href="javascript:void(0)" class="btn-outline fbprofbutton twitterprofbutton set" id="removetwitter" style="font-family: \'Circular Std Book\';" onclick="socialDeactivate(\'TwitterProfile\');"><img src="images/twitter.png" style="width: 18px; margin: 0 6px -5px -24px;">Log Out</a>');
+                    } else {
+                        $('#twitter_but').children().attr(
+                            'href',
+                            'loginTwitter?channelid=' + channelid);
+                    }
+                    if (data.edit_profile.dob !== undefined) {
+
+                    	//$('#dob_text').html(data.edit_profile.dob);
+                        $('#' + data.edit_profile.dob).prop(
+                            "selected", true);
+                        //$('#dob').prop('disabled', true);
+                    }
+                    if (data.edit_profile.location !== undefined && data.edit_profile.location!='' && data.edit_profile.country!='') {
+                        if ("location" in data.edit_profile && data.edit_profile.location != "") {
+                        	//$('#country_text').html(data.edit_profile.location);
+                            $("#country").attr("value",data.edit_profile.location); //prop('disabled', true)
+
+                        } else {
+                        	//$('#country_text').html(data.edit_profile.country);
+                            $("#country").attr("value", data.edit_profile.country);
+                        }
+                    }else{
+                    	//$('#country').removeClass('hidden');
+                    	//$('#country_change_but, #country_text').addClass('hidden');
+                    	//$('#country_save_but').removeClass('hidden');
+                    }
+                    if (data.edit_profile.rstatus !== undefined) {
+                        var ms = ["Single", "Married", "In a Relationship", "Separated/Divorced"];
+                        $("#radio" + (ms.indexOf(data.edit_profile.rstatus) + 1)).prop("checked", true).parent().addClass("active");
+                    }
+
+                    /* var bestTrait = ["face/looks", "body/figure", "intelligence/humor", "success/fame"];
+                    $("#radio2" + (bestTrait.indexOf((data.edit_profile.bestTrait).toLowerCase()) + 1)).prop("checked", true).parent().addClass("active");
+
+                    var traitChatmate = ["face/looks", "body/figure", "intelligence/humor", "success/fame"];
+                    $("#radio3" + (traitChatmate.indexOf((data.edit_profile.traitChatmate).toLowerCase()) + 1)).prop("checked", true).parent().addClass("active");*/
+
+                    $("#radioGoverment"+data.edit_profile.goverment).prop("checked",true).parent().addClass("active");
+
+                    var ps = ["Student", "Full-Time Job", "Part-Time/Freelance", "Business", "Homemaker", "Retired"];
+                    $("#radio6" + (ps.indexOf(data.edit_profile.ps) + 1)).prop("checked", true).parent().addClass("active");
+
+                    if(data.edit_profile.notitime != 0 && data.edit_profile.notitime != "0") {
+                    	$("#radio9" + data.edit_profile.notitime).prop("checked", true).parent().addClass("active");
+                    } else {
+                    	//$("#radio95").prop("checked", true).parent().addClass("active");
+                    }
+
+                    if(data.edit_profile.getFCMPermission) {
+                    	$("#radio9" + 1).data('getFCMPermission', true);
+                    	$("#radio9" + 2).data('getFCMPermission', true);
+                    	$("#radio9" + 3).data('getFCMPermission', true);
+                    	$("#radio9" + 4).data('getFCMPermission', true);
+                    	$("#radio9" + 5).data('getFCMPermission', true);
+                    	$("#radio9" + 6).data('getFCMPermission', true);
+                    	//prop("checked", true).parent().addClass("active");
+                    } else {
+                      $("#radio9" + 1).data('getFCMPermission', false);
+                      $("#radio9" + 2).data('getFCMPermission', false);
+                      $("#radio9" + 3).data('getFCMPermission', false);
+                      $("#radio9" + 4).data('getFCMPermission', false);
+                      $("#radio9" + 5).data('getFCMPermission', false);
+                      $("#radio9" + 6).data('getFCMPermission', false);
+                    }
+
+                    var bodytype = ["Thin", "Athletic", "Average", "Chubby"];
+                    $("#radio7" + (bodytype.indexOf(data.edit_profile.bodytype) + 1)).prop("checked", true).parent().addClass("active");
+					if (data.edit_profile.height !== undefined && data.edit_profile.height !== "00'00") {
+						var inch = parseInt(data.edit_profile.height)*0.3937007874;
+						var feet = Math.floor(inch / 12);
+						var inches = Math.round(inch % 12);
+						if(inches==12){
+							feet+=1;
+							inches=0;
+						}
+                        $('#ft' + feet).prop("selected", true);
+                        $('#i' + inches).prop("selected", true);
+                    }else{
+                    	 $('#ft' + (data.edit_profile.height).split('\'')[0]).prop("selected", true);
+                    	 $('#i' + (data.edit_profile.height).split('\'')[1]).prop("selected", true);
+                    }
+                    if (data.edit_profile.wantNG !== undefined) {
+                        var wantNG = ["serious dating",
+                            "just friends", "casual dating"
+                        ];
+                        $("#radio4" + (wantNG.indexOf(data.edit_profile.wantNG.toLowerCase()) + 1))
+                            .prop("checked", true).parent()
+                            .addClass("active");
+                    }
+                    /* if (data.edit_profile.followlink !== undefined) {
+                        if ("followlink" in data.edit_profile && data.edit_profile.followlink != "" && data) {
+                            $('#radioShareYes').prop("checked", true)
+                                .parent().addClass("active");
+                        } else {
+                        	$('#radioShareNo').prop("checked", true)
+                            .parent().addClass("active");
+                            $('#radioShareNo').click();
+                        }
+                    } */
+                    if (data.edit_profile.mobile !== undefined) {
+                        $("#mobile").attr("value",
+                            data.edit_profile.mobile);
+                    }
+                    if (data.edit_profile.notification_rec !== undefined) {
+                        if (data.edit_profile.notification_rec.toLowerCase() != "yes") {
+                            $("#radioNotiNo").prop("checked", true)
+                                .parent().addClass("active");
+                            $("#radioNotiYes").prop("checked",
+                                false);
+                        } else {
+                            $("#radioNotiYes")
+                                .prop("checked", true).parent()
+                                .addClass("active");
+                            $("#radioNotiNo")
+                                .prop("checked", false);
+                        }
+                    }
+                    if (data.edit_profile.firstname !== undefined) {
+                        if (data.edit_profile.firstname == "3") {
+                            $("#radioFNFull").prop("checked", true)
+                                .parent().addClass("active");
+                            $("#radioFNFirst").prop("checked",
+                                false);
+                            $("#radioFNHide")
+                                .prop("checked", false);
+                        } else if (data.edit_profile.firstname == "1") {
+                            $("#radioFNFirst")
+                                .prop("checked", true).parent()
+                                .addClass("active");
+                            $("#radioFNFull")
+                                .prop("checked", false);
+                            $("#radioFNHide")
+                                .prop("checked", false);
+                        } else if (data.edit_profile.firstname == "2") {
+                            $("#radioFNHide").prop("checked", true)
+                                .parent().addClass("active");
+                            $("#radioFNFull")
+                                .prop("checked", false);
+                            $("#radioFNFirst").prop("checked",
+                                false);
+                            $('#user_name').removeClass('hidden');
+                            $('input[name="username"]').val(
+                                data.edit_profile.username);
+                        }
+                    }
+                    if (data.edit_profile.blurimage !== undefined) {
+                        if (data.edit_profile.blurimage == "1") {
+                            $("#radioBlur").prop("checked", true)
+                                .click().parent().addClass(
+                                    "active");
+                            $("#radioReal").prop("checked", false);
+                            $("#radioUnblur")
+                                .prop("checked", false);
+                        } else if (data.edit_profile.blurimage == "2") {
+                            $("#radioReal").prop("checked", true)
+                                .click().parent().addClass(
+                                    "active");
+                            $("#radioBlur").prop("checked", false);
+                            $("#radioUnblur")
+                                .prop("checked", false);
+                        } else {
+                            $("#radioUnblur").prop("checked", true)
+                                .click().parent().addClass(
+                                    "active");
+                            $("#radioBlur").prop("checked", false);
+                            $("#radioReal").prop("checked", false);
+                        }
+                    }
+                    /* $.getScript("js/range.js",function() {
+                                var dis = 1001;
+                                var dist = 4;
+                                if (data.edit_profile.distance != '300' || (data.edit_profile.country).toLowerCase() != 'philippines') {
+									dis = parseInt(data.edit_profile.distance);
+                                    if (dis < 26) {
+                                        dist = 1
+                                    } else if (dis < 76) {
+                                        dist = 2
+                                    } else if (dis < 151) {
+                                        dist = 3
+                                    } else if (dis < 251) {
+                                        dist = 4
+                                    } else if (dis > 500) {
+                                        dist = 4
+                                    } else {
+                                        dist = 4
+                                    }
+                                } else {
+                                    dis = 75;
+                                    dist = 2;
+                                }
+                                $('input[name="distance"]')
+                                    .val(dist);
+                                if (gender != "female") {
+                                    $('#rangec')
+                                        .addClass(
+                                            'range-colorchange');
+                                    $('#range1')
+                                        .removeClass(
+                                            'active')
+                                        .removeClass(
+                                            'selected');
+                                    $('#range' + $(
+                                                'input[name="distance"]')
+                                            .val())
+                                        .addClass(
+                                            'active-colorchange')
+                                        .addClass(
+                                            'selected-colorchange')
+                                        .click();
+                                } else {
+                                    $('#range1')
+                                        .removeClass(
+                                            'active')
+                                        .removeClass(
+                                            'selected');
+                                    $(
+                                            '#range' + $(
+                                                'input[name="distance"]')
+                                            .val())
+                                        .addClass(
+                                            'active')
+                                        .addClass(
+                                            'selected')
+                                        .click();
+                                }
+                            }); */
+                    if (data.edit_profile.advices_hashtag != "" && data.edit_profile.advices_hashtag !== undefined) {
+                        var a_hashtag = data.edit_profile.advices_hashtag;
+                        var hashtag = a_hashtag.split(', ');
+                        var d_hashtag = ["#WittyLines", "#AskQuestion", "#CaptionThis", "#AnswerThis", "#Audio", "#DailyRants",  "#Personals", "#YouTube", "#Confession", "#WritingContest", "LGBT"];
+                        for (var i = 0; i < hashtag.length; i++) {
+                            if (gender != "female") {
+                                $(
+                                        "#checkboxadv-" + (d_hashtag
+                                            .indexOf(hashtag[i]) + 1))
+                                    .prop("checked", true)
+                                    .parent()
+                                    .addClass(
+                                        "is-checked-colorchange");
+                            } else {
+                                $(
+                                        "#checkboxadv-" + (d_hashtag
+                                            .indexOf(hashtag[i]) + 1))
+                                    .prop("checked", true)
+                                    .parent().addClass(
+                                        "is-checked");
+                            }
+                        }
+                    }
+                    if(data.edit_profile.mgender==gender){
+                   	 if (gender != "female") {
+                            $("#checkboxadv-11")
+                                .prop("checked", true)
+                                .parent()
+                                .addClass(
+                                    "is-checked-colorchange");
+                        } else {
+                            $("#checkboxadv-11")
+                                .prop("checked", true)
+                                .parent().addClass(
+                                    "is-checked");
+                        }
+                   	$("#checkboxadv-7")
+                    .prop("checked", false);
+                   }else{
+                   	 $("#checkboxadv-11")
+                        .prop("checked", false);
+                   	if (gender != "female") {
+                        $("#checkboxadv-7")
+                            .prop("checked", true)
+                            .parent()
+                            .addClass(
+                                "is-checked-colorchange");
+                    } else {
+                        $("#checkboxadv-7")
+                            .prop("checked", true)
+                            .parent().addClass(
+                                "is-checked");
+                    }
+                   }
+
+                    if (data.edit_profile.bestTrait != "" && data.edit_profile.bestTrait !== undefined) {
+                        var a_bestTrait = data.edit_profile.bestTrait;
+                        var bestTrait = a_bestTrait.split(' , ');
+                        for (var i = 0; i < bestTrait.length; i++) {
+                        	console.log(bestTrait[i]);
+                            if (gender != "female") {
+                                $("#checkboxproud-" + bestTrait[i])
+                                    .prop("checked", true)
+                                    .parent().addClass("is-checked-colorchange");
+                            } else {
+                                $("#checkboxproud-" + bestTrait[i])
+                                    .prop("checked", true)
+                                    .parent().addClass("is-checked");
+                            }
+                        }
+                    }
+
+                    if (data.edit_profile.traitChatmate != "" && data.edit_profile.traitChatmate !== undefined) {
+                        var a_traitChatmate = data.edit_profile.traitChatmate;
+                        var traitChatmate = a_traitChatmate.split(' , ');
+                        for (var i = 0; i < traitChatmate.length; i++) {
+                        	console.log(traitChatmate[i]);
+                            if (gender != "female") {
+                                $("#checkboxchatmate-" + traitChatmate[i])
+                                    .prop("checked", true)
+                                    .parent().addClass("is-checked-colorchange");
+                            } else {
+                                $("#checkboxchatmate-" + traitChatmate[i])
+                                    .prop("checked", true)
+                                    .parent().addClass("is-checked");
+                            }
+                        }
+                    }
+
+                    if (data.edit_profile.passions != "" && data.edit_profile.passions !== undefined) {
+                        var a_passions = data.edit_profile.passions;
+                        var passions = a_passions.split(', ');
+                        var d_passions = ["American TV series", "Anime/Manga", "Books/Reading", "Dancing", "Fashion", "Food", "Gaming", "Gym", "Hollywood Movies", "Internet/Chatting", "Karaoke", "Korean Culture", "Musical", "Instrument", "Painting/Doodling", "Pets", "Photography", "Religion", "Running/Cycling", "Science/Tech", "Sports", "Traveling", "Volunteering", "Writing", "Yoga/Meditation"];
+                        for (var i = 0; i < passions.length; i++) {
+                            if (gender != "female") {
+                                $(
+                                        "#checkboxpass-" + (d_passions
+                                            .indexOf(passions[i]) + 1))
+                                    .prop("checked", true)
+                                    .parent()
+                                    .addClass(
+                                        "is-checked-colorchange");
+                            } else {
+                                $(
+                                        "#checkboxpass-" + (d_passions
+                                            .indexOf(passions[i]) + 1))
+                                    .prop("checked", true)
+                                    .parent().addClass(
+                                        "is-checked");
+                            }
+                        }
+                    }
+                    if (data.edit_profile.languages != "" && data.edit_profile.languages !== undefined) {
+                        var language = (data.edit_profile.languages).split(', ');
+                        var d_language = ["English", "Filipino", "Vietnamese", "Thai", "Malay", "Indonesian", "Khmer", "Portuguese", "Spanish", "French", "Chinese", "Japanese", "Korean", "Russian", "Arabic", "Other"];
+                        if(language.length>0){
+	                		$("#radio5" + (d_language.indexOf(language[0]) + 1)).prop("checked", true).parent().addClass("active");
+                        }else{
+    	                	$("#radio5" + (d_language.indexOf(data.edit_profile.languages) + 1)).prop("checked", true).parent().addClass("active");
+                        }
+                    }else{
+                    	$("#radio51").prop("checked", true).parent().addClass("active");
+                    }
+                    if(data.edit_profile.fb_interest !== undefined && data.edit_profile.fb_active=='0'){
+                    	$('#interest_sec').removeClass('hidden');
+                    	var interest=[];
+                    	var count_i=0;
+                    	for(var inte in data.edit_profile.fb_interest){
+                    		interest.push(data.edit_profile.fb_interest[inte]);
+	                    	$('#checkbox_list_interest').append('<div class="checkbox"><input type="checkbox" id="checkboxinterest-'
+	                    			+ inte
+	                    			+ '" class="checkbox__input" name="interest" value="'
+	                    			+ data.edit_profile.fb_interest[inte]
+	                    			+ '"><label class="checkbox__label" for="checkboxinterest-'
+	                    			+ inte
+	                    			+ '">'
+	                    			+ data.edit_profile.fb_interest[inte]
+	                    			+ '</label></div>');
+	                    	count_i++;
+                    	}
+                    	if(data.edit_profile.interest!==undefined && data.edit_profile.interest!='' && data.edit_profile.interest!='null'){
+                    		for(var inte in data.edit_profile.interest){
+                    			if(interest.indexOf(data.edit_profile.interest[inte])!=-1){
+	                    			if (gender != "female") {
+	                                    $("#checkboxinterest-" + (interest.indexOf(data.edit_profile.interest[inte])))
+	                                        .prop("checked", true)
+	                                        .parent()
+	                                        .addClass(
+	                                            "is-checked-colorchange");
+	                                } else {
+	                                    $("#checkboxinterest-" + (interest.indexOf(data.edit_profile.interest[inte])))
+	                                        .prop("checked", true)
+	                                        .parent().addClass(
+	                                            "is-checked");
+	                                }
+                    			}else{
+                    			}
+                    		}
+                    	}else{
+                    		for(var i=0; i<count_i ; i++){
+                    			if (gender != "female") {
+                                    $("#checkboxinterest-" + i)
+                                        .prop("checked", true)
+                                        .parent()
+                                        .addClass(
+                                            "is-checked-colorchange");
+                                } else {
+                                    $("#checkboxinterest-" + i)
+                                        .prop("checked", true)
+                                        .parent().addClass(
+                                            "is-checked");
+                                }
+                    		}
+                    	}
+                    }
+
+                   /*  if (data.edit_profile.languages != "" && data.edit_profile.languages !== undefined) {
+                    	var a_language = data.edit_profile.languages;
+                        var language = a_language.split(', ');
+                        var d_language = ["English", "Filipino",
+                            "Spanish", "Arabic", "Portuguese",
+                            "Vietnamese", "French", "German",
+                            "Russian", "Italian", "Polish",
+                            "Other"
+                        ];
+                        for (var i = 0; i < language.length; i++) {
+                        	if(language[i]=='Hindi'){
+                        		if (gender != "female") {
+                                    $("#checkboxlan-12")
+                                        .prop("checked", true)
+                                        .parent()
+                                        .addClass(
+                                            "is-checked-colorchange");
+                                } else {
+                                    $("#checkboxlan-12")
+                                        .prop("checked", true)
+                                        .parent().addClass(
+                                            "is-checked");
+                                }
+                        	}else{
+                            if (gender != "female") {
+                                $("#checkboxlan-" + (d_language
+                                            .indexOf(language[i]) + 1))
+                                    .prop("checked", true)
+                                    .parent()
+                                    .addClass(
+                                        "is-checked-colorchange");
+                            } else {
+                                $("#checkboxlan-" + (d_language
+                                            .indexOf(language[i]) + 1))
+                                    .prop("checked", true)
+                                    .parent().addClass(
+                                        "is-checked");
+                            }
+                        	}
+                        }
+                    } else {
+                        //1-English
+                        if (gender != "female") {
+                            $("#checkboxlan-1").prop("checked",
+                                true).parent().addClass(
+                                "is-checked-colorchange");
+                        } else {
+                            $("#checkboxlan-1").prop("checked",
+                                true).parent().addClass(
+                                "is-checked");
+                        }
+                    } */
+                    console.log(gender);
+                    if (gender == 'male') {
+                        radioMale();
+                    } else {
+                        radioFemale();
+                    }
+                } else if ("deactivate" in data) {
+                    $('.deactivate_container').removeClass('hidden');
+                    $('.maincontainer').html('');
+                } else if ("Grant_Access" in data) {
+                    if (data.Grant_Access === false) {
+                        window.location.replace("bot2.html");
+                    }
+                } else {
+
+                }
+            }
+        }
+    });
+});
+
+$(function() {
+var y = 1947;
+var d = new Date();
+var length = (d.getFullYear() - 10) - y;
+
+for (var i = 0; i <= length; i++) {
+    $('#dob').append(
+        '<option value="' + (y + i) + '" id="' + (y + i) + '">' + (y + i) + '</option>');
+}
+});
+
+$('#radioUnblur').click(function() {
+$('#blurimage_text').html('Unblurs slowly in a private chat');
+});
+
+$('#radioBlur').click(function() {
+$('#blurimage_text').html('Always blurred');
+});
+
+$('#radioReal').click(function() {
+$('#blurimage_text').html('No blur at all');
+});
+
+$(".rdoControl input[type=radio]").click(function() {
+	$(this).closest(".rdoControl").find("label").removeClass("active");
+	$(this).parent().addClass("active");
+});
+
+$(".rdoControl-Circle input[type=radio]").click(function() {
+    $(this).closest(".rdoControl-Circle").find("label").removeClass("active");
+    $(this).parent().addClass("active");
+});
+
+$('#mobile').keyup(function(){
+	$('#mobile').attr('maxlength', '10');
+	var mobile= $('#mobile').val();
+	var mob = mobile.split('');
+    var moblength = mob.length;
+    var flagcount = 0;
+    if(mobile!=''){
+    	for (var i = 0; i < moblength; i++) {
+            var code = mobile[i].charCodeAt(0);
+            if (code >= 48 && code <= 57) { //usernameRegex.test(user[i])
+                flagcount++;
+            } else {}
+        }
+    if(moblength==10 && moblength==flagcount){
+    	errorMsg.addClass('hidden');
+    	validMsg.removeClass('hidden');
+    	$('input[name="mobile"]').addClass(
+        "green").removeClass("red");
+    	$('#mobile_sec').removeClass('error');
+    	$('input[name="succeedMobile"]').val('success');
+    }else {
+    	errorMsg.removeClass('hidden');
+    	validMsg.addClass('hidden');
+    	$('input[name="mobile"]').removeClass(
+        "green").addClass("red");
+    	$('#mobile_sec').addClass('error');
+    	$('input[name="succeedMobile"]').val('failed');
+    }
+    }else{
+    	errorMsg.addClass('hidden');
+    	validMsg.addClass('hidden');
+    	$('input[name="mobile"]').removeClass(
+        "green").removeClass("red");
+    	$('#mobile_sec').removeClass('error');
+    	$('input[name="succeedMobile"]').val('blank');
+    }
+});
+
+$('#social-prof')
+.keyup(
+    function() {
+        var social_prof = $('input[name="social-prof"]').val();
+        //	var usernameRegex = new RegExp("[a-zA-Z0-9._-]");
+        var user = social_prof.split('');
+        var flagcount = 0;
+        var userlength = user.length;
+        if (social_prof != "") {
+
+            $('#Image').removeClass('hidden');
+            for (var i = 0; i < userlength; i++) {
+                var code = social_prof[i].charCodeAt(0);
+                if ((code >= 65 && code <= 90) || (code >= 97 && code <= 122) || (code >= 48 && code <= 57) || code == 38 || code == 45 || code == 46 || code == 47 || code == 61 || code == 63 || code == 95) { //usernameRegex.test(user[i])
+                    flagcount++;
+                } else {}
+            }
+            var socprof = social_prof.split('/');
+            if (social_prof.includes('/')) {
+                if (((socprof[0]).toLowerCase()) == 'facebook.com' || socprof[0].toLowerCase() == 'fb.com' || socprof[0].toLowerCase() == 'instagram.com' || socprof[0].toLowerCase() == 'twitter.com') {
+                    if (userlength == flagcount) {
+                        $("#LoadingImage").attr("src",
+                            "images/checked.png");
+                        $('input[name="succeed"]').val(
+                            "success");
+                        $('input[name="social-prof"]')
+                            .removeClass("red").addClass(
+                                "green");
+                    } else {
+                        $("#LoadingImage").attr("src",
+                            "images/cancel.png");
+                        $('input[name="succeed"]')
+                            .val("failed");
+                        $('input[name="social-prof"]')
+                            .removeClass("green").addClass(
+                                "red");
+                    }
+                } else {
+                    $("#LoadingImage").attr("src",
+                        "images/cancel.png");
+                    $('input[name="succeed"]').val("failed");
+                    $('input[name="social-prof"]').removeClass(
+                        "green").addClass("red");
+                }
+            } else {
+                $("#LoadingImage").attr("src",
+                    "images/cancel.png");
+                $('input[name="succeed"]').val("failed");
+                $('input[name="social-prof"]').removeClass(
+                    "green").addClass("red");
+            }
+        } else {
+            $('#Image').addClass('hidden');
+            $("#LoadingImage").attr("src", "");
+            $('input[name="succeed"]').val("blank");
+            $('input[name="social-prof"]').removeClass("red")
+                .removeClass("green");
+        }
+    });
+
+$('#username')
+.keyup(
+    function() {
+        var nguser = $('input[name="username"]').val();
+        //	var usernameRegex = new RegExp("[a-zA-Z0-9._-]");
+        var user = nguser.split('');
+        var flagcount = 0;
+        var userlength = user.length;
+        if (nguser != "") {
+            for (var i = 0; i < userlength; i++) {
+                var code = nguser[i].charCodeAt(0);
+                if ((code >= 65 && code <= 90) || (code >= 97 && code <= 122) || (code >= 48 && code <= 57) || code == 45 || code == 46 || code == 95) { //usernameRegex.test(user[i])
+                    flagcount++;
+                } else {}
+            }
+            if (userlength == flagcount) {
+                $("#ImageUsername").removeClass('hidden');
+                $("#LoadingImageUsername").attr("src",
+                    "images/ezgif.gif");
+                var urli = "userNameNG?uname=" + nguser;
+                $
+                    .ajax({
+                        type: "GET",
+                        url: urli,
+                        cache: false,
+                        success: function(data) {
+                            var res = data.charAt(0);
+                            if (res == 'a') {
+                                if (userlength == flagcount) {
+                                    $(
+                                            "#LoadingImageUsername")
+                                        .attr("src",
+                                            "images/checked.png");
+                                    $(
+                                            'input[name="username"]')
+                                        .removeClass(
+                                            "red")
+                                        .addClass(
+                                            "green");
+                                    $(
+                                            'input[name="succeedUsername"]')
+                                        .val("success");
+                                } else {
+                                    $(
+                                            "#LoadingImageUsername")
+                                        .attr("src",
+                                            "images/cancel.png");
+                                    $(
+                                            'input[name="username"]')
+                                        .removeClass(
+                                            "green")
+                                        .addClass("red");
+                                    $(
+                                            'input[name="succeedUsername"]')
+                                        .val("failed");
+                                }
+                            } else if (res == 'b') {
+                                $("#LoadingImageUsername")
+                                    .attr("src",
+                                        "images/cancel.png");
+                                $('input[name="username"]')
+                                    .removeClass(
+                                        "green")
+                                    .addClass("red");
+                                $(
+                                        'input[name="succeedUsername"]')
+                                    .val("failed");
+                            } else {
+                                $("#ImageUsername")
+                                    .addClass('hidden');
+                                $('input[name="username"]')
+                                    .removeClass(
+                                        "green")
+                                    .removeClass("red");
+                                $("#LoadingImageUsername")
+                                    .attr("src",
+                                        "images/cancel.png");
+                                $(
+                                        'input[name="succeedUsername"]')
+                                    .val("failed");
+                            }
+                        }
+                    });
+            } else {
+                $('input[name="username"]')
+                    .removeClass("green").addClass("red");
+                $("#LoadingImageUsername").attr("src",
+                    "images/cancel.png");
+                $('input[name="succeedUsername"]')
+                    .val("failed");
+            }
+        } else {
+            $('input[name="username"]').removeClass("green")
+                .addClass("red");
+            $("#LoadingImageUsername").attr("src",
+                "images/cancel.png");
+            $('input[name="succeedUsername"]').val("failed");
+        }
+    });
+/*   $('.select2').select2(); */
+
+$("#checkbox_list_passions").find("input[name=passions]").click(function() {
+    var len = $(this).closest("#checkbox_list_passions").find("input[type=checkbox]:checked").length;
+    if (len > 6) {
+        var data = {
+            message: 'You cannot choose more than 6',
+            timeout: 2000
+        };
+        showsnackbar(data.message);
+        $(this).prop("checked", false);
+    }
+});
+
+$("#checkbox_list_proud").find("input[name=proud]").click(function() {
+    var len = $(this).closest("#checkbox_list_proud").find("input[type=checkbox]:checked").length;
+    if (len > 2) {
+        var data = {
+            message: 'You cannot choose more than 2',
+            timeout: 2000
+        };
+        showsnackbar(data.message);
+        $(this).prop("checked", false);
+    }
+});
+
+$("#checkbox_list_chatmate").find("input[name=chatmate]").click(function() {
+    var len = $(this).closest("#checkbox_list_chatmate").find("input[type=checkbox]:checked").length;
+    if (len > 2) {
+        var data = {
+            message: 'You cannot choose more than 2',
+            timeout: 2000
+        };
+        showsnackbar(data.message);
+        $(this).prop("checked", false);
+    }
+});
+
+
+
+</script>
