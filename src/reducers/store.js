@@ -4,10 +4,12 @@ import ReduxPromise from 'redux-promise';
 import { combineReducers } from 'redux';
 import friends from './friends';
 import notification from './notification';
+import login from './login';
 
 const reducers = combineReducers({
     friends: friends,
-    notifications: notification
+    notifications: notification,
+    login: login
 });
 
 const createStoreWithMiddleware = applyMiddleware(ReduxPromise)(createStore);

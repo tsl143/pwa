@@ -1,44 +1,66 @@
 import React from 'react';
-import { render as ReactDomRender } from 'react-dom';
-import { Route, HashRouter } from 'react-router-dom';
+import { render as ReactDomRender, Switch } from 'react-dom';
+import { Route, HashRouter, BrowserRouter  } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
 import ReduxStore from './reducers/store';
 import App from './components/App';
 import Chat from './components/Chat';
+import Login from './components/Login';
 import Permission from './components/Notifications/permission';
+import Apphome from './components/AppHome/index';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import registerServiceWorker from './registerServiceWorker';
 import initialize from "./initializeFirebase";
 
-const MyApp = props => (
-  <MuiThemeProvider>
-    <App route={props}/>
-  </MuiThemeProvider>
-);
+import AppLayout from "./components/AppLayout"
+import Routes from './routes/routes.js'
 
-const MyChat = props => (
-    <MuiThemeProvider>
-      <Chat route={props}/>
-    </MuiThemeProvider>
-  );
-
-const FCMPermission = props => (
-    <MuiThemeProvider>
-      <Permission route={props}/>
-    </MuiThemeProvider>
-  );
+// const MyApp = props => (
+//   <MuiThemeProvider>
+//     <App route={props}/>
+//   </MuiThemeProvider>
+// );
+//
+// const MyChat = props => (
+//     <MuiThemeProvider>
+//       <Chat route={props}/>
+//     </MuiThemeProvider>
+//   );
+//
+// const FCMPermission = props => (
+//     <MuiThemeProvider>
+//       <Permission route={props}/>
+//     </MuiThemeProvider>
+//   );
+//
+// const AppHome = props => (
+//     <MuiThemeProvider>
+//       <Apphome route={props}/>
+//     </MuiThemeProvider>
+//   );
 
 initialize();
+
 ReactDomRender(
     <Provider store={ReduxStore}>
-        <HashRouter>
-            <div>
-                <Route exact path="/" component={MyApp} />
-                <Route exact path="/chat" component={MyChat} />
-                <Route exact path="/permission" component={FCMPermission} />
-            </div>
+      <MuiThemeProvider>
+        <Routes />
+
+        {/**
+          <HashRouter>
+                <div>
+                <Switch>
+                <Route exact path="/#/login" component={Login} />
+                <Route exact path="/" component={Apphome} />
+
+                <AppLayout>
+                </Switch>
+                </AppLayout>
+                </div>
         </HashRouter>
+      **/}
+      </MuiThemeProvider>
     </Provider>,
     document.getElementById('app')
 );

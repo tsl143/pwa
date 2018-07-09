@@ -1,0 +1,11 @@
+.OnboardContainer {
+  width: 100vw;
+  height: auto;
+}
+
+.uploadImg {
+  min-width: 50px;
+  max-width: 150px;
+  min-height: 50px;
+  max-height: 200px;
+}

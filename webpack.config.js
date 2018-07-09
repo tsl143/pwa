@@ -15,6 +15,12 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = {
+    devtool: 'inline-source-map',
+     devServer: {
+       inline: true,
+       contentBase: './',
+       port : 8080
+     },
     entry: './src/index.js',  //'./src/permissionIndex.js',
     output: {
         path: __dirname,
@@ -53,15 +59,15 @@ module.exports = {
         ]
     },
     plugins: [
-        new UglifyJsPlugin({
-          uglifyOptions: {
-            compress : {
-              dead_code: true,
-              // drop_console: true,
-              unused: true
-            }
-          }
-        }),
+        // new UglifyJsPlugin({
+        //   uglifyOptions: {
+        //     compress : {
+        //       dead_code: true,
+        //       // drop_console: true,
+        //       unused: true
+        //     }
+        //   }
+        // }),
         new webpack.DefinePlugin({
           FIREBASE_APIKEY : JSON.stringify('AIzaSyDpUZwIU_xX0igWcFGWwxh6ioGzuu635-c'),
           FIREBASE_AUTHDOMAIN : JSON.stringify('neargroup-lite.firebaseapp.com'),
@@ -72,9 +78,9 @@ module.exports = {
           API: JSON.stringify('https://mytest.neargroup.me/ng/'),  //JSON.stringify('https://4d44c241.ngrok.io/NG/'),
           AVTAR: JSON.stringify('avtar.svg'),
           'process.env': {
-              NODE_ENV: JSON.stringify('production')
-          }
-
+              NODE_ENV: JSON.stringify('development')
+          },
+          BOT_API: JSON.stringify('https://ng.neargroup.me')
         })
       ]
 };

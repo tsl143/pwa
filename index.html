@@ -11,6 +11,10 @@
 	    <link rel="manifest" href="manifest.json">
 	    <link rel="shortcut icon" href="logo.png">
 	    <link rel="preconnect" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" crossorigin>
+			<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-
+			wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+			crossorigin="anonymous">
+			<link rel="stylesheet" href="/src/shared/geosuggest.css" />
 	    <style type="text/css">
 		    body {
 				margin: 0;
@@ -45,6 +49,8 @@
 			</div>
 		</div>
 	</body>
+	<script async src="firebasejs4-8-1.js"></script>
+	<script async src='firebase-client.js'></script>
 	<script>
 
 	// document.documentElement.on('click', gofull());
@@ -60,8 +66,9 @@
       }
 		}
 	</script>
-	<script src="firebasejs4-8-1.js"></script>
-	<script src='firebase-client.js'></script>
-	<script src="bundle.js"></script>
+	<script defer src="bundle.js"></script>
 
+	<script async defer
+   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDIpBdmQINB580TRRZysXjyDDHgOQdQvXA&libraries=places&language=en">
+  </script>
 </html>
