@@ -126,11 +126,20 @@ class FbLogin extends Component {
 
     responseFacebook(response) {
       console.log('login by module reaponse ', response);
-      // localStorage.setItem("NG_APP_SD_LOGGEDIN", true)
-      // localStorage.setItem("NG_APP_SD_LOGINSESSION", JSON.stringify(response))
+      let user_details = {
+        imageUrl: response.picture.data.url,
+        name: response.name,
+        email: response.email,
+        accessToken: response.accessToken,
+        channelId: response.id
+      }
+      localStorage.setItem("NG_APP_SD_LOGGEDIN", true)
       localStorage.setItem("NG_APP_SD_CHANNELID", JSON.stringify(response.id))
+      localStorage.setItem("NG_APP_SD_LOGINSESSION", JSON.stringify(response))
+      localStorage.setItem("NG_APP_SD_USER_DETAILS", JSON.stringify(user_details))
       // this.props.saveLoginSession({login_method: this.state.loginType, ...response})
       this.props.saveChannelId(response.id)
+      this.props.saveLoginSession({login_method: this.state.loginType, ...response})
     }
 
     componentClicked() {

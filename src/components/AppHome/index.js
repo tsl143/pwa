@@ -12,7 +12,7 @@ import AppLayout from "../AppLayout";
 import FbLogin from '../FbLogin/index';
 import querystring from 'query-string';
 import Permissions from '../Permissions'
-import Onboarding from '../Onboarding/onboarding'
+// import Onboarding from '../Onboarding/onboarding'
 import Discover from '../Discover/discover'
 // import Styles from './style.scss';
 

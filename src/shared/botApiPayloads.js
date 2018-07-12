@@ -27,57 +27,58 @@
 //
 // }
 
-export const normal_text = {
+export const get_started = {
   "nearGroupWeb": "webchat",
-  " messageObj": {
-    "referralParam": "",
-    "text": "1995",
-    "type": "msg"
+  "messageObj": {
+    "referralParam": "<GET_STARTED_PAYLOAD>",
+    "text": "startchattingevent",
+    "type": "event"
   },
   "senderObj": {
-    "userProfilePic": "",
-    "display": "",
-    "channeltype": "fb",
-    "userLocation": "",
+    "display": "Shailendra",
+    "channeltype": "webchat",
     "pageId": "322287134931229",
-    "locale": "",
-    "channelid": "1578839942198894",
-    "subdisplay": ""
+    "channelid": "157883994219889433",
+    "subdisplay": "",
+    "userProfilePic": "https://xyz.com",
+    "userLocation": "New Delhi",
+    "locale": "en_US"
   },
   "contextObj": {
     "botname": "rhtbot2",
     "contexttype": "p2p",
-    "channeltype": "fb",
-    "contextid": "1578839942198894",
+    "channeltype": "webchat",
+    "contextid": "157883994219889433",
     "pageId": "322287134931229"
   }
 }
 
-export const get_started = {
-                    "nearGroupWeb": "webchat",
-                    "messageObj": {
-                      "referralParam": "<GET_STARTED_PAYLOAD>",
-                      "text": "startchattingevent",
-                      "type": "event"
-                    },
-                    "senderObj": {
-                      "display": "",
-                      "channeltype": "webchat",
-                      "pageId": "",
-                      "channelid": "",
-                      "subdisplay": "",
-                      "userProfilePic": "",
-                      "userLocation": "",
-                      "locale": "en_US"
-                    },
-                    "contextObj": {
-                      "botname": "rhtbot2",
-                      "contexttype": "p2p",
-                      "channeltype": "webchat",
-                      "contextid": "",
-                      "pageId": ""
-                    }
-                  }
+
+// {
+//                     "nearGroupWeb": "webchat",
+//                     "messageObj": {
+//                       "referralParam": "<GET_STARTED_PAYLOAD>",
+//                       "text": "startchattingevent",
+//                       "type": "event"
+//                     },
+//                     "senderObj": {
+//                       "display": "",
+//                       "channeltype": "webchat",
+//                       "pageId": "",
+//                       "channelid": "",
+//                       "subdisplay": "",
+//                       "userProfilePic": "",
+//                       "userLocation": "",
+//                       "locale": "en_US"
+//                     },
+//                     "contextObj": {
+//                       "botname": "rhtbot2",
+//                       "contexttype": "p2p",
+//                       "channeltype": "webchat",
+//                       "contextid": "",
+//                       "pageId": ""
+//                     }
+//                   }
 
 export const postback = {
     "recipient": {
@@ -85,7 +86,7 @@ export const postback = {
     },
     "message": {
         "attachment": {
-            "type": "  ",
+            "type": "template",
             "payload": {
                 "template_type": "button",
                 "text": "Pls wait... I\u0027m searching 🔎 for a suitable girl for you near Manila 😍 \n\nI will notify you when I find your match 😇\n\nMeanwhile, complete your profile in SETTINGS so you can get the best matches! 👇",
@@ -150,7 +151,7 @@ export const postback_quickreply = {
     }
 }
 
-export const send_quick_reply = {
+export const quick_reply = {
     "type": "quick_reply",
     "content": {
         "type": "text",
@@ -184,4 +185,83 @@ export const survey = {
     }]
 }
 
-export default {get_started, normal_text, postback, postback_quickreply, send_quick_reply, survey}
+export const send_quick_reply = {
+  "nearGroupWeb": "webchat",
+  "messageObj": {
+    "referralParam": "",
+    "refmsgid": "qr_212", // msgid
+    "text": "Female", // user input
+    "type": "msg"
+  },
+  "senderObj": {
+    "userProfilePic": "", // imageUrl
+    "display": "", //name
+    "channeltype": "webchat",
+    "userLocation": "",
+    "pageId": "322287134931229", // unique ng web id
+    "locale": "",
+    "channelid": "", //user channelId
+    "subdisplay": ""
+  },
+  "contextObj": {
+    "botname": "rhtbot2",
+    "contexttype": "p2p",
+    "channeltype": "webchat",
+    "contextid": "", //channelId
+    "pageId": "322287134931229" // unique ng web id
+  }
+}
+
+export const send_postback = {
+  "nearGroupWeb": "webchat",
+  "messageObj": {
+    "refmsgid": "EP$$$",
+    "text": "",
+    "type": "msg"
+  },
+  "senderObj": {
+    "userProfilePic": "",
+    "display": "",
+    "channeltype": "webchat",
+    "userLocation": "",
+    "pageId": "322287134931229",
+    "locale": "",
+    "channelid": "",
+    "subdisplay": ""
+  },
+  "contextObj": {
+    "botname": "rhtbot2",
+    "contexttype": "p2p",
+    "channeltype": "webchat",
+    "contextid": "",
+    "pageId": "322287134931229"
+  }
+}
+
+export const normal_text = {
+  "nearGroupWeb": "webchat",
+  "messageObj": {
+    "referralParam": "",
+    "text": "",
+    "type": "msg"
+  },
+  "senderObj": {
+    "userProfilePic": "",
+    "display": "",
+    "channeltype": "webchat",
+    "userLocation": "",
+    "pageId": "322287134931229",
+    "locale": "",
+    "channelid": "",
+    "subdisplay": ""
+  },
+  "contextObj": {
+    "botname": "rhtbot2",
+    "contexttype": "p2p",
+    "channeltype": "webchat",
+    "contextid": "",
+    "pageId": "322287134931229"
+  }
+}
+
+export default {get_started, normal_text, postback, postback_quickreply, quick_reply, survey, send_quick_reply, send_postback}

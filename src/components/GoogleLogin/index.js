@@ -10,7 +10,7 @@ import FontAwesome from 'react-fontawesome'
 
 // import Styles from './style.scss';
 
-class FbLogin extends Component {
+class LoginGoogle extends Component {
 
     constructor(props) {
         super(props);
@@ -30,7 +30,13 @@ class FbLogin extends Component {
 
     responseGoogle(response) {
       console.log("google response-- ", response, this.props);
-
+      let user_details = {
+        imageUrl: response.profileObj.imageUrl,
+        name: response.profileObj.name,
+        email: response.profileObj.email,
+        accessToken: response.accessToken,
+        channelId: response.profileObj.googleId
+      }
       if(response.error) {
         localStorage.setItem("NG_APP_SD_LOGGEDIN", false)
         // localStorage.setItem("NG_APP_SD_LOGINSESSION", JSON.stringify(response))
@@ -38,6 +44,7 @@ class FbLogin extends Component {
         localStorage.setItem("NG_APP_SD_LOGGEDIN", true)
         localStorage.setItem("NG_APP_SD_LOGINSESSION", JSON.stringify(response))
         localStorage.setItem("NG_APP_SD_CHANNELID", JSON.stringify(response.googleId))
+        localStorage.setItem("NG_APP_SD_USER_DETAILS", JSON.stringify(user_details))
         this.props.saveChannelId(response.googleId)
         this.props.saveLoginSession({login_method: this.state.loginType, ...response})
       }
@@ -84,4 +91,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(FbLogin);
+export default connect(mapStateToProps, mapDispatchToProps)(LoginGoogle);

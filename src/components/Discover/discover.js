@@ -13,15 +13,11 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
-// import TextField from '@material-ui/core/TextField';
 import TextField from "material-ui/TextField";
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { cyan500 } from "material-ui/styles/colors";
-// import Geosuggest from 'react-geosuggest';
-// import { parseNumber, formatNumber, AsYouType } from 'libphonenumber-js'
 import Fontawesome from 'react-fontawesome'
 import botApiPayloads, {get_started} from '../../shared/botApiPayloads'
-// import {saveLoginSession, addBotData } from '../../actions/login';
 import {addBotData, sendBotReply } from '../../actions/discover';
 import { htmlDecode, formatTime, formatDate } from '../../utility';
 import { Twemoji } from "react-emoji-render";
@@ -86,16 +82,21 @@ class Discover extends Component {
     // resource.setAttribute("type","text/css");
     // var head = document.getElementsByTagName('head')[0];
     // head.appendChild(resource);
+    let userData = localStorage.getItem("NG_APP_SD_USER_DETAILS") != null ? JSON.parse(localStorage.getItem("NG_APP_SD_USER_DETAILS")) : {}
+    this.startListening(userData.channelId)
   }
 
   componentWillReceiveProps(nextProps) {
     console.log('componentWillReceiveProps  Discover = ', nextProps);
     if(nextProps.botData != this.props.botData) {
-      this.setState({botData: nextProps.botData})
+      console.log('setState botData');
+      this.setState({botData: nextProps.botData}, () => {
+        console.log('botData state set -- ', this.state);
+      })
     }
     // this.setState({onboardingData: nextProps.onboardingData})
     if(nextProps.channelId && nextProps.channelId != "") {
-      this.startListening(nextProps.channelId)
+      // this.startListening(nextProps.channelId)
     }
   }
 
@@ -115,7 +116,7 @@ class Discover extends Component {
 		// } else {
 			firebase
 				.database()
-				.ref(`/bot_rooms/${channelId}`)
+				.ref(`/bot_chat_rooms/${channelId}`)
 				.on('child_added', snapshot => this.handleChildAdd(snapshot));
 		// }
 
@@ -137,8 +138,18 @@ class Discover extends Component {
 	}
 
   handleChildAdd(snapshot, lastChat) {
-		console.log('handleChildAdd = ', snapshot, lastChat, this.props.channelId);
-		// const msg = snapshot.val();
+    var data = snapshot.val();
+		console.log('handleChildAdd = ', data, lastChat, this.props.channelId);
+    var msg = data.msg
+    let dataType = 'string'
+    if(data.msg.charAt(0) == '{') {
+      console.log("data.msg from firebase is json");
+      var msg = JSON.parse(decodeURIComponent(data.msg))
+      dataType = 'object'
+    }
+    console.log('msg parse= ', msg);
+    this.checkInputType(msg, dataType)  //quick_reply quick_reply postback
+
 		// const msgId = snapshot.key;
 		// console.log('msg in handleChildAdd= ', msg);
 		// msg.id = msgId;
@@ -158,8 +169,11 @@ class Discover extends Component {
   handleGetStarted(e) {
     console.log('handleGetStarted');
     let getStartedPayload = botApiPayloads.get_started
-    this.props.addBotData({type: 'user_input', payload_type: 'get_started', text:"get started"})
-    this.checkInputType(botApiPayloads.survey)
+    this.props.addBotData({elem_type: 'user_input', payload_type: 'get_started', text:"get started"})
+    this.props.sendBotReply({elem_type: 'user_input', payload_type: 'get_started'})
+
+    // TODO: remove below statement..only for testing
+    // this.checkInputType(botApiPayloads.postback_quickreply)  //quick_reply quick_reply postback
   }
 
   handleNormalText(data) {
@@ -179,22 +193,41 @@ class Discover extends Component {
     this.setState({message: e.target.value})
   }
 
-  checkInputType(data) {
+  checkInputType(data, dataType) {
     console.log('in checkInputType');
+    console.log('checkInputType dataType == ', dataType);
     let payload
-    if("recipient" in data) {
-      console.log('firebase input contains reciepient');
+
+    if(dataType === "string") {
+      this.props.addBotData({elem_type: 'bot_input', payload_type: 'text', text: data})
     } else {
-      console.log('firebase input NOT contains reciepient');
-      switch (data.type) {
-        case "survey":
-          console.log("input type SURVEY");
-          // payload = botApiPayloads.survey
-          this.props.addBotData({...data, type: 'bot_input', payload_type: 'survey', text: data.question, options: data.options})
 
-          break;
-        default:
+      if("recipient" in data) {
+        let {attachment, quick_replies} = data.message
+        console.log('firebase input contains reciepient');
+        switch (attachment.type) {
+          case 'template':
+            this.props.addBotData({...data, elem_type: 'bot_input', payload_type: 'postback', text: attachment.payload.text, quick_replies: quick_replies})
+            break;
+          default:
 
+        }
+      } else {
+        console.log('firebase input NOT contains reciepient');
+        switch (data.type) {
+          case "survey":
+            console.log("input type SURVEY");
+            // payload = botApiPayloads.survey
+            this.props.addBotData({...data, elem_type: 'bot_input', payload_type: 'survey', text: data.question, options: data.options})
+            break;
+          case "quick_reply":
+            console.log("input type SURVEY");
+            // payload = botApiPayloads.survey
+            this.props.addBotData({...data, elem_type: 'bot_input', payload_type: 'quick_reply', text: data.content.text, options: data.options})
+            break;
+          default:
+
+        }
       }
     }
   }
@@ -203,17 +236,79 @@ class Discover extends Component {
     let {message} = this.state
     console.log('send action -- ', e, message);
     if(message == "") return false
-    this.props.sendBotReply({type: 'user_input', payload_type: 'normal_text', text: message})
+    this.props.addBotData({elem_type: 'user_input', payload_type: 'normal_text', text: message})
+    this.props.sendBotReply({type: 'user_input', payload_type: 'normal_text', payload: message})
     this.setState({message: ''})
   }
 
-  handleOptionsClick(data) {
-    let {type} = data
-    console.log('handleOptionsClick- ', data);
-    if(type == 'url' || type == 'web_url') {
-      console.log('option -- ', type);
-      window.location = data.url
+  handleOptionsClick(e, option, data) {
+    e.preventDefault()
+    let {type} = data  //content_type
+    let content_type = ''
+    if(option.type != undefined && option.type != 'text') type = option.type
+    console.log('handleOptionsClick- ', option, data, type);
+    switch (type) {
+      case "quick_reply":
+        if(typeof option != 'string') {
+          if(option.type != undefined) content_type = option.type
+          if(option.content_type != undefined) content_type = option.content_type
+        }
+        console.log('options content_type= ', content_type);
+        if(typeof option == 'string') {
+          console.log('option string');
+          this.props.addBotData({elem_type: 'user_input', payload_type: type, text: option})
+          this.props.sendBotReply({elem_type: 'user_input', payload_type: type, payload: {...data, selectedOption: option}})
+        }
+        else if(content_type == 'url' || content_type == 'web_url') {
+          console.log('option -- ', content_type);
+          window.location = option.url
+        }
+        else if( content_type == 'text' ) {
+          console.log('option -- ', content_type);
+          this.props.addBotData({elem_type: 'user_input', payload_type: 'quick_reply', text: option.title, icon: option.image_url})
+          this.props.sendBotReply({elem_type: 'user_input', payload_type: 'quick_reply', payload: {...data, selectedOption: option.title}})
+        }
+        break;
+        case 'postback':
+          if(typeof option != 'string') {
+            if(option.type != undefined) content_type = option.type
+            if(option.content_type != undefined) content_type = option.content_type
+          }
+          console.log('options content_type= ', content_type);
+          if(typeof option == 'string') {
+            console.log('option string');
+            this.props.addBotData({elem_type: 'user_input', payload_type: type, text: option})
+            this.props.sendBotReply({elem_type: 'user_input', payload_type: type, payload: {...data, selectedOption: option}})
+          }
+          else if(content_type == 'url' || content_type == 'web_url') {
+            console.log('option -- ', content_type);
+            window.location = option.url
+          }
+          else if( content_type == 'text' ) {
+            console.log('option -- ', content_type);
+            this.props.addBotData({elem_type: 'user_input', payload_type: type, text: option.title, icon: option.image_url})
+            this.props.sendBotReply({elem_type: 'user_input', payload_type: type, payload: {...data, selectedOption: option.title}})
+          }
+          else if( content_type == 'postback') {
+            console.log('option -- ', content_type);
+            this.props.addBotData({elem_type: 'user_input', payload_type: type, text: option.title})
+            this.props.sendBotReply({elem_type: 'user_input', payload_type: type, payload: {...data, postback: option.postback, selectedOption: option.title}})
+          }
+
+      default:
+
     }
+
+    // if(type == 'url' || type == 'web_url') {
+    //   console.log('option -- ', type);
+    //   window.location = data.url
+    // } else if( type == 'text' ) {
+    //   console.log('option -- ', type);
+    //   this.props.addBotData({type: 'user_input', payload_type: 'quick_reply', text: data.title, icon: data.image_url})
+    // } else if(content_type == 'text') {
+    //   this.props.addBotData({type: 'user_input', payload_type: 'postback', text: data.title, icon: data.image_url})
+    // }
+
   }
 
   render() {
@@ -231,17 +326,51 @@ class Discover extends Component {
               {
                 botData.map((item, index) => {
                   let botDataOptions = "options" in item ? item.options.length > 0 : false
-                  console.log('botDataOptions= ', botDataOptions);
+                  let showQuickReplies = "quick_replies" in item ? item.quick_replies.length > 0 : false
 
-                  return (<div key={index} className={item.type == "user_input" ? Styles.self : ""}>
-                    <span className={Styles.chatlet}><Twemoji text={htmlDecode(item.text)} /></span>
+                  console.log('botData render map= ', item, index);
+
+                  return (<div key={index} className={item.elem_type == "user_input" ? Styles.self : ""}>
+                    <div><span className={Styles.chatlet}><Twemoji text={htmlDecode(item.text)} /></span></div>
                     {
                       botDataOptions &&
-                      item.options.map((option, index) => (<div key={index}>
-                      <span><Button variant="contained" className={classes.button} onClick={() => this.handleOptionsClick(option)}>
-                        {option.title}
-                      </Button></span>
-                      </div>) )
+                      item.options.map((option, index) => {
+                        if(typeof option == 'string') {
+                          console.log("typeof option= ", "string", option);
+                          return (<span key={index}>
+                            <Button variant="contained" className={classes.button} onClick={(e) => this.handleOptionsClick(e, option, item)}>
+                            {option}
+                            </Button>
+                            </span>)
+                        } else {
+                          console.log("typeof option= ", "object", option);
+                          return (<span key={index}>
+                            <Button variant="contained" className={classes.button} onClick={(e) => this.handleOptionsClick(e, option, item)}>
+                            {option.iconurl && <img src={option.iconurl} style={{maxWidth: 22, margin: 0}} />}{option.title}
+                            </Button>
+                            </span>)
+                        }
+                      })
+                    }
+                    {
+                      showQuickReplies &&
+                      item.quick_replies.map((reply, index) => {
+                        if(typeof reply == 'string') {
+                          console.log("typeof reply= ", "string", reply);
+                          return (<span key={index}>
+                            <Button variant="contained" className={classes.button} onClick={(e) => this.handleOptionsClick(e, reply, item)}>
+                            {reply}
+                            </Button>
+                            </span>)
+                        } else {
+                          console.log("typeof reply= ", "object", reply);
+                          return (<span key={index}>
+                            <Button variant="contained" className={classes.button} onClick={(e) => this.handleOptionsClick(e, reply, item)}>
+                            {reply.image_url && <img src={reply.image_url} style={{maxWidth: 22, margin: 0}} />}{reply.title}
+                            </Button>
+                            </span>)
+                        }
+                      })
                     }
                   </div>)
                 })

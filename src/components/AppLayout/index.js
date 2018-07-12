@@ -20,9 +20,10 @@ class AppLayout extends Component {
 
     this.state = {
       isLoggedIn: false,
-      openDrawer: false
+      openDrawer: false,
+      reload: false
     }
-
+    this.handleLogout = this.handleLogout.bind(this)
     this.toggleDrawer = this.toggleDrawer.bind(this)
     this.handleAvatarClick = this.handleAvatarClick.bind(this)
   }
@@ -47,13 +48,25 @@ class AppLayout extends Component {
     console.log('avatar click -- ');
   }
 
+  handleLogout() {
+    // localStorage.removeItem("NG_APP_SD_LOCATION")
+    localStorage.removeItem("NG_APP_SD_CHANNELID")
+    localStorage.removeItem("NG_APP_SD_LOGGEDIN")
+    localStorage.removeItem("NG_APP_SD_LOGINSESSION")
+    localStorage.removeItem("NG_APP_SD_USER_DETAILS")
+    this.setState({reload: true})
+  }
+
   render() {
     let name = "NearGroup"
-    let {isLoggedIn} = this.state
+    let {isLoggedIn, reload} = this.state
     console.log("isLoggedIn in render state= ", isLoggedIn);
 
     return (
       <div>
+      {
+        reload && <Redirect to='/' />
+      }
       <AppBar
         style = { {...this.props.style } }
         iconElementLeft = {
@@ -61,7 +74,7 @@ class AppLayout extends Component {
         }
         title = { name }
         iconElementRight = {
-          <div style={{padding: 5}}>
+          <div style={{padding: 5}} onClick={this.handleLogout}>
             <Avatar
               alt="User Image"
               src="https://s3-us-west-2.amazonaws.com/wisp-image/ng/thumb/50_50_profile_1768136369876451"
@@ -84,7 +97,7 @@ class AppLayout extends Component {
            <p>SwipeableDrawer :) </p>
          </div>
        </SwipeableDrawer>
-       <div style={{height: '100vh', backgroundColor: '#DDE1E0'}}>
+       <div style={{height: '90vh', backgroundColor: '#DDE1E0'}}>
         {
           isLoggedIn ? this.props.children : <Redirect to='/login' />
         }

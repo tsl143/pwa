@@ -10,18 +10,21 @@ export function showLoader() {
     };
 }
 
-// export function hitBotApi(data) {
-//   console.log('in hitBotApi');
-//   // axios({
-//   //     method: 'POST',
-//   //     url: `${BOT_API}`,
-//   //     data
-//   // })
-//   // .then(response => {
-//   //   console.log('hitBotApi response= ', response);
-//   // })
-//   return
-// }
+export function hitBotApi(data) {
+  console.log('in hitBotApi');
+  return axios({
+      method: 'POST',
+      url: `${BOT_API}`,
+      data
+  })
+  .then(response => {
+    console.log('hitBotApi response= ', response);
+    return {
+            type: 'BLANK',
+        }
+  })
+  return
+}
 
 export const addBotData = (data) => {
   console.log('in addBotData = ', data);
@@ -34,22 +37,57 @@ export const addBotData = (data) => {
 export function sendBotReply(data) {
   console.log('in sendBotReply ', data);
   let bot_payload = {}
+  let userData = localStorage.getItem("NG_APP_SD_USER_DETAILS") != null ? JSON.parse(localStorage.getItem("NG_APP_SD_USER_DETAILS")) : {}
   // let botData = {type: 'user_input', payload_type: 'get_started', text:""}
-  switch (data.payload_type) {
-    case "get_started":
-      bot_payload = botApiPayloads.get_started
-      // botData["text"] = "get started"
-      break;
-    case "normal_text":
-      bot_payload = botApiPayloads.get_started
-      // botData["text"] = ""
-      break;
-    default:
+  // return (dispatch, getState) => {
+  //   let store = getState()
+    // console.log('store in sendBotReply= ', store);
+    switch (data.payload_type) {
+      case "get_started":
+        bot_payload = botApiPayloads.get_started
+        // botData["text"] = "get started"
 
-  }
-  console.log('');
+        bot_payload["senderObj"]["channelid"] = userData.channelId
+        bot_payload["senderObj"]["userProfilePic"] = userData.imageUrl
+        bot_payload["contextObj"]["contextid"] = userData.channelId
+        console.log("get-started bot_payload ", bot_payload);
+        break;
+      case "quick_reply":
+        bot_payload = botApiPayloads.send_quick_reply
+        bot_payload["messageObj"]["refmsgid"] = data.payload.msgid
+        bot_payload["messageObj"]["text"] = data.payload.selectedOption
+        bot_payload["senderObj"]["userProfilePic"] = userData.imageUrl
+        bot_payload["senderObj"]["display"] = userData.name
+        bot_payload["senderObj"]["channelid"] = userData.channelId
+        bot_payload["contextObj"]["contextid"] = userData.channelId
+        console.log("get-started quick_reply ", bot_payload);
+        // botData["text"] = ""
+        break;
+      case "normal_text":
+        bot_payload = botApiPayloads.normal_text
+        // bot_payload["messageObj"]["referralParam"] = data.payload.msgid
+        bot_payload["messageObj"]["text"] = data.payload
+        bot_payload["senderObj"]["userProfilePic"] = userData.imageUrl
+        bot_payload["senderObj"]["display"] = userData.name
+        bot_payload["senderObj"]["channelid"] = userData.channelId
+        bot_payload["contextObj"]["contextid"] = userData.channelId
+        // botData["text"] = ""
+        break;
+      case 'postback':
+        bot_payload = botApiPayloads.send_postback
+        bot_payload["messageObj"]["refmsgid"] = data.payload.msgid
+        bot_payload["messageObj"]["text"] = data.payload.selectedOption
+        bot_payload["senderObj"]["userProfilePic"] = userData.imageUrl
+        bot_payload["senderObj"]["display"] = userData.name
+        bot_payload["senderObj"]["channelid"] = userData.channelId
+        bot_payload["contextObj"]["contextid"] = userData.channelId
+      default:
+
+    }
+  // }
+  console.log('final bot_payload ', bot_payload);
 
   // TODO: api with payload
-  // hitBotApi(bot_payload)
-  return addBotData(data)
+  return hitBotApi(bot_payload)
+  // return addBotData(bot_payload)
 }
