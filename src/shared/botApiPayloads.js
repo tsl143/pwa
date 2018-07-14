@@ -35,20 +35,20 @@ export const get_started = {
     "type": "event"
   },
   "senderObj": {
-    "display": "Shailendra",
+    "display": "",
     "channeltype": "webchat",
     "pageId": "322287134931229",
-    "channelid": "157883994219889433",
+    "channelid": "",
     "subdisplay": "",
     "userProfilePic": "https://xyz.com",
-    "userLocation": "New Delhi",
+    "userLocation": "",
     "locale": "en_US"
   },
   "contextObj": {
     "botname": "rhtbot2",
     "contexttype": "p2p",
     "channeltype": "webchat",
-    "contextid": "157883994219889433",
+    "contextid": "",
     "pageId": "322287134931229"
   }
 }

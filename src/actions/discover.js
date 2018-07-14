@@ -46,7 +46,7 @@ export function sendBotReply(data) {
       case "get_started":
         bot_payload = botApiPayloads.get_started
         // botData["text"] = "get started"
-
+        bot_payload["senderObj"]["display"] = userData.name
         bot_payload["senderObj"]["channelid"] = userData.channelId
         bot_payload["senderObj"]["userProfilePic"] = userData.imageUrl
         bot_payload["contextObj"]["contextid"] = userData.channelId
@@ -60,13 +60,14 @@ export function sendBotReply(data) {
         bot_payload["senderObj"]["display"] = userData.name
         bot_payload["senderObj"]["channelid"] = userData.channelId
         bot_payload["contextObj"]["contextid"] = userData.channelId
-        console.log("get-started quick_reply ", bot_payload);
+        console.log("quick_reply bot_payload ", bot_payload);
         // botData["text"] = ""
         break;
       case "normal_text":
+        console.log("normal_text bot_payload ", bot_payload);
         bot_payload = botApiPayloads.normal_text
         // bot_payload["messageObj"]["referralParam"] = data.payload.msgid
-        bot_payload["messageObj"]["text"] = data.payload
+        bot_payload["messageObj"]["text"] = data.payload.selectedOption
         bot_payload["senderObj"]["userProfilePic"] = userData.imageUrl
         bot_payload["senderObj"]["display"] = userData.name
         bot_payload["senderObj"]["channelid"] = userData.channelId
@@ -74,6 +75,7 @@ export function sendBotReply(data) {
         // botData["text"] = ""
         break;
       case 'postback':
+        console.log("postback bot_payload ", bot_payload);
         bot_payload = botApiPayloads.send_postback
         bot_payload["messageObj"]["refmsgid"] = data.payload.msgid
         bot_payload["messageObj"]["text"] = data.payload.selectedOption

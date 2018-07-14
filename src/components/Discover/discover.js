@@ -64,6 +64,7 @@ class Discover extends Component {
     this.state = {
       botData: [],
       message: '',
+      userData: {}
     }
 
     this.sendPlz = this.sendPlz.bind(this)
@@ -72,6 +73,7 @@ class Discover extends Component {
     this.startListening = this.startListening.bind(this)
     this.handleChildAdd = this.handleChildAdd.bind(this)
     this.handleNormalText = this.handleNormalText.bind(this)
+    this.sendUserInputToFirebase = this.sendUserInputToFirebase.bind(this)
   }
 
   componentDidMount() {
@@ -83,17 +85,18 @@ class Discover extends Component {
     // var head = document.getElementsByTagName('head')[0];
     // head.appendChild(resource);
     let userData = localStorage.getItem("NG_APP_SD_USER_DETAILS") != null ? JSON.parse(localStorage.getItem("NG_APP_SD_USER_DETAILS")) : {}
+    this.setState({userData})
     this.startListening(userData.channelId)
   }
 
   componentWillReceiveProps(nextProps) {
     console.log('componentWillReceiveProps  Discover = ', nextProps);
-    if(nextProps.botData != this.props.botData) {
+    // if(nextProps.botData != this.props.botData) {
+    // }
       console.log('setState botData');
       this.setState({botData: nextProps.botData}, () => {
         console.log('botData state set -- ', this.state);
       })
-    }
     // this.setState({onboardingData: nextProps.onboardingData})
     if(nextProps.channelId && nextProps.channelId != "") {
       // this.startListening(nextProps.channelId)
@@ -141,6 +144,7 @@ class Discover extends Component {
     var data = snapshot.val();
 		console.log('handleChildAdd = ', data, lastChat, this.props.channelId);
     var msg = data.msg
+    var from = data.fromId
     let dataType = 'string'
     if(data.msg.charAt(0) == '{') {
       console.log("data.msg from firebase is json");
@@ -148,7 +152,7 @@ class Discover extends Component {
       dataType = 'object'
     }
     console.log('msg parse= ', msg);
-    this.checkInputType(msg, dataType)  //quick_reply quick_reply postback
+    this.checkInputType(msg, from, dataType)  //quick_reply quick_reply postback
 
 		// const msgId = snapshot.key;
 		// console.log('msg in handleChildAdd= ', msg);
@@ -168,12 +172,10 @@ class Discover extends Component {
 
   handleGetStarted(e) {
     console.log('handleGetStarted');
-    let getStartedPayload = botApiPayloads.get_started
-    this.props.addBotData({elem_type: 'user_input', payload_type: 'get_started', text:"get started"})
+    // let getStartedPayload = botApiPayloads.get_started
+    // this.props.addBotData({elem_type: 'user_input', payload_type: 'get_started', text:"Get Started"})
     this.props.sendBotReply({elem_type: 'user_input', payload_type: 'get_started'})
-
-    // TODO: remove below statement..only for testing
-    // this.checkInputType(botApiPayloads.postback_quickreply)  //quick_reply quick_reply postback
+    this.sendUserInputToFirebase("Get Started")
   }
 
   handleNormalText(data) {
@@ -193,40 +195,48 @@ class Discover extends Component {
     this.setState({message: e.target.value})
   }
 
-  checkInputType(data, dataType) {
+  checkInputType(data, from, dataType) {
     console.log('in checkInputType');
     console.log('checkInputType dataType == ', dataType);
     let payload
 
-    if(dataType === "string") {
-      this.props.addBotData({elem_type: 'bot_input', payload_type: 'text', text: data})
-    } else {
-
-      if("recipient" in data) {
-        let {attachment, quick_replies} = data.message
-        console.log('firebase input contains reciepient');
-        switch (attachment.type) {
-          case 'template':
-            this.props.addBotData({...data, elem_type: 'bot_input', payload_type: 'postback', text: attachment.payload.text, quick_replies: quick_replies})
-            break;
-          default:
-
-        }
+    // handle user inputs
+    if(from == "user_input") {
+      console.log('user_input from firebase');
+      this.props.addBotData({elem_type: 'user_input', payload_type: 'normal_text', text: data})
+    }
+    else {
+      console.log('bot_input from firebase');
+      if(dataType === "string") {
+        this.props.addBotData({elem_type: 'bot_input', payload_type: 'normal_text', text: data})
       } else {
-        console.log('firebase input NOT contains reciepient');
-        switch (data.type) {
-          case "survey":
-            console.log("input type SURVEY");
-            // payload = botApiPayloads.survey
-            this.props.addBotData({...data, elem_type: 'bot_input', payload_type: 'survey', text: data.question, options: data.options})
-            break;
-          case "quick_reply":
-            console.log("input type SURVEY");
-            // payload = botApiPayloads.survey
-            this.props.addBotData({...data, elem_type: 'bot_input', payload_type: 'quick_reply', text: data.content.text, options: data.options})
-            break;
-          default:
 
+        if("recipient" in data) {
+          let {attachment, quick_replies} = data.message
+          console.log('firebase input contains reciepient');
+          switch (attachment.type) {
+            case 'template':
+              this.props.addBotData({...data, elem_type: 'bot_input', payload_type: 'postback', text: attachment.payload.text, quick_replies: quick_replies, buttons: attachment.payload.buttons})
+              break;
+            default:
+
+          }
+        } else {
+          console.log('firebase input NOT contains reciepient');
+          switch (data.type) {
+            case "survey":
+              console.log("input type SURVEY");
+              // payload = botApiPayloads.survey
+              this.props.addBotData({...data, elem_type: 'bot_input', payload_type: 'survey', text: data.question, options: data.options})
+              break;
+            case "quick_reply":
+              console.log("input type SURVEY");
+              // payload = botApiPayloads.survey
+              this.props.addBotData({...data, elem_type: 'bot_input', payload_type: 'quick_reply', text: data.content.text, options: data.options})
+              break;
+            default:
+
+          }
         }
       }
     }
@@ -236,9 +246,33 @@ class Discover extends Component {
     let {message} = this.state
     console.log('send action -- ', e, message);
     if(message == "") return false
-    this.props.addBotData({elem_type: 'user_input', payload_type: 'normal_text', text: message})
-    this.props.sendBotReply({type: 'user_input', payload_type: 'normal_text', payload: message})
+    let {userData} = this.state
+    // this.props.addBotData({elem_type: 'user_input', payload_type: 'normal_text', text: message})
+    this.props.sendBotReply({type: 'user_input', payload_type: 'normal_text', payload: {selectedOption : message}})
+    this.sendUserInputToFirebase(message)
     this.setState({message: ''})
+  }
+
+  sendUserInputToFirebase(message) {
+    let {userData} = this.state
+    console.log("sendUserInputToFirebase= ", message, userData)
+    let msgObj = {
+      timestamp: Date.now(),
+      fromId: 'user_input',
+      msg: message
+    }
+    firebase
+			.database()
+			.ref(`/bot_chat_rooms/${userData.channelId}`)
+			.push(msgObj).then(res => {
+				msgObj.id = res.key;
+				if (msgObj.id) {
+          console.log('msg send firebase id= ', msgObj.id);
+					// this.storeChat(chatObj);
+				}
+				// console.log('getLastMsg in processChat= ', data.meetingId, chatObj);
+				// this.props.getLastMsg(data.meetingId, chatObj)
+			});
   }
 
   handleOptionsClick(e, option, data) {
@@ -256,7 +290,8 @@ class Discover extends Component {
         console.log('options content_type= ', content_type);
         if(typeof option == 'string') {
           console.log('option string');
-          this.props.addBotData({elem_type: 'user_input', payload_type: type, text: option})
+          // this.props.addBotData({elem_type: 'user_input', payload_type: type, text: option})
+          this.sendUserInputToFirebase(option)
           this.props.sendBotReply({elem_type: 'user_input', payload_type: type, payload: {...data, selectedOption: option}})
         }
         else if(content_type == 'url' || content_type == 'web_url') {
@@ -265,37 +300,69 @@ class Discover extends Component {
         }
         else if( content_type == 'text' ) {
           console.log('option -- ', content_type);
-          this.props.addBotData({elem_type: 'user_input', payload_type: 'quick_reply', text: option.title, icon: option.image_url})
+          // this.props.addBotData({elem_type: 'user_input', payload_type: 'quick_reply', text: option.title, icon: option.image_url})
+          this.sendUserInputToFirebase(option.title)
           this.props.sendBotReply({elem_type: 'user_input', payload_type: 'quick_reply', payload: {...data, selectedOption: option.title}})
         }
         break;
-        case 'postback':
-          if(typeof option != 'string') {
-            if(option.type != undefined) content_type = option.type
-            if(option.content_type != undefined) content_type = option.content_type
-          }
-          console.log('options content_type= ', content_type);
-          if(typeof option == 'string') {
-            console.log('option string');
-            this.props.addBotData({elem_type: 'user_input', payload_type: type, text: option})
-            this.props.sendBotReply({elem_type: 'user_input', payload_type: type, payload: {...data, selectedOption: option}})
-          }
-          else if(content_type == 'url' || content_type == 'web_url') {
-            console.log('option -- ', content_type);
-            window.location = option.url
-          }
-          else if( content_type == 'text' ) {
-            console.log('option -- ', content_type);
-            this.props.addBotData({elem_type: 'user_input', payload_type: type, text: option.title, icon: option.image_url})
-            this.props.sendBotReply({elem_type: 'user_input', payload_type: type, payload: {...data, selectedOption: option.title}})
-          }
-          else if( content_type == 'postback') {
-            console.log('option -- ', content_type);
-            this.props.addBotData({elem_type: 'user_input', payload_type: type, text: option.title})
-            this.props.sendBotReply({elem_type: 'user_input', payload_type: type, payload: {...data, postback: option.postback, selectedOption: option.title}})
-          }
+      case 'postback':
+        if(typeof option != 'string') {
+          if(option.type != undefined) content_type = option.type
+          if(option.content_type != undefined) content_type = option.content_type
+        }
+        console.log('options content_type= ', content_type);
+        if(typeof option == 'string') {
+          console.log('option string');
+          // this.props.addBotData({elem_type: 'user_input', payload_type: type, text: option})
+          this.sendUserInputToFirebase(option)
+          this.props.sendBotReply({elem_type: 'user_input', payload_type: type, payload: {...data, selectedOption: option}})
+        }
+        else if(content_type == 'url' || content_type == 'web_url') {
+          console.log('option -- ', content_type);
+          window.location = option.url
+        }
+        else if( content_type == 'text' ) {
+          console.log('option -- ', content_type);
+          // this.props.addBotData({elem_type: 'user_input', payload_type: type, text: option.title, icon: option.image_url})
+          this.sendUserInputToFirebase(option.title)
+          this.props.sendBotReply({elem_type: 'user_input', payload_type: type, payload: {...data, selectedOption: option.title}})
+        }
+        else if( content_type == 'postback') {
+          console.log('option -- ', content_type);
+          // this.props.addBotData({elem_type: 'user_input', payload_type: type, text: option.title})
+          this.sendUserInputToFirebase(option.title)
+          this.props.sendBotReply({elem_type: 'user_-input', payload_type: type, payload: {...data, postback: option.postback, selectedOption: option.title}})
+        }
 
       default:
+        console.log('handle option click default !--');
+        if(typeof option != 'string') {
+          if(option.type != undefined) content_type = option.type
+          if(option.content_type != undefined) content_type = option.content_type
+        }
+        console.log('options content_type= ', content_type);
+        if(typeof option == 'string') {
+          console.log('option string');
+          // this.props.addBotData({elem_type: 'user_input', payload_type: type, text: option})
+          this.sendUserInputToFirebase(option)
+          this.props.sendBotReply({elem_type: 'user_input', payload_type: content_type, payload: {...data, selectedOption: option}})
+        }
+        else if(content_type == 'url' || content_type == 'web_url') {
+          console.log('option -- ', content_type);
+          window.location = option.url
+        }
+        else if( content_type == 'text' ) {
+          console.log('option -- ', content_type);
+          // this.props.addBotData({elem_type: 'user_input', payload_type: type, text: option.title, icon: option.image_url})
+          this.sendUserInputToFirebase(option.title)
+          this.props.sendBotReply({elem_type: 'user_input', payload_type: "normal_text", payload: {...data, selectedOption: option.title}})
+        }
+        else if( content_type == 'postback') {
+          console.log('option -- ', content_type);
+          // this.props.addBotData({elem_type: 'user_input', payload_type: type, text: option.title})
+          this.sendUserInputToFirebase(option.title)
+          this.props.sendBotReply({elem_type: 'user_-input', payload_type: content_type, payload: {...data, postback: option.postback, selectedOption: option.title}})
+        }
 
     }
 
@@ -327,7 +394,7 @@ class Discover extends Component {
                 botData.map((item, index) => {
                   let botDataOptions = "options" in item ? item.options.length > 0 : false
                   let showQuickReplies = "quick_replies" in item ? item.quick_replies.length > 0 : false
-
+                  let showButtons = "buttons" in item ? item.buttons.length > 0 : false
                   console.log('botData render map= ', item, index);
 
                   return (<div key={index} className={item.elem_type == "user_input" ? Styles.self : ""}>
@@ -367,6 +434,26 @@ class Discover extends Component {
                           return (<span key={index}>
                             <Button variant="contained" className={classes.button} onClick={(e) => this.handleOptionsClick(e, reply, item)}>
                             {reply.image_url && <img src={reply.image_url} style={{maxWidth: 22, margin: 0}} />}{reply.title}
+                            </Button>
+                            </span>)
+                        }
+                      })
+                    }
+                    {
+                      showButtons &&
+                      item.buttons.map((button, index) => {
+                        if(typeof button == 'string') {
+                          console.log("typeof button= ", "string", button);
+                          return (<span key={index}>
+                            <Button variant="contained" className={classes.button} onClick={(e) => this.handleOptionsClick(e, button, item)}>
+                            {button}
+                            </Button>
+                            </span>)
+                        } else {
+                          console.log("typeof button= ", "object", button);
+                          return (<span key={index}>
+                            <Button variant="contained" className={classes.button} onClick={(e) => this.handleOptionsClick(e, button, item)}>
+                            {button.image_url && <img src={button.image_url} style={{maxWidth: 22, margin: 0}} />}{button.title}
                             </Button>
                             </span>)
                         }

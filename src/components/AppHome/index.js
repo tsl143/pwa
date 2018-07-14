@@ -10,7 +10,6 @@ import AppLayout from "../AppLayout";
 // import {setUnreadChatCount, getFriends, getFriendsCache, getLastMsg, getFriendsChat, processChat } from '../../actions/friends';
 // import setFCM from '../../FCM';
 import FbLogin from '../FbLogin/index';
-import querystring from 'query-string';
 import Permissions from '../Permissions'
 // import Onboarding from '../Onboarding/onboarding'
 import Discover from '../Discover/discover'
@@ -79,7 +78,7 @@ class Home extends Component {
       // } else {
       //
       // }
-        return (
+      return (
         <div style={{height: '100vh', width: '100vw'}}>
           <Permissions />
           {permissions == true  && <Redirect to="/discover" />}
