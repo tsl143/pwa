@@ -8,6 +8,7 @@ import ButtonSelect from './ButtonSelect';
 import TextInput from './TextInput';
 import SelectBox from './SelectBox';
 import MyCard from './MyCard';
+import SetImage from './SetImage';
 
 
 import Styles from './styles.scss'
@@ -32,7 +33,7 @@ class Settings extends Component {
 	}
 
   	render() {
-		const { questions = [] } = this.props;
+		const { questions = [], answers = [] } = this.props;
 		return (
 			<div className={Styles.settingsBox}>
 				<FloatingActionButton className={Styles.fab}>
@@ -41,6 +42,7 @@ class Settings extends Component {
 				{
 					questions.map(q => {
 						const { id = "", options, question = "", required = false, subtitle = "", type ="" } = q;
+						const answer = answers.find(a => a.id === id);
 						switch (type){
 							case 'multiSelect': {
 								return <MyCard
@@ -53,6 +55,7 @@ class Settings extends Component {
 											hint = {subtitle}
 											data = {options}
 											action = {this.selectOption.bind(this, id)}
+											answer = {answer}
 										/>
 									}
 								/>
@@ -69,6 +72,7 @@ class Settings extends Component {
 											hint = {subtitle}
 											data = {options}
 											action = {this.selectOption.bind(this, id)}
+											answer = {answer}
 										/>
 									}
 								/>
@@ -85,6 +89,7 @@ class Settings extends Component {
 											hint = {subtitle}
 											data = {options}
 											action = {this.selectOption.bind(this, id)}
+											answer = {answer}
 										/>
 									}
 								/>
@@ -99,6 +104,21 @@ class Settings extends Component {
 											id={id}
 											hint = {subtitle}
 											action = {this.selectOption.bind(this, id)}
+											answer = {answer}
+										/>
+									}
+								/>
+							}
+							case 'image': {
+								return <MyCard
+									title = {question}
+									key={id}
+									content={
+										<SetImage
+											id={id}
+											hint = {subtitle}
+											action = {this.selectOption.bind(this, id)}
+											answer = {answer}
 										/>
 									}
 								/>

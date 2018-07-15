@@ -3,12 +3,12 @@
     {
       "meta": "",
       "id": "profileImage",
-      "option": "https://platform-lookaside.fbsbx.com/platform/profilepic/?psid=1578839942198894&width=1024&ext=1531395882&hash=AeQ01OPX9lzcRONZ"
+      "option": "https://scontent.fdel8-1.fna.fbcdn.net/v/t31.0-8/17547108_2030528067224593_2939837092356574875_o.png?_nc_cat=0&oh=8e4554dfe23da321abc3122952610dde&oe=5BE593AC&efg=eyJhZG1pc3Npb25fY29udHJvbCI6MSwidXBsb2FkZXJfaWQiOiIxNTc2MzMzMjA1OTc3NDE3In0%3D"
     },
     {
       "meta": "",
       "id": "myGender",
-      "option": "male"
+      "option": "Babae"
     },
     {
       "meta": "",
@@ -22,7 +22,8 @@
     },
     {
       "meta": "",
-      "id": "displayName"
+      "id": "displayName",
+      "option": "First Name"
     },
     {
       "meta": "",
@@ -32,12 +33,12 @@
     {
       "meta": "",
       "id": "aboutMe",
-      "option": ""
+      "option": "test text"
     },
     {
       "meta": "",
       "id": "chatPreference",
-      "option": "Anyone"
+      "option": "Kahit sino"
     },
     {
       "meta": "",
@@ -47,7 +48,9 @@
     {
       "meta": "",
       "id": "traitsProud",
-      "option": ""
+      "option": [
+        "Itsura"
+      ]
     },
     {
       "meta": "",
@@ -57,22 +60,23 @@
     {
       "meta": "",
       "id": "traitsChatmate",
-      "option": ""
+      "option": ["Nakakatawa"]
     },
     {
       "meta": "",
       "id": "interest",
-      "option": ""
+      "option": ["Sports",
+        "Volunteering"]
     },
     {
       "meta": "",
       "id": "notificationTime",
-      "option": ""
+      "option": "3 PM - 6 PM"
     },
     {
       "meta": "",
       "id": "language",
-      "option": "en"
+      "option": ["English"]
     }
   ]
 }

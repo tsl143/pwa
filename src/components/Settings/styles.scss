@@ -53,3 +53,22 @@ $NGBlue: #199aab;
 	background: $NGBlue !important;
 	color: #fff !important;
 }
+
+.imageHelp {
+	font-size: 12px;
+	font-weight: bold;
+	line-height: 1.2;
+	text-align: center;
+}
+
+.profileImg {
+	width: 100px;
+	margin: 5px;
+	border: 1px dashed #b8b8b8;
+	padding: 4px;
+
+	img {
+		width: 100%;
+		height: auto;
+	}
+}

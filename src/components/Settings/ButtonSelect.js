@@ -15,8 +15,9 @@ export default class ButtonSelect extends Component {
 
     constructor(props) {
         super(props);
+        const { answer = {} } = props;
         this.state = {
-            active: props.active || [],
+            active: answer.option || '',
         }
     }
 
@@ -28,7 +29,7 @@ export default class ButtonSelect extends Component {
     }
 
     render() {
-        const { data } = this.props;
+        const { data, answer } = this.props;
         return (
             <div>
                 {

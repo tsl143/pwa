@@ -15,8 +15,11 @@ export default class MultiSelect extends Component {
 
     constructor(props) {
         super(props);
+        const { answer = {} } = props;
+        
+        const active =  answer.option && answer.option.map(a => ({text: a, index: props.data.indexOf(a)})) || [];
         this.state = {
-            active: props.active || [],
+            active,
         }
     }
 
@@ -26,7 +29,7 @@ export default class MultiSelect extends Component {
             const activePills = [...prev.active];
             if(!activePills.find(a => a.index === index)) {
                 activePills.push({ text, index });
-                if(this.props.action) this.props.action(activePills);
+                if(this.props.action) this.props.action(activePills.map(a => a.text));
             }
             return { active: activePills }
         });
@@ -43,7 +46,7 @@ export default class MultiSelect extends Component {
     }
 
     render() {
-        const { data } = this.props;
+        const { data, answer } = this.props;
         return (
             <div>
                 <SelectField

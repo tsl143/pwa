@@ -2,32 +2,27 @@ import React, { Component } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Styles from './styles.scss'
 
-const styles = {
-    fullWidth: {
-        width: '100%',
-    },
-};
-
 export default class TextInput extends Component {
 
     constructor(props) {
         super(props);
+        const { answer = {} } = props;
         this.state = {
-            active: props.active || '',
-            data: []
+            text: answer.option || ''
         }
     }
 
     setActive(ev) {
-        const active = ev.target.value
+        const text = ev.target.value;
         this.setState((prev) => {            
-            if(this.props.action) this.props.action(active);
-            return { active }
-        });
+            if(this.props.action) this.props.action(text);
+            return { text }
+        }); 
     }
 
     render() {
-        const { hint } = this.props;
+        const { hint, answer = {} } = this.props;
+        const { text = '' } = this.state;
         return (
             <TextField
                 helperText={hint}
@@ -35,6 +30,7 @@ export default class TextInput extends Component {
                 margin="normal"
                 multiline
                 onChange={this.setActive.bind(this)}
+                value={text}
             />
         );
     }
