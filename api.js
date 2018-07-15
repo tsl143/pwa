@@ -12,6 +12,11 @@ app.use(bodyParser.text({ type: 'text/html' }));
 // parse some custom thing into a Buffer
 app.use(bodyParser.raw({ type: 'application/vnd.custom-type' }));
 
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
 
 app.post('/data/signin', (req, res) => {
     fs.readFile(path.join(__dirname, '../example/public/data/signin.json'), 'utf8', function(error, content) {
@@ -97,8 +102,7 @@ app.get('/getFriends', (req, res) => {
 
 
 
-app.use(express.static(path.join(__dirname, '../example/public')));
-app.use(express.static(path.join(__dirname, '../dist')));
+app.use(express.static(path.join(__dirname, './dummy')));
 
 
 app.listen(8081, '0.0.0.0', err => {

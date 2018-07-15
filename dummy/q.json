@@ -1,0 +1,218 @@
+{
+  "questions": [
+    {
+      "question": "Photos",
+      "subtitle": "Your photo is blurred and will slowly be revealed to your chatmate as you chat longer.",
+      "options": [
+        "https://platform-lookaside.fbsbx.com/platform/profilepic/?psid=1578839942198894&width=1024&ext=1531395882&hash=AeQ01OPX9lzcRONZ"
+      ],
+      "id": "profileImage",
+      "type": "image",
+      "required": true
+    },
+    {
+      "question": "Gender",
+      "subtitle": "",
+      "options": [
+        "Lalaki",
+        "Babae",
+        "Kahit sino"
+      ],
+      "id": "myGender",
+      "type": "buttonSelect",
+      "required": true
+    },
+    {
+      "question": "Birthyear",
+      "subtitle": "",
+      "options": "",
+      "id": "birthYear",
+      "type": "selectBox",
+      "required": true
+    },
+    {
+      "question": "Location",
+      "subtitle": "",
+      "options": "",
+      "id": "location",
+      "type": "location",
+      "required": false
+    },
+    {
+      "question": "User Name",
+      "subtitle": "",
+      "id": "userName",
+      "type": "textField",
+      "required": false
+    },
+    {
+      "subtitle": "",
+      "options": [
+        "Full Name",
+        "First Name",
+        "Username"
+      ],
+      "id": "displayName",
+      "question": "Name to Display",
+      "type": "buttonSelect",
+      "required": true
+    },
+    {
+      "question": "Facebook Verification",
+      "subtitle": "Ang NG ay:\n? Ilalagay ka sa priority at ima-match ka nang mabilis\n? Maghahanap ng users na may kaparehong interes\n? I-verify ang iyong account\n\nHindi gagawin ng NG ang:\n? Pagnanakaw ng iyong mga detalye\n? Pagpo-post sa iyong timeline\n? Pagpakita ng info mo sa NG users\n? Pag-send ng messages sa iyong FB friends",
+      "options": [
+        "Connect with Facebook"
+      ],
+      "id": "verifyFBAccount",
+      "type": "buttonSelect1",
+      "required": true
+    },
+    {
+      "question": "About Me",
+      "subtitle": "",
+      "id": "aboutMe",
+      "type": "textField",
+      "required": false
+    },
+    {
+      "question": "Preferred Chatmate",
+      "subtitle": "",
+      "options": [
+        "Lalaki",
+        "Babae",
+        "Kahit sino"
+      ],
+      "id": "chatPreference",
+      "type": "buttonSelect",
+      "required": true
+    },
+    {
+      "question": "Looking For",
+      "subtitle": "",
+      "options": [
+        "Seryosong relasyon",
+        "Kaibigan lamang",
+        "Kaswal na relasyon"
+      ],
+      "id": "lookingFor",
+      "type": "radio",
+      "required": false
+    },
+    {
+      "question": "Traits You are Proud Of",
+      "subtitle": "",
+      "options": [
+        "Itsura",
+        "Intelligence/Humor",
+        "Atletiko",
+        "Maalaga",
+        "Height",
+        "Nakakatawa"
+      ],
+      "id": "traitsProud",
+      "type": "multiSelect",
+      "required": false
+    },
+    {
+      "question": "Relationship Status",
+      "subtitle": "",
+      "options": [
+        "Single",
+        "Kasal",
+        "Nasa isang relasyon",
+        "Hiwalay sa Asawa"
+      ],
+      "id": "relationshipStatus",
+      "type": "buttonSelect",
+      "required": false
+    },
+    {
+      "question": "Traits of Your Ideal Chatmate",
+      "subtitle": "",
+      "options": [
+        "Itsura",
+        "Intelligence/Humor",
+        "Atletiko",
+        "Maalaga",
+        "Height",
+        "Nakakatawa"
+      ],
+      "id": "traitsChatmate",
+      "type": "multiSelect",
+      "required": false
+    },
+    {
+      "question": "Interests",
+      "subtitle": "",
+      "options": [
+        "American TV Series",
+        "Books",
+        "Fashion",
+        "Gaming",
+        "Hollywood Movies",
+        "Karaoke",
+        "Music",
+        "Pets",
+        "Religion",
+        "Science/Tech",
+        "Travel",
+        "Writing",
+        "Anime/Manga",
+        "Dance",
+        "Food",
+        "Gym",
+        "Internet",
+        "Korean Culture",
+        "Painting/Doodling",
+        "Photography",
+        "Running/Cycling",
+        "Sports",
+        "Volunteering",
+        "Yoga/Meditation"
+      ],
+      "id": "interest",
+      "type": "multiSelect",
+      "required": false
+    },
+    {
+      "question": "Time to Introduce to New People",
+      "subtitle": "",
+      "options": [
+        "5 AM - 9 AM",
+        "9 AM - 12 PM",
+        "12 PM - 3 PM",
+        "3 PM - 6 PM",
+        "6 PM - 9 PM",
+        "9 PM - 12 AM"
+      ],
+      "id": "notificationTime",
+      "type": "buttonSelect",
+      "required": false
+    },
+    {
+      "question": "Language",
+      "subtitle": "",
+      "options": [
+        "English",
+        "Filipino",
+        "Vietnamese",
+        "Thai",
+        "Malay",
+        "Indonesian",
+        "Khmer",
+        "Portuguese",
+        "Spanish",
+        "French",
+        "Mandarin",
+        "Japanese",
+        "Korean",
+        "Russian",
+        "Arabic",
+        "Iba"
+      ],
+      "id": "language",
+      "type": "multiSelect",
+      "required": false
+    }
+  ]
+}

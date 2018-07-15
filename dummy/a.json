@@ -1,0 +1,78 @@
+{
+  "answers": [
+    {
+      "meta": "",
+      "id": "profileImage",
+      "option": "https://platform-lookaside.fbsbx.com/platform/profilepic/?psid=1578839942198894&width=1024&ext=1531395882&hash=AeQ01OPX9lzcRONZ"
+    },
+    {
+      "meta": "",
+      "id": "myGender",
+      "option": "male"
+    },
+    {
+      "meta": "",
+      "id": "birthYear",
+      "option": "1995"
+    },
+    {
+      "meta": "",
+      "id": "location",
+      "option": "28.7040592"
+    },
+    {
+      "meta": "",
+      "id": "displayName"
+    },
+    {
+      "meta": "",
+      "id": "verifyFBAccount",
+      "option": "Verify your account via FB"
+    },
+    {
+      "meta": "",
+      "id": "aboutMe",
+      "option": ""
+    },
+    {
+      "meta": "",
+      "id": "chatPreference",
+      "option": "Anyone"
+    },
+    {
+      "meta": "",
+      "id": "lookingFor",
+      "option": "Just Friends"
+    },
+    {
+      "meta": "",
+      "id": "traitsProud",
+      "option": ""
+    },
+    {
+      "meta": "",
+      "id": "relationshipStatus",
+      "option": "Single"
+    },
+    {
+      "meta": "",
+      "id": "traitsChatmate",
+      "option": ""
+    },
+    {
+      "meta": "",
+      "id": "interest",
+      "option": ""
+    },
+    {
+      "meta": "",
+      "id": "notificationTime",
+      "option": ""
+    },
+    {
+      "meta": "",
+      "id": "language",
+      "option": "en"
+    }
+  ]
+}

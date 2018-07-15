@@ -15,7 +15,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = {
-    entry: './src/index.js',
+    entry: './src/settings.js',
     output: {
         path: __dirname,
         filename: 'bundle.js'
