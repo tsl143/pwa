@@ -15,11 +15,11 @@ export const getQuestions = (channelid = '040f6a5ff54643e0ab24795e3f426766') => 
         type: 'QUESTIONS',
         payload: axios({
             //url: `${apiURL}/getQuestions?id=${channelid}`,
-            url: 'http://192.168.1.6:8081/q.json'
+            url: 'https://api.myjson.com/bins/1dqqom'
         }).then(questions => {
             return axios({
                 //url: `${apiURL}/getAnswers?id=${channelid}`,
-                url: 'http://192.168.1.6:8081/a.json'
+                url: 'https://api.myjson.com/bins/x2lqu'
             }).then(answers => ({ questions, answers }))
         }).catch(err => ({ err }))
     }

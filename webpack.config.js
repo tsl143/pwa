@@ -21,7 +21,7 @@ module.exports = {
        contentBase: './',
        port : 8080
      },
-    entry: './src/index.js',  //'./src/permissionIndex.js',
+    entry: './src/settings.js',  //'./src/permissionIndex.js',
     output: {
         path: __dirname,
         filename: 'bundle.js'
