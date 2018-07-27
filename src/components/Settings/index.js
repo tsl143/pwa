@@ -41,7 +41,8 @@ class Settings extends Component {
                 </FloatingActionButton>
 				{
 					questions.map(q => {
-						const { id = "", options, question = "", required = false, subtitle = "", type ="" } = q;
+						const { id = "", options: opts = [], question = "", required = false, subtitle = "", type ="" } = q;
+						const options = opts[0];
 						const answer = answers.find(a => a.id === id);
 						switch (type){
 							case 'multiSelect': {
@@ -94,6 +95,7 @@ class Settings extends Component {
 									}
 								/>
 							}
+
 							case 'textField': {
 								return <MyCard
 									title = {question}
@@ -109,6 +111,7 @@ class Settings extends Component {
 									}
 								/>
 							}
+
 							case 'image': {
 								return <MyCard
 									title = {question}

@@ -20,9 +20,9 @@ export default class SelectBox extends Component {
     }
 
     componentDidMount() {
-        let { data = [], id = '' } = this.props;
-        if(typeof data === 'string' && id === 'birthYear' ) {
-            this.setState({ data: this.makeDate() });
+        let { data = [], id = '', answer } = this.props;
+        if(id === 'birthYear' ) {
+            this.setState({ data: this.makeDate(), active: parseInt(answer.option, 10) || '' });
         } else {
             this.setState({ data });
         }

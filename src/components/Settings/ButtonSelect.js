@@ -29,14 +29,15 @@ export default class ButtonSelect extends Component {
     }
 
     render() {
-        const { data, answer } = this.props;
+        const { data = {}, answer } = this.props;
+        const keys = Object.keys(data);
         return (
             <div>
                 {
-                    data.map(m => <MenuItem
+                    keys.map(m => <MenuItem
                         value={m}
                         key={m}
-                        primaryText={m}
+                        primaryText={data[m]}
                         className={m===this.state.active ? Styles.activeBtn : ''}
                         onClick={this.setActive.bind(this, m)}
                     />)

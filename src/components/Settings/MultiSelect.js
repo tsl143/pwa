@@ -17,19 +17,18 @@ export default class MultiSelect extends Component {
         super(props);
         const { answer = {} } = props;
         
-        const active =  answer.option && answer.option.map(a => ({text: a, index: props.data.indexOf(a)})) || [];
+        const active =  (answer.option && answer.option.length > 0) ?  answer.option : [];
         this.state = {
             active,
         }
     }
 
-    changeActive(ev, index) {
-        const text = this.props.data[index];
+    changeActive(key) {
         this.setState((prev) => {
             const activePills = [...prev.active];
-            if(!activePills.find(a => a.index === index)) {
-                activePills.push({ text, index });
-                if(this.props.action) this.props.action(activePills.map(a => a.text));
+            if(!(activePills.indexOf(key) > -1)) {
+                activePills.push(key);
+                if(this.props.action) this.props.action(activePills);
             }
             return { active: activePills }
         });
@@ -47,26 +46,26 @@ export default class MultiSelect extends Component {
 
     render() {
         const { data, answer } = this.props;
+        const keys = Object.keys(data);
         return (
             <div>
                 <SelectField
                     value={this.state.active}
-                    onChange={this.changeActive.bind(this)}
                     maxHeight={200}
                     style={styles.fullWidth}
                 >
                     {
-                        data.map(yr => <MenuItem value={yr} key={yr} primaryText={yr} />)
+                        keys.map(k => <MenuItem onClick={this.changeActive.bind(this, k)} value={k} key={k} primaryText={data[k]} />)
                     }
                 </SelectField>
                 <div className={Styles.pills}>
                     {
-                        this.state.active.map(a => {
+                        this.state.active.map(k => {
                             return (
                                 <Chip
-                                    label={ a.text }
-                                    key={a.index}
-                                    onDelete={this.deleteActive.bind(this,a)}
+                                    label={ data[k] }
+                                    key={k}
+                                    onDelete={this.deleteActive.bind(this,k)}
                                     className={Styles.pill}
                                 />
                             )
